@@ -8,3 +8,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark mode true black background */
+[data-mantine-color-scheme='dark'] {
+  --mantine-color-body: #000000;
+  --mantine-color-default: #000000;
+  --mantine-color-dark-9: #000000;
+  --mantine-color-dark-8: #0a0a0a;
+  --mantine-color-dark-7: #1a1a1a;
+  --mantine-color-dark-6: #2a2a2a;
+}
+
+/* Force AppShell backgrounds to true black */
+[data-mantine-color-scheme='dark'] .mantine-AppShell-root,
+[data-mantine-color-scheme='dark'] .mantine-AppShell-main,
+[data-mantine-color-scheme='dark'] .mantine-AppShell-header,
+[data-mantine-color-scheme='dark'] .mantine-AppShell-navbar {
+  background-color: #000000;
+}
