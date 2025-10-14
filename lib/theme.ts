@@ -1,4 +1,4 @@
-import { createTheme } from '@mantine/core';
+import { createTheme, MantineColorScheme } from '@mantine/core';
 
 export const theme = createTheme({
   /** Your theme configuration here */

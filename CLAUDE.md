@@ -9,8 +9,8 @@ A personalized book summarizer platform that delivers AI-generated, reader-perso
 - **Next.js 15** with App Router
 - **React 19** with TypeScript
 - **Tailwind CSS** for styling
-- **shadcn/ui** for component library
-- **Lucide React** for icons
+- **Mantine UI** - Component library (AppShell, forms, modals, notifications, etc.)
+- **Tabler Icons** - Icon library (used by Mantine)
 
 ### Backend & Database
 - **Supabase** - Postgres database, Auth, Storage, pgvector for embeddings
@@ -34,9 +34,11 @@ A personalized book summarizer platform that delivers AI-generated, reader-perso
     client.ts      # Browser Supabase client
     server.ts      # Server-side Supabase client
     middleware.ts  # Auth session management
-  utils.ts         # Utility functions (cn for className merging)
+  theme.ts         # Mantine theme configuration
+  utils.ts         # Utility functions (cn for Tailwind className merging)
 
-/components        # React components (to be populated)
+/components        # React components
+  /dashboard       # Dashboard layout with Mantine AppShell
 
 /packages          # Future monorepo structure for mobile app
   /ui             # Shared React components
@@ -90,13 +92,18 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
 ### ✅ Completed
 - Next.js app initialized with TypeScript and App Router
 - Tailwind CSS configured
-- shadcn/ui utilities set up
+- Mantine UI integrated with theming system
+  - AppShell-based dashboard layout with responsive sidebar
+  - Color scheme toggle (light/dark mode)
+  - Modals and notifications providers configured
+  - Hydration issues resolved with proper SSR setup
 - Supabase client utilities created
 - Auth middleware configured
 - Basic folder structure following PRD monorepo design
 - API route stubs with TODOs
 - Basic layout with nav and footer
 - Landing page with hero and features sections
+- Dashboard page with navigation structure
 
 ### 🚧 Next Steps
 1. Set up Supabase project and configure environment variables
@@ -123,8 +130,8 @@ yarn build
 # Start production server
 yarn start
 
-# Add shadcn/ui components
-npx shadcn@latest add [component-name]
+# Mantine components are imported directly from @mantine packages
+# See: https://mantine.dev/
 ```
 
 ## Future Roadmap
@@ -152,7 +159,36 @@ npx shadcn@latest add [component-name]
 
 - `PRD.md` - Full architecture and system design
 - `.env.local.example` - Environment variable template
-- `components.json` - shadcn/ui configuration
+
+## UI Library Architecture
+
+### Mantine UI
+We chose **Mantine UI** as our component library for several reasons:
+
+1. **Complete Dashboard Components** - AppShell, Navbar, Header with responsive design out of the box
+2. **Rich Component Ecosystem** - Forms, modals, notifications, overlays, data tables
+3. **Built-in Theme System** - Color schemes, dark mode, customizable design tokens
+4. **TypeScript Native** - Excellent type safety and developer experience
+5. **Active Development** - Well-maintained with regular updates
+
+### Key Mantine Features Used
+- **AppShell** - Dashboard layout structure (components/dashboard/DashboardLayout.tsx)
+- **Color Scheme** - Light/dark mode toggle with proper SSR hydration
+- **ModalsProvider** - Global modal management
+- **Notifications** - Toast notifications system
+- **Navigation Components** - NavLink, Burger menu for mobile
+- **Form Components** - Built-in validation and form state management
+- **Data Display** - Tables, cards, grids for displaying book summaries
+
+### Tailwind CSS Integration
+- Mantine works seamlessly with Tailwind CSS
+- Use `cn()` utility from `lib/utils.ts` for conditional Tailwind classes
+- Mantine components use CSS-in-JS, avoiding style conflicts
+
+### Hydration Considerations
+- Mantine's color scheme requires careful SSR setup
+- `defaultColorScheme="light"` set on both `ColorSchemeScript` and `MantineProvider`
+- Client-side theme toggle uses `mounted` state check to prevent hydration mismatches
 
 ## Notes
 
@@ -160,3 +196,4 @@ npx shadcn@latest add [component-name]
 - Middleware handles Supabase auth session management automatically
 - TypeScript paths configured with `@/*` alias for clean imports
 - All API routes check authentication before processing requests
+- Mantine UI is the sole component library for a streamlined, consistent design system

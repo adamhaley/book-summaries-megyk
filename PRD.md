@@ -24,7 +24,7 @@ Ollama / OpenAI APIs (embeddings, summary generation)
 
 | Layer | Technology | Rationale |
 |-------|-------------|-----------|
-| **Frontend (Web)** | **Next.js 14 + React 18 (App Router) + Tailwind CSS + shadcn/ui** | Modern React SSR/ISR framework with excellent SEO and smooth migration to React Native Web. |
+| **Frontend (Web)** | **Next.js 15 + React 19 (App Router) + Tailwind CSS + Mantine UI** | Modern React SSR/ISR framework with excellent SEO and smooth migration to React Native Web. Mantine provides comprehensive dashboard components with TypeScript-first design. |
 | **Frontend (Mobile, later)** | **React Native / Expo** | Shares component logic and hooks from the web app; supports offline + native distribution. |
 | **Backend / Database** | **Supabase (Postgres, Auth, Storage, pgvector)** | Managed backend with instant REST + GraphQL APIs, native vector search, and RLS for multi-user security. |
 | **Automation & AI Orchestration** | **n8n (self-hosted)** | Handles LLM calls, embedding pipelines, and background jobs; accessible through HTTP webhooks. |
@@ -82,8 +82,29 @@ Ollama / OpenAI APIs (embeddings, summary generation)
 | Long-term maintainability | Medium | High |
 → **Decision:** Adopt **Next.js + Supabase + n8n** for MVP to ensure direct portability to React Native.
 
-## 12. Summary
-> **Architecture Goal:** One React-centric codebase powering web, PWA, and mobile apps, connected to a single Supabase + n8n backend and AI layer.  
+## 12. UI Component Strategy
+
+### Primary: Mantine UI
+**Decision:** Adopted **Mantine UI** as the primary component library for the web application.
+
+**Rationale:**
+- **Dashboard-First Design** - AppShell, responsive navigation, and layout components optimized for admin/dashboard interfaces
+- **Complete Form System** - Rich form components with validation, built-in accessibility
+- **TypeScript Native** - First-class TypeScript support improves developer experience
+- **Theme System** - Built-in dark mode, color schemes, and design token system
+- **Rich Component Library** - Modals, notifications, overlays, tables, and data visualization components
+- **Active Ecosystem** - Well-maintained with regular updates and strong community
+
+### Implementation Notes
+- Dashboard uses Mantine's **AppShell** for layout (see `components/dashboard/DashboardLayout.tsx`)
+- Proper SSR hydration handling with `defaultColorScheme="light"`
+- Tabler Icons integrated for consistent iconography
+- Theme customization via `lib/theme.ts`
+
+## 13. Summary
+> **Architecture Goal:** One React-centric codebase powering web, PWA, and mobile apps, connected to a single Supabase + n8n backend and AI layer.
 > This minimizes tech debt, accelerates MVP launch, and guarantees seamless transition to native mobile deployment.
+>
+> **UI Strategy:** Mantine UI as the sole component library provides a production-ready, TypeScript-native system with minimal custom styling, allowing rapid development of dashboard interfaces while maintaining design consistency. This streamlined approach reduces complexity and potential style conflicts.
 
 

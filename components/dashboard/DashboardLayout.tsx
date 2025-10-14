@@ -75,7 +75,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <Group>
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
             <Text size="xl" fw={700}>
-              Book Summaries
+              Megyk Book Summaries
             </Text>
           </Group>
           <Group>
