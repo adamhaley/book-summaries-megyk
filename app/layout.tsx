@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
+import { theme } from '@/lib/theme';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,7 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={`${inter.className} antialiased`}>
+        <MantineProvider theme={theme}>
+          <ModalsProvider>
+            <Notifications />
         <nav className="border-b">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <div className="text-xl font-bold">Book Summaries</div>
@@ -33,6 +43,8 @@ export default function RootLayout({
             <p>&copy; 2025 Book Summaries. All rights reserved.</p>
           </div>
         </footer>
+          </ModalsProvider>
+        </MantineProvider>
       </body>
     </html>
   );
