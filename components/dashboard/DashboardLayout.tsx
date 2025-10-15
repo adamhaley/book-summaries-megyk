@@ -74,7 +74,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <Group h="100%" px="md" justify="space-between">
           <Group>
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-            <Text size="xl" fw={700}>
+            <Text 
+              size="xl" 
+              fw={700}
+              component="a" 
+              href="/" 
+              style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+              className="hover:opacity-80"
+            >
               Megyk Book Summaries
             </Text>
           </Group>

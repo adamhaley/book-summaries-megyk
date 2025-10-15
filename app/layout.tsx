@@ -4,6 +4,7 @@ import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { theme } from '@/lib/theme';
+import { MainNavigation } from '@/components/MainNavigation';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -27,19 +28,10 @@ export default function RootLayout({
         <MantineProvider theme={theme} defaultColorScheme="light">
           <ModalsProvider>
             <Notifications />
-        <nav className="border-b">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="text-xl font-bold">Megyk Book Summaries</div>
-            <div className="flex gap-4">
-              <a href="#" className="text-gray-600 hover:text-gray-900">Home</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">Library</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">Profile</a>
-            </div>
-          </div>
-        </nav>
+        <MainNavigation />
         <main>{children}</main>
-        <footer className="border-t mt-20">
-          <div className="container mx-auto px-4 py-8 text-center text-gray-600">
+        <footer style={{ borderTop: '1px solid var(--mantine-color-default-border)', marginTop: '5rem' }}>
+          <div className="container mx-auto px-4 py-8 text-center" style={{ color: 'var(--mantine-color-dimmed)' }}>
             <p>&copy; 2025 Megyk Book Summaries. All rights reserved.</p>
           </div>
         </footer>
