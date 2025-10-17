@@ -43,7 +43,7 @@ export default function Home() {
               </Text>
               <Button
                 component={Link}
-                href="/dashboard"
+                href="/onboarding"
                 size="lg"
                 rightSection={<IconArrowRight size={20} />}
                 gradient={{ from: 'blue', to: 'cyan' }}

@@ -22,6 +22,7 @@ import {
   IconMoon,
   IconChartBar,
   IconBookmark,
+  IconAdjustments,
 } from '@tabler/icons-react';
 
 interface DashboardLayoutProps {
@@ -32,6 +33,7 @@ const navigation = [
   { label: 'Dashboard', icon: IconHome, href: '/dashboard' },
   { label: 'Library', icon: IconBook, href: '/dashboard/library' },
   { label: 'My Summaries', icon: IconBookmark, href: '/dashboard/summaries' },
+  { label: 'Preferences', icon: IconAdjustments, href: '/dashboard/preferences' },
   { label: 'Analytics', icon: IconChartBar, href: '/dashboard/analytics' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
   { label: 'Settings', icon: IconSettings, href: '/dashboard/settings' },
