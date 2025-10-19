@@ -44,7 +44,7 @@ export function MainNavigation() {
             style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
             className="hover:opacity-80"
           >
-            Megyk Book Summaries
+            Megyk Books
           </Text>
 
           {/* Desktop Navigation */}

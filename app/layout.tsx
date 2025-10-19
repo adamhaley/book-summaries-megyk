@@ -10,7 +10,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Megyk Book Summaries - Personalized AI-Generated Summaries",
+  title: "Megyk Books - Personalized AI-Generated Summaries",
   description: "Get personalized book summaries tailored to your reading preferences",
 };
 
@@ -32,7 +32,6 @@ export default function RootLayout({
         <main>{children}</main>
         <footer style={{ borderTop: '1px solid var(--mantine-color-default-border)', marginTop: '5rem' }}>
           <div className="container mx-auto px-4 py-8 text-center" style={{ color: 'var(--mantine-color-dimmed)' }}>
-            <p>&copy; 2025 Megyk Book Summaries. All rights reserved.</p>
           </div>
         </footer>
           </ModalsProvider>
