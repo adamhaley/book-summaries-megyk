@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import {
   AppShell,
   Burger,
@@ -41,8 +42,8 @@ const navigation = [
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
-  const [active, setActive] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
   const theme = useMantineTheme();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -51,13 +52,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     setMounted(true);
   }, []);
 
-  const items = navigation.map((item, index) => (
+  const items = navigation.map((item) => (
     <NavLink
       key={item.label}
-      active={index === active}
+      active={pathname === item.href}
       label={item.label}
       leftSection={<item.icon size={20} stroke={1.5} />}
-      onClick={() => setActive(index)}
       href={item.href}
     />
   ));
@@ -71,6 +71,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         collapsed: { mobile: !opened },
       }}
       padding="md"
+      styles={{
+        main: {
+          paddingTop: 'calc(var(--app-shell-header-height, 0px) + var(--mantine-spacing-xs))'
+        }
+      }}
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
@@ -84,7 +89,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
               className="hover:opacity-80"
             >
-              Megyk Book Summaries
+              Megyk Books
             </Text>
           </Group>
           <Group>

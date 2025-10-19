@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { UserProfile, DEFAULT_PREFERENCES } from '@/lib/types/preferences'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
+  const startTime = Date.now()
+
   try {
     const supabase = await createClient()
+    console.log(`[Profile API] Supabase client created in ${Date.now() - startTime}ms`)
+
+    const authStart = Date.now()
     const { data: { user } } = await supabase.auth.getUser()
+    console.log(`[Profile API] Auth check completed in ${Date.now() - authStart}ms`)
 
     if (!user) {
       return NextResponse.json(
@@ -14,16 +22,19 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Fetch user profile with preferences
+    // Fetch user profile with preferences (only select what we need)
+    const queryStart = Date.now()
     const { data: profile, error } = await supabase
       .from('user_profiles')
-      .select('*')
+      .select('user_id, preferences')
       .eq('user_id', user.id)
       .single()
+    console.log(`[Profile API] Database query completed in ${Date.now() - queryStart}ms`)
 
     if (error) {
       // If profile doesn't exist, return default preferences
       if (error.code === 'PGRST116') {
+        console.log(`[Profile API] No profile found, returning defaults. Total time: ${Date.now() - startTime}ms`)
         return NextResponse.json({
           user_id: user.id,
           preferences: DEFAULT_PREFERENCES
@@ -37,9 +48,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
+    console.log(`[Profile API] Success. Total time: ${Date.now() - startTime}ms`)
     return NextResponse.json(profile)
   } catch (error) {
     console.error('Unexpected error:', error)
+    console.log(`[Profile API] Error occurred. Total time: ${Date.now() - startTime}ms`)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

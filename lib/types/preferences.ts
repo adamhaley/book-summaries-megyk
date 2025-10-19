@@ -25,9 +25,9 @@ export const SUMMARY_STYLE_OPTIONS = [
 ] as const
 
 export const SUMMARY_LENGTH_OPTIONS = [
-  { value: '1pg', label: '1 Page Max', description: 'Quick overview (~250 words)' },
-  { value: '5pg', label: '5 Pages Max', description: 'Moderate depth (~1,250 words)' },
-  { value: '15pg', label: '15 Pages Max', description: 'Comprehensive analysis (~3,750 words)' }
+  { value: '1pg', label: '1 Page', description: 'Quick overview (~250 words)' },
+  { value: '5pg', label: '5 Pages', description: 'Moderate depth (~1,250 words)' },
+  { value: '15pg', label: '15 Pages', description: 'Comprehensive analysis (~3,750 words)' }
 ] as const
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
