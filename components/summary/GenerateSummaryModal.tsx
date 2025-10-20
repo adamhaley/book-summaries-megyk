@@ -211,7 +211,6 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           padding: '20px',
         },
       }}
-      scrollAreaComponent="div"
     >
       <Stack gap="md" style={{ overflow: 'hidden' }}>
         {book && (
