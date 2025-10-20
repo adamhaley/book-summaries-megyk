@@ -1,0 +1,63 @@
+.responsiveCard {
+  @media (max-width: 768px) {
+    padding: var(--mantine-spacing-md) !important;
+  }
+}
+
+.responsiveSliderCard {
+  @media (max-width: 768px) {
+    padding: var(--mantine-spacing-md) !important;
+  }
+}
+
+.responsiveContainer {
+  @media (max-width: 768px) {
+    padding-top: var(--mantine-spacing-md);
+    padding-bottom: var(--mantine-spacing-md);
+  }
+}
+
+.mobileSlider {
+  @media (max-width: 480px) {
+    .markLabel {
+      font-size: 0.65rem !important;
+      transform: rotate(-45deg);
+      transform-origin: left center;
+      margin-top: 16px !important;
+    }
+  }
+}
+
+/* Global styles for mobile slider labels */
+:global(.mobile-slider) .mantine-Slider-markLabel {
+  @media (max-width: 480px) {
+    font-size: 0.65rem !important;
+    transform: rotate(-45deg);
+    transform-origin: left center;
+    margin-top: 16px !important;
+  }
+}
+
+/* Mobile stepper layout fixes */
+.mobileStepper {
+  @media (max-width: 768px) {
+    :global(.mantine-Stepper-steps) {
+      flex-direction: column !important;
+      gap: 1rem !important;
+    }
+    
+    :global(.mantine-Stepper-step) {
+      flex: none !important;
+      width: 100% !important;
+    }
+    
+    :global(.mantine-Stepper-stepBody) {
+      margin-left: 0 !important;
+      margin-top: 0.5rem !important;
+    }
+    
+    :global(.mantine-Stepper-separator) {
+      display: none !important;
+    }
+  }
+}

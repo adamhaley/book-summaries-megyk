@@ -23,6 +23,7 @@ import {
   SUMMARY_LENGTH_OPTIONS,
   DEFAULT_PREFERENCES
 } from '@/lib/types/preferences'
+import styles from './OnboardingWizard.module.css'
 
 export function OnboardingWizard() {
   const router = useRouter()
@@ -73,8 +74,8 @@ export function OnboardingWizard() {
   }
 
   return (
-    <Container size="md" py="xl">
-      <Card shadow="lg" padding="xl" radius="md" withBorder>
+    <Container size="md" py="xl" className={styles.responsiveContainer}>
+      <Card shadow="lg" padding="xl" radius="md" withBorder className={styles.responsiveCard}>
         <Stack gap="xl">
           <div>
             <Title order={1} mb="xs">
@@ -91,7 +92,7 @@ export function OnboardingWizard() {
             </Alert>
           )}
 
-          <Stepper active={active} onStepClick={setActive}>
+          <Stepper active={active} onStepClick={setActive} className={styles.mobileStepper}>
             <Stepper.Step label="Welcome" description="Get started">
               <Stack gap="md" mt="xl">
                 <Text size="lg">
@@ -117,7 +118,7 @@ export function OnboardingWizard() {
                   </Text>
                 </div>
 
-                <Card padding="xl" withBorder>
+                <Card padding="xl" withBorder className={styles.responsiveSliderCard}>
                   <Stack gap="xl">
                     <Box>
                       <Slider
@@ -132,8 +133,13 @@ export function OnboardingWizard() {
                         }))}
                         size="lg"
                         styles={{
-                          markLabel: { marginTop: 8 }
+                          markLabel: { 
+                            marginTop: 8,
+                            fontSize: '0.75rem',
+                            whiteSpace: 'nowrap'
+                          }
                         }}
+                        className="mobile-slider"
                       />
                     </Box>
                     <Box
@@ -167,7 +173,7 @@ export function OnboardingWizard() {
                   </Text>
                 </div>
 
-                <Card padding="xl" withBorder>
+                <Card padding="xl" withBorder className={styles.responsiveSliderCard}>
                   <Stack gap="xl">
                     <Box>
                       <Slider
@@ -182,8 +188,13 @@ export function OnboardingWizard() {
                         }))}
                         size="lg"
                         styles={{
-                          markLabel: { marginTop: 8 }
+                          markLabel: { 
+                            marginTop: 8,
+                            fontSize: '0.75rem',
+                            whiteSpace: 'nowrap'
+                          }
                         }}
+                        className="mobile-slider"
                       />
                     </Box>
                     <Box
