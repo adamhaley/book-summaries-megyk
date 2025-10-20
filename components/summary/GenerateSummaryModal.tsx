@@ -201,18 +201,19 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
       centered
       styles={{
         body: {
-          overflow: 'hidden',
-          maxHeight: 'calc(100vh - 120px)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          maxHeight: 'calc(100vh - 160px)',
         },
         content: {
-          overflow: 'hidden',
+          maxHeight: '90vh',
         },
         inner: {
           padding: '20px',
         },
       }}
     >
-      <Stack gap="md" style={{ overflow: 'hidden' }}>
+      <Stack gap="md">
         {book && (
           <Box
             p="md"
