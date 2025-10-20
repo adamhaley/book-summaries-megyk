@@ -6,11 +6,12 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+/* Switch to desktop table view at a larger breakpoint to avoid button cutoff */
+@media (min-width: 1280px) {
   .mobileView {
     display: none;
   }
-  
+
   .desktopView {
     display: block;
   }
