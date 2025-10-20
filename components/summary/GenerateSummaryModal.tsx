@@ -98,6 +98,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
     setErrorMessage(null)
 
     try {
+      console.log('Starting summary generation for book:', book.id)
+
+      // Set a 2 minute timeout for the request
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 120000)
+
       const response = await fetch('/api/v1/summary', {
         method: 'POST',
         headers: {
@@ -107,6 +113,15 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           book_id: book.id,
           preferences: { style, length }
         }),
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      console.log('Response received:', {
+        status: response.status,
+        contentType: response.headers.get('content-type'),
+        ok: response.ok
       })
 
       if (response.ok) {
@@ -114,15 +129,22 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
 
         // Check if response is a PDF
         if (contentType.includes('application/pdf')) {
+          console.log('PDF detected, initiating download...')
           const blob = await response.blob()
+          console.log('Blob size:', blob.size, 'bytes')
+
           const url = window.URL.createObjectURL(blob)
           const a = document.createElement('a')
           a.href = url
-          a.download = `book-summary-${book.id}.pdf`
+          a.download = `${book.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_summary.pdf`
           document.body.appendChild(a)
           a.click()
-          window.URL.revokeObjectURL(url)
-          document.body.removeChild(a)
+
+          // Small delay before cleanup to ensure download starts
+          setTimeout(() => {
+            window.URL.revokeObjectURL(url)
+            document.body.removeChild(a)
+          }, 100)
 
           notifications.show({
             title: 'Summary Generated!',
@@ -135,13 +157,14 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           onClose() // Close modal on success
         } else {
           // Handle JSON response (async processing)
+          console.log('JSON response received (async mode)')
           const data = await response.json()
-          console.log('Summary generation started:', data)
+          console.log('Summary generation response:', data)
 
           notifications.show({
             title: 'Summary Generation Started',
-            message: `Your personalized summary for "${book.title}" is being generated. You'll be notified when it's ready.`,
-            color: 'green',
+            message: `Your personalized summary for "${book.title}" is being generated.`,
+            color: 'blue',
             icon: <IconCheck size={18} />,
             autoClose: 5000,
           })
@@ -149,12 +172,17 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           onClose() // Close modal on success
         }
       } else {
-        const error = await response.json()
-        setErrorMessage(error.error || 'Failed to generate summary')
+        console.error('Response not OK:', response.status, response.statusText)
+        const error = await response.json().catch(() => ({ error: 'Unknown error' }))
+        setErrorMessage(error.error || `Failed to generate summary (${response.status})`)
       }
     } catch (error) {
       console.error('Error generating summary:', error)
-      setErrorMessage('An unexpected error occurred')
+      if (error instanceof Error && error.name === 'AbortError') {
+        setErrorMessage('Request timed out. The summary is taking longer than expected. Please try again.')
+      } else {
+        setErrorMessage('An unexpected error occurred. Please try again.')
+      }
     } finally {
       setGenerating(false)
     }
@@ -241,7 +269,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   Choose how you want your book summary presented
                 </Text>
               </div>
-              <Box px="xs" pb="md">
+              <Box px="md" pb="md" mx="sm">
                 <Slider
                   value={styleIndex}
                   onChange={setStyleIndex}
@@ -254,7 +282,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   }))}
                   size="lg"
                   styles={{
-                    markLabel: { marginTop: 8, whiteSpace: 'nowrap', fontSize: '0.75rem' }
+                    markLabel: {
+                      marginTop: 8,
+                      whiteSpace: 'nowrap',
+                      fontSize: '0.75rem',
+                      transform: 'translateX(-50%)'
+                    }
                   }}
                 />
               </Box>
@@ -284,7 +317,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   Select your preferred max summary length
                 </Text>
               </div>
-              <Box px="xs" pb="md">
+              <Box px="md" pb="md" mx="sm">
                 <Slider
                   value={lengthIndex}
                   onChange={setLengthIndex}
@@ -297,7 +330,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   }))}
                   size="lg"
                   styles={{
-                    markLabel: { marginTop: 8, whiteSpace: 'nowrap', fontSize: '0.75rem' }
+                    markLabel: {
+                      marginTop: 8,
+                      whiteSpace: 'nowrap',
+                      fontSize: '0.75rem',
+                      transform: 'translateX(-50%)'
+                    }
                   }}
                 />
               </Box>
