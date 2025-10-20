@@ -28,8 +28,6 @@ export function MainNavigation() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '#', label: 'Library' },
-    { href: '#', label: 'Profile' },
   ];
 
   return (
