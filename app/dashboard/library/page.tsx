@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react'
 import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert } from '@mantine/core'
 import { IconBook, IconAlertCircle, IconSparkles } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
+import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
 
 export default function LibraryPage() {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [modalOpened, setModalOpened] = useState(false)
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
 
   useEffect(() => {
     fetchBooks()
@@ -32,8 +35,8 @@ export default function LibraryPage() {
   }
 
   const handleGenerateSummary = (book: Book) => {
-    // TODO: Implement summary generation
-    console.log('Generate summary for:', book.title)
+    setSelectedBook(book)
+    setModalOpened(true)
   }
 
   if (loading) {
@@ -139,6 +142,12 @@ export default function LibraryPage() {
           Showing {books.length} {books.length === 1 ? 'book' : 'books'}
         </Text>
       </Stack>
+
+      <GenerateSummaryModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        book={selectedBook}
+      />
     </Container>
   )
 }
