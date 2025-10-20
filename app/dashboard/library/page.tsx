@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert } from '@mantine/core'
+import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box } from '@mantine/core'
 import { IconBook, IconAlertCircle, IconSparkles } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
+import styles from './library.module.css'
 
 export default function LibraryPage() {
   const [books, setBooks] = useState<Book[]>([])
@@ -80,7 +81,62 @@ export default function LibraryPage() {
             </Stack>
           </Card>
         ) : (
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
+          <>
+            {/* Mobile Card View */}
+            <Box className={styles.mobileView}>
+            <SimpleGrid cols={1} spacing="md">
+              {books.map((book) => (
+                <Card key={book.id} shadow="sm" padding="lg" radius="md" withBorder>
+                  <Stack gap="sm">
+                    <div>
+                      <Text fw={600} size="lg">{book.title}</Text>
+                      <Text c="dimmed" size="sm">by {book.author}</Text>
+                      {book.description && (
+                        <Text size="sm" c="dimmed" mt="xs" lineClamp={2}>
+                          {book.description}
+                        </Text>
+                      )}
+                    </div>
+                    
+                    <Group justify="space-between" align="flex-start">
+                      <Stack gap="xs">
+                        {book.genre && (
+                          <Badge variant="light" size="sm">
+                            {book.genre}
+                          </Badge>
+                        )}
+                        <Group gap="md">
+                          {book.publication_year && (
+                            <Text size="xs" c="dimmed">
+                              {book.publication_year}
+                            </Text>
+                          )}
+                          {book.page_count && (
+                            <Text size="xs" c="dimmed">
+                              {book.page_count} pages
+                            </Text>
+                          )}
+                        </Group>
+                      </Stack>
+                      
+                      <Button
+                        size="sm"
+                        variant="light"
+                        leftSection={<IconSparkles size={16} />}
+                        onClick={() => handleGenerateSummary(book)}
+                        style={{ flexShrink: 0 }}
+                      >
+                        Generate Summary
+                      </Button>
+                    </Group>
+                  </Stack>
+                </Card>
+              ))}
+            </SimpleGrid>
+          </Box>
+          
+          {/* Desktop Table View */}
+          <Card shadow="sm" padding="lg" radius="md" withBorder className={styles.desktopView}>
             <Table.ScrollContainer minWidth={800}>
               <Table striped highlightOnHover>
                 <Table.Thead>
@@ -136,6 +192,7 @@ export default function LibraryPage() {
               </Table>
             </Table.ScrollContainer>
           </Card>
+          </>
         )}
 
         <Text size="sm" c="dimmed">
