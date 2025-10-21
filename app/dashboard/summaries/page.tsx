@@ -135,10 +135,10 @@ export default function SummariesPage() {
                     </div>
 
                     <Group gap="xs">
-                      <Badge variant="light" color="blue">
+                      <Badge variant="light" color="green">
                         {getStyleLabel(summary.style)}
                       </Badge>
-                      <Badge variant="light" color="green">
+                      <Badge variant="light" color="blue">
                         {getLengthLabel(summary.length)}
                       </Badge>
                     </Group>
@@ -147,7 +147,7 @@ export default function SummariesPage() {
                       <Group gap="xs">
                         <IconClock size={16} style={{ opacity: 0.6 }} />
                         <Text size="xs" c="dimmed">
-                          {formatDate(summary.created_at)}
+                          Generated {formatDate(summary.created_at)}
                         </Text>
                       </Group>
 

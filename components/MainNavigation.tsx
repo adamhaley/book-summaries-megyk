@@ -26,7 +26,6 @@ export function MainNavigation() {
   }, []);
 
   const navLinks = [
-    { href: '/', label: 'Home' },
     { href: '/dashboard', label: 'Dashboard' },
   ];
 

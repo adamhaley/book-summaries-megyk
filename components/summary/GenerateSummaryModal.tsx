@@ -149,20 +149,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
 
           onClose() // Close modal on success
         } else {
-          // Handle JSON response (async processing)
-          console.log('JSON response received (async mode)')
-          const data = await response.json()
-          console.log('Summary generation response:', data)
+          // Non-PDF response - something went wrong
+          console.error('Expected PDF but received:', contentType)
+          const data = await response.json().catch(() => ({}))
+          console.log('Response data:', data)
 
-          notifications.show({
-            title: 'Summary Generation Started',
-            message: `Your personalized summary for "${book.title}" is being generated.`,
-            color: 'blue',
-            icon: <IconCheck size={18} />,
-            autoClose: 5000,
-          })
-
-          onClose() // Close modal on success
+          setErrorMessage('Expected PDF response but received a different format. Please try again.')
         }
       } else {
         console.error('Response not OK:', response.status, response.statusText)
