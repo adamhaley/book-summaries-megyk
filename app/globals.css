@@ -9,6 +9,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent extra scroll space */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 /* Dark mode true black background */
 [data-mantine-color-scheme='dark'] {
   --mantine-color-body: #000000;
@@ -25,6 +33,33 @@
 [data-mantine-color-scheme='dark'] .mantine-AppShell-header,
 [data-mantine-color-scheme='dark'] .mantine-AppShell-navbar {
   background-color: #000000;
+}
+
+/* Fix AppShell height and prevent extra scroll space */
+.mantine-AppShell-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  z-index: 100;
+}
+
+/* Hide root layout's main/footer when AppShell is active */
+body:has(.mantine-AppShell-root) > div > main,
+body:has(.mantine-AppShell-root) > div > footer {
+  display: none;
+}
+
+.mantine-AppShell-main {
+  height: calc(100vh - 60px);
+  height: calc(100dvh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Mobile scrolling fixes */
