@@ -5,11 +5,11 @@ import { join } from 'path'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = await createClient()
-    const summaryId = params.id
+    const { id: summaryId } = await params
 
     // For MVP: Use hardcoded user_id
     const userId = 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff'
