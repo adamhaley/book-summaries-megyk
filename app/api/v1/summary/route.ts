@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { writeFile } from 'fs/promises'
+import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,18 +72,40 @@ export async function POST(request: NextRequest) {
       const contentType = webhookResponse.headers.get('content-type') || ''
 
       if (contentType.includes('application/pdf') || contentType.includes('application/octet-stream')) {
+        // Get generation metrics from response headers if available
+        const tokensSpent = webhookResponse.headers.get('x-tokens-spent')
+        const generationTime = webhookResponse.headers.get('x-generation-time')
+
         // Stream PDF binary directly to browser
         const pdfBuffer = await webhookResponse.arrayBuffer()
 
-        // TODO: Log summary request in database when schema is ready
-        // const { data, error } = await supabase
-        //   .from('summary_requests')
-        //   .insert({
-        //     user_id: 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff',
-        //     book_id,
-        //     preferences,
-        //     status: 'completed'
-        //   })
+        // Generate unique filename
+        const timestamp = Date.now()
+        const filename = `summary-${book_id}-${timestamp}.pdf`
+        const filePath = join(process.cwd(), 'files', filename)
+
+        // Save PDF to local filesystem
+        await writeFile(filePath, Buffer.from(pdfBuffer))
+
+        // Create database record
+        const { data: summaryData, error: summaryError } = await supabase
+          .from('summaries')
+          .insert({
+            user_id: 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff',
+            book_id,
+            style: preferences.style,
+            length: preferences.length,
+            file_path: `files/${filename}`,
+            tokens_spent: tokensSpent ? parseInt(tokensSpent) : null,
+            generation_time: generationTime ? parseFloat(generationTime) : null,
+          })
+          .select()
+          .single()
+
+        if (summaryError) {
+          console.error('Error saving summary record:', summaryError)
+          // Continue even if DB insert fails - user still gets their PDF
+        }
 
         // Return PDF with appropriate headers for download
         return new NextResponse(pdfBuffer, {
