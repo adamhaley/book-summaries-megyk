@@ -203,10 +203,11 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
         body: {
           overflowY: 'auto',
           overflowX: 'hidden',
-          maxHeight: 'calc(100vh - 160px)',
+          maxHeight: 'calc(100dvh - 160px)', // Use dvh for mobile
+          WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
         },
         content: {
-          maxHeight: '90vh',
+          maxHeight: '90dvh', // Use dvh for mobile
         },
         inner: {
           padding: '20px',

@@ -26,3 +26,27 @@
 [data-mantine-color-scheme='dark'] .mantine-AppShell-navbar {
   background-color: #000000;
 }
+
+/* Mobile scrolling fixes */
+.mantine-Modal-body {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto !important;
+}
+
+/* Ensure scrollable areas have visible scrollbars on mobile */
+@supports (-webkit-touch-callout: none) {
+  /* iOS-specific styles */
+  .mantine-Modal-body::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  .mantine-Modal-body::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  [data-mantine-color-scheme='dark'] .mantine-Modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
