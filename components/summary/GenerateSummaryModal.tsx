@@ -100,10 +100,6 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
     try {
       console.log('Starting summary generation for book:', book.id)
 
-      // Set a 2 minute timeout for the request
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 120000)
-
       const response = await fetch('/api/v1/summary', {
         method: 'POST',
         headers: {
@@ -113,10 +109,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           book_id: book.id,
           preferences: { style, length }
         }),
-        signal: controller.signal,
       })
-
-      clearTimeout(timeoutId)
 
       console.log('Response received:', {
         status: response.status,
@@ -178,11 +171,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
       }
     } catch (error) {
       console.error('Error generating summary:', error)
-      if (error instanceof Error && error.name === 'AbortError') {
-        setErrorMessage('Request timed out. The summary is taking longer than expected. Please try again.')
-      } else {
-        setErrorMessage('An unexpected error occurred. Please try again.')
-      }
+      setErrorMessage('An unexpected error occurred. Please try again.')
     } finally {
       setGenerating(false)
     }

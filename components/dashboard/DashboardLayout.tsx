@@ -17,11 +17,9 @@ import {
   IconHome,
   IconBook,
   IconUser,
-  IconSettings,
   IconLogout,
   IconSun,
   IconMoon,
-  IconChartBar,
   IconBookmark,
   IconAdjustments,
 } from '@tabler/icons-react';
@@ -35,9 +33,7 @@ const navigation = [
   { label: 'Library', icon: IconBook, href: '/dashboard/library' },
   { label: 'My Summaries', icon: IconBookmark, href: '/dashboard/summaries' },
   { label: 'Preferences', icon: IconAdjustments, href: '/dashboard/preferences' },
-  { label: 'Analytics', icon: IconChartBar, href: '/dashboard/analytics' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
-  { label: 'Settings', icon: IconSettings, href: '/dashboard/settings' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
