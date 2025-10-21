@@ -243,7 +243,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   Generating Your Personalized Summary
                 </Text>
                 <Text size="sm" c="dimmed" ta="center" maw={400}>
-                  AI is analyzing "{book?.title}" and creating a custom summary based on your preferences. This may take 30-60 seconds...
+                  AI is analyzing "{book?.title}" and creating a custom summary based on your preferences. This could take up to a few minutes...
                 </Text>
               </Stack>
             </Stack>

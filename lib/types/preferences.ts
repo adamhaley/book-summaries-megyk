@@ -25,9 +25,9 @@ export const SUMMARY_STYLE_OPTIONS = [
 ] as const
 
 export const SUMMARY_LENGTH_OPTIONS = [
-  { value: '1pg', label: '1 Page', description: 'Quick overview (~250 words)' },
-  { value: '5pg', label: '5 Pages', description: 'Moderate depth (~1,250 words)' },
-  { value: '15pg', label: '15 Pages', description: 'Comprehensive analysis (~3,750 words)' }
+  { value: '1pg', label: 'Short', description: 'One sentence per chapter' },
+  { value: '5pg', label: 'Medium', description: 'One paragraph per chapter' },
+  { value: '15pg', label: 'Long', description: 'One page per chapter' }
 ] as const
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
