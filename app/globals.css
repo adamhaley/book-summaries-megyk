@@ -12,9 +12,13 @@
 /* Prevent extra scroll space */
 html, body {
   height: 100%;
-  overflow: hidden;
   margin: 0;
   padding: 0;
+}
+
+/* Only prevent body scroll when AppShell is present (dashboard pages) */
+body:has(.mantine-AppShell-root) {
+  overflow: hidden;
 }
 
 /* Dark mode true black background */
@@ -57,7 +61,7 @@ body:has(.mantine-AppShell-root) > div > footer {
 .mantine-AppShell-main {
   height: calc(100vh - 60px);
   height: calc(100dvh - 60px);
-  overflow-y: auto;
+  overflow-y: scroll !important;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }

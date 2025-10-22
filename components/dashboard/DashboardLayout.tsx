@@ -40,15 +40,25 @@ const navigation = [
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const [mounted, setMounted] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const theme = useMantineTheme();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch and load user data
   useEffect(() => {
     setMounted(true);
+    loadUserData();
   }, []);
+
+  const loadUserData = async () => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserEmail(user.email || null);
+    }
+  };
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -78,7 +88,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       padding="md"
       styles={{
         main: {
-          paddingTop: 'calc(var(--app-shell-header-height, 0px) + var(--mantine-spacing-xs))'
+          paddingTop: 'calc(var(--app-shell-header-height, 0px) + var(--mantine-spacing-xl))'
         }
       }}
     >
@@ -97,7 +107,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               Megyk Books
             </Text>
           </Group>
-          <Group>
+          <Group gap="md">
+            {userEmail && (
+              <Text size="sm" c="dimmed" visibleFrom="sm">
+                {userEmail}
+              </Text>
+            )}
             <ActionIcon
               variant="default"
               onClick={() => toggleColorScheme()}
