@@ -3,7 +3,7 @@ import { PreferencesForm } from '@/components/preferences/PreferencesForm'
 
 export default function PreferencesPage() {
   return (
-    <Container size="md" py="xl">
+    <Container size="md" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
           <Title order={1} mb="xs">

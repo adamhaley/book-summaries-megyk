@@ -42,7 +42,7 @@ export default function LibraryPage() {
 
   if (loading) {
     return (
-      <Container size="xl" py="xl">
+      <Container size="xl" pt="0" pb="xl">
         <Stack align="center" gap="md" style={{ minHeight: '400px', justifyContent: 'center' }}>
           <Loader size="lg" />
           <Text c="dimmed">Loading books...</Text>
@@ -53,7 +53,7 @@ export default function LibraryPage() {
 
   if (error) {
     return (
-      <Container size="xl" py="xl">
+      <Container size="xl" pt="0" pb="xl">
         <Alert icon={<IconAlertCircle size={16} />} color="red" title="Error">
           {error}
         </Alert>
@@ -62,7 +62,7 @@ export default function LibraryPage() {
   }
 
   return (
-    <Container size="xl" py="xl">
+    <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
           <Title order={1} mb="xs">

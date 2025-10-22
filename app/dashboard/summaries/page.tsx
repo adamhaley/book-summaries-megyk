@@ -79,7 +79,7 @@ export default function SummariesPage() {
   }
 
   return (
-    <Container size="xl" py="xl">
+    <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
           <Title order={1} mb="xs">

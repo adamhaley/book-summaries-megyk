@@ -99,7 +99,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <Container size="md" py="xl">
+    <Container size="md" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
           <Title order={1} mb="xs">
