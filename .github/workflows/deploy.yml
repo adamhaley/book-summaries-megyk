@@ -16,7 +16,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             cd /root/book-summaries-megyk/
             .scripts/deploy.sh
