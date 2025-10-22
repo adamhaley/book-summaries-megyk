@@ -8,13 +8,12 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    // For MVP: Skip auth check since auth is TBD
-    // if (!user) {
-    //   return NextResponse.json(
-    //     { error: 'Unauthorized' },
-    //     { status: 401 }
-    //   )
-    // }
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
 
     const body = await request.json()
     const { book_id, preferences } = body
@@ -49,7 +48,7 @@ export async function POST(request: NextRequest) {
         style: preferences.style,
         length: preferences.length
       },
-      user_id: 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff', // Hardcoded for MVP - TODO: Replace with real user_id when auth is implemented
+      user_id: user.id,
       timestamp: new Date().toISOString()
     }
 
@@ -91,7 +90,7 @@ export async function POST(request: NextRequest) {
         const { data: summaryData, error: summaryError } = await supabase
           .from('summaries')
           .insert({
-            user_id: 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff',
+            user_id: user.id,
             book_id,
             style: preferences.style,
             length: preferences.length,

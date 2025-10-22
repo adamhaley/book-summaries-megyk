@@ -11,8 +11,17 @@ export async function GET(
     const supabase = await createClient()
     const { id: summaryId } = await params
 
-    // For MVP: Use hardcoded user_id
-    const userId = 'bfb1e2f2-353c-4cf7-807e-4be63ed7cfff'
+    // Get authenticated user
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    const userId = user.id
 
     // Fetch the summary record
     const { data: summary, error } = await supabase

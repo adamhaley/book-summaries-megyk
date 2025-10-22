@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   AppShell,
   Burger,
@@ -23,6 +23,7 @@ import {
   IconBookmark,
   IconAdjustments,
 } from '@tabler/icons-react';
+import { createClient } from '@/lib/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -40,6 +41,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [opened, { toggle }] = useDisclosure();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const theme = useMantineTheme();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -47,6 +49,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push('/auth/signin');
+    router.refresh();
+  };
 
   const items = navigation.map((item) => (
     <NavLink
@@ -100,7 +109,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <IconMoon size={20} />
               )}
             </ActionIcon>
-            <ActionIcon variant="default" size="lg">
+            <ActionIcon variant="default" size="lg" onClick={handleLogout} title="Logout">
               <IconLogout size={20} />
             </ActionIcon>
           </Group>
