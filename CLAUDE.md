@@ -209,6 +209,26 @@ yarn start
 # See: https://mantine.dev/
 ```
 
+## Deployment
+
+### Automated Deployment Pipeline
+- GitHub Actions workflow triggers on push to `master` branch
+- Executes `.scripts/deploy.sh` on production server
+
+### Deploy Script (`.scripts/deploy.sh`)
+```bash
+#!/bin/bash
+set -e
+git pull origin master
+yarn build
+sudo systemctl restart megyk-books.service
+```
+
+### Important Notes
+- **Service restart is required** after each build
+- Next.js production server loads build artifacts into memory at startup
+- Without restart, new chunk files return 404 errors, causing client-side exceptions
+
 ## Running Database Migrations
 
 Unlike Laravel's `php artisan migrate`, Next.js doesn't have built-in migration tools. Use one of these methods:
