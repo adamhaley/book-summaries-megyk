@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Container, Title, Text, Stack, Card, Center, Button, Group, Badge, Loader, Table, SimpleGrid, Box } from '@mantine/core'
-import { IconBookmark, IconDownload } from '@tabler/icons-react'
+import { IconBookmark, IconDownload, IconTrash } from '@tabler/icons-react'
 import { SummaryWithBook } from '@/lib/types/summaries'
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences'
 import styles from './summaries.module.css'
@@ -60,6 +60,28 @@ export default function SummariesPage() {
     }
   }
 
+  const handleDelete = async (summaryId: string) => {
+    if (!confirm('Are you sure you want to delete this summary? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/v1/summaries/${summaryId}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete summary')
+      }
+
+      // Remove from local state
+      setSummaries(summaries.filter(s => s.id !== summaryId))
+    } catch (err) {
+      console.error('Error deleting summary:', err)
+      alert('Failed to delete summary. Please try again.')
+    }
+  }
+
   const getStyleLabel = (style: string) => {
     return SUMMARY_STYLE_OPTIONS.find(opt => opt.value === style)?.label || style
   }
@@ -77,6 +99,21 @@ export default function SummariesPage() {
       minute: '2-digit'
     })
   }
+
+  // Group summaries by book
+  const groupedSummaries = summaries.reduce((acc, summary) => {
+    const bookId = summary.book_id
+    if (!acc[bookId]) {
+      acc[bookId] = {
+        book: summary.book,
+        summaries: []
+      }
+    }
+    acc[bookId].summaries.push(summary)
+    return acc
+  }, {} as Record<string, { book: any, summaries: SummaryWithBook[] }>)
+
+  const books = Object.values(groupedSummaries)
 
   return (
     <Container size="xl" pt="0" pb="xl">
@@ -124,92 +161,138 @@ export default function SummariesPage() {
           <>
             {/* Mobile Card View */}
             <Box className={styles.mobileView}>
-              <SimpleGrid cols={1} spacing="md">
-                {summaries.map((summary) => (
-                  <Card key={summary.id} shadow="sm" padding="lg" radius="md" withBorder>
-                    <Stack gap="sm">
+              <Stack gap="lg">
+                {books.map((bookGroup, idx) => (
+                  <Card key={idx} shadow="sm" padding="lg" radius="md" withBorder>
+                    <Stack gap="md">
+                      {/* Book Header */}
                       <div>
-                        <Text fw={600} size="lg">{summary.book?.title || 'Unknown Book'}</Text>
-                        <Text c="dimmed" size="sm">by {summary.book?.author || 'Unknown Author'}</Text>
+                        <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
+                        <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
+                        <Text c="dimmed" size="xs" mt={4}>
+                          {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
+                        </Text>
                       </div>
 
-                      <Group gap="xs">
-                        <Badge variant="light" color="green" size="sm">
-                          {getStyleLabel(summary.style)}
-                        </Badge>
-                        <Badge variant="light" color="blue" size="sm">
-                          {getLengthLabel(summary.length)}
-                        </Badge>
-                      </Group>
+                      {/* Individual Summaries */}
+                      <Stack gap="sm" style={{ paddingLeft: '16px' }}>
+                        {bookGroup.summaries.map((summary) => (
+                          <Card key={summary.id} padding="md" radius="sm" withBorder style={{ borderLeft: '3px solid var(--mantine-color-blue-5)' }}>
+                            <Stack gap="xs">
+                              <Group gap="xs">
+                                <Badge variant="light" color="green" size="sm">
+                                  {getStyleLabel(summary.style)}
+                                </Badge>
+                                <Badge variant="light" color="blue" size="sm">
+                                  {getLengthLabel(summary.length)}
+                                </Badge>
+                              </Group>
 
-                      <Text size="xs" c="dimmed">
-                        Generated {formatDate(summary.created_at)}
-                      </Text>
+                              <Text size="xs" c="dimmed">
+                                Generated {formatDate(summary.created_at)}
+                              </Text>
 
-                      <Button
-                        size="sm"
-                        variant="light"
-                        leftSection={<IconDownload size={16} />}
-                        onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
-                      >
-                        Download PDF
-                      </Button>
+                              <Group gap="xs">
+                                <Button
+                                  size="xs"
+                                  variant="light"
+                                  leftSection={<IconDownload size={14} />}
+                                  onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
+                                  style={{ flex: 1 }}
+                                >
+                                  Download PDF
+                                </Button>
+                                <Button
+                                  size="xs"
+                                  variant="light"
+                                  color="gray"
+                                  onClick={() => handleDelete(summary.id)}
+                                >
+                                  <IconTrash size={14} />
+                                </Button>
+                              </Group>
+                            </Stack>
+                          </Card>
+                        ))}
+                      </Stack>
                     </Stack>
                   </Card>
                 ))}
-              </SimpleGrid>
+              </Stack>
             </Box>
 
             {/* Desktop Table View */}
-            <Card shadow="sm" padding="lg" radius="md" withBorder className={styles.desktopView}>
-              <Table.ScrollContainer minWidth={800}>
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Title</Table.Th>
-                      <Table.Th>Author</Table.Th>
-                      <Table.Th>Style</Table.Th>
-                      <Table.Th>Length</Table.Th>
-                      <Table.Th>Generated</Table.Th>
-                      <Table.Th>Action</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {summaries.map((summary) => (
-                      <Table.Tr key={summary.id}>
-                        <Table.Td>
-                          <Text fw={600}>{summary.book?.title || 'Unknown Book'}</Text>
-                        </Table.Td>
-                        <Table.Td>{summary.book?.author || 'Unknown Author'}</Table.Td>
-                        <Table.Td>
-                          <Badge variant="light" color="green" size="sm">
-                            {getStyleLabel(summary.style)}
-                          </Badge>
-                        </Table.Td>
-                        <Table.Td>
-                          <Badge variant="light" color="blue" size="sm">
-                            {getLengthLabel(summary.length)}
-                          </Badge>
-                        </Table.Td>
-                        <Table.Td>
-                          <Text size="sm">{formatDate(summary.created_at)}</Text>
-                        </Table.Td>
-                        <Table.Td>
-                          <Button
-                            size="xs"
-                            variant="light"
-                            leftSection={<IconDownload size={14} />}
-                            onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
-                          >
-                            Download PDF
-                          </Button>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              </Table.ScrollContainer>
-            </Card>
+            <Stack gap="lg" className={styles.desktopView}>
+              {books.map((bookGroup, idx) => (
+                <Card key={idx} shadow="sm" padding="0" radius="md" withBorder>
+                  <Stack gap="md">
+                    {/* Book Header */}
+                    <div style={{ padding: '20px 20px 12px 20px', borderBottom: '2px solid var(--mantine-color-gray-3)' }}>
+                      <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
+                      <Group gap="md" mt={4}>
+                        <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
+                        <Text c="dimmed" size="xs">
+                          {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
+                        </Text>
+                      </Group>
+                    </div>
+
+                    {/* Summaries Table */}
+                    <Table.ScrollContainer minWidth={600} style={{ paddingLeft: '44px', paddingBottom: '20px' }}>
+                      <Table highlightOnHover horizontalSpacing="sm" layout="fixed">
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th style={{ width: '20%' }}>Style</Table.Th>
+                            <Table.Th style={{ width: '20%' }}>Length</Table.Th>
+                            <Table.Th style={{ width: '35%' }}>Generated</Table.Th>
+                            <Table.Th style={{ width: '25%', textAlign: 'right' }}>Actions</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {bookGroup.summaries.map((summary) => (
+                            <Table.Tr key={summary.id}>
+                              <Table.Td>
+                                <Badge variant="light" color="green" size="sm">
+                                  {getStyleLabel(summary.style)}
+                                </Badge>
+                              </Table.Td>
+                              <Table.Td>
+                                <Badge variant="light" color="blue" size="sm">
+                                  {getLengthLabel(summary.length)}
+                                </Badge>
+                              </Table.Td>
+                              <Table.Td>
+                                <Text size="sm">{formatDate(summary.created_at)}</Text>
+                              </Table.Td>
+                              <Table.Td style={{ textAlign: 'right' }}>
+                                <Group gap="xs" justify="flex-end">
+                                  <Button
+                                    size="xs"
+                                    variant="light"
+                                    leftSection={<IconDownload size={14} />}
+                                    onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
+                                  >
+                                    Download PDF
+                                  </Button>
+                                  <Button
+                                    size="xs"
+                                    variant="light"
+                                    color="gray"
+                                    onClick={() => handleDelete(summary.id)}
+                                  >
+                                    <IconTrash size={14} />
+                                  </Button>
+                                </Group>
+                              </Table.Td>
+                            </Table.Tr>
+                          ))}
+                        </Table.Tbody>
+                      </Table>
+                    </Table.ScrollContainer>
+                  </Stack>
+                </Card>
+              ))}
+            </Stack>
           </>
         )}
       </Stack>
