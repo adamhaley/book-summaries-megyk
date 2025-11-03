@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -78,23 +76,37 @@ export async function POST(request: NextRequest) {
         // Stream PDF binary directly to browser
         const pdfBuffer = await webhookResponse.arrayBuffer()
 
-        // Generate unique filename
+        // Generate unique filename with user folder structure: user_id/summary_id.pdf
         const timestamp = Date.now()
-        const filename = `summary-${book_id}-${timestamp}.pdf`
-        const filePath = join(process.cwd(), 'files', filename)
+        const summaryId = crypto.randomUUID()
+        const storagePath = `${user.id}/${summaryId}.pdf`
 
-        // Save PDF to local filesystem
-        await writeFile(filePath, Buffer.from(pdfBuffer))
+        // Upload PDF to Supabase Storage
+        const { error: uploadError } = await supabase.storage
+          .from('summaries')
+          .upload(storagePath, Buffer.from(pdfBuffer), {
+            contentType: 'application/pdf',
+            upsert: false
+          })
+
+        if (uploadError) {
+          console.error('Error uploading PDF to storage:', uploadError)
+          return NextResponse.json(
+            { error: 'Failed to save summary PDF' },
+            { status: 500 }
+          )
+        }
 
         // Create database record
         const { data: summaryData, error: summaryError } = await supabase
           .from('summaries')
           .insert({
+            id: summaryId,
             user_id: user.id,
             book_id,
             style: preferences.style,
             length: preferences.length,
-            file_path: `files/${filename}`,
+            file_path: storagePath,
             tokens_spent: tokensSpent ? parseInt(tokensSpent) : null,
             generation_time: generationTime ? parseFloat(generationTime) : null,
           })
@@ -103,7 +115,12 @@ export async function POST(request: NextRequest) {
 
         if (summaryError) {
           console.error('Error saving summary record:', summaryError)
-          // Continue even if DB insert fails - user still gets their PDF
+          // Clean up uploaded file if DB insert fails
+          await supabase.storage.from('summaries').remove([storagePath])
+          return NextResponse.json(
+            { error: 'Failed to save summary record' },
+            { status: 500 }
+          )
         }
 
         // Return PDF with appropriate headers for download

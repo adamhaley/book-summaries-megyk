@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { readFile } from 'fs/promises'
-import { join } from 'path'
 
 export async function GET(
   request: NextRequest,
@@ -38,28 +36,31 @@ export async function GET(
       )
     }
 
-    // Read the file from local filesystem
-    const filePath = join(process.cwd(), summary.file_path)
+    // Download file from Supabase Storage
+    const { data: fileData, error: downloadError } = await supabase.storage
+      .from('summaries')
+      .download(summary.file_path)
 
-    try {
-      const fileBuffer = await readFile(filePath)
-
-      // Return PDF with appropriate headers for download
-      return new NextResponse(fileBuffer.buffer.slice(fileBuffer.byteOffset, fileBuffer.byteOffset + fileBuffer.byteLength) as ArrayBuffer, {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename="summary-${summary.book_id}.pdf"`,
-          'Content-Length': fileBuffer.byteLength.toString(),
-        },
-      })
-    } catch (fileError) {
-      console.error('Error reading file:', fileError)
+    if (downloadError || !fileData) {
+      console.error('Error downloading file from storage:', downloadError)
       return NextResponse.json(
         { error: 'File not found' },
         { status: 404 }
       )
     }
+
+    // Convert blob to array buffer
+    const fileBuffer = await fileData.arrayBuffer()
+
+    // Return PDF with appropriate headers for download
+    return new NextResponse(fileBuffer, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="summary-${summary.book_id}.pdf"`,
+        'Content-Length': fileBuffer.byteLength.toString(),
+      },
+    })
   } catch (error) {
     console.error('Error in download endpoint:', error)
     return NextResponse.json(

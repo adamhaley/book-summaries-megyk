@@ -13,7 +13,7 @@ A personalized book summarizer platform that delivers AI-generated, reader-perso
 - **Tabler Icons** - Icon library (used by Mantine)
 
 ### Backend & Database
-- **Supabase** - Postgres database, Auth, Storage, pgvector for embeddings
+- **Supabase** - Postgres database, Auth, **Storage (for PDFs)**, pgvector for embeddings
 - **n8n** - Automation & AI orchestration (self-hosted)
 - **Ollama/OpenAI** - AI models for embeddings and summary generation
 
@@ -58,8 +58,10 @@ A personalized book summarizer platform that delivers AI-generated, reader-perso
   /migrations
     001_create_user_profiles.sql  # User profiles & preferences
     002_create_summaries.sql      # Summaries table with metadata
+    003_update_summaries_rls.sql  # Updated RLS policies for summaries
+    004_create_storage_bucket.sql # Supabase Storage bucket for PDFs
 
-/files             # Local PDF storage directory
+/files             # Legacy local files (deprecated - now using Supabase Storage)
 
 /packages          # Future monorepo structure for mobile app
   /ui             # Shared React components
@@ -91,10 +93,16 @@ N8N_WEBHOOK_URL=your-n8n-webhook-url
 
 - **`summaries`** - Generated book summaries with metadata
   - Links user_id and book_id (no unique constraint - multiple summaries allowed)
-  - Stores style, length, file_path, tokens_spent, generation_time
+  - Stores style, length, file_path (Supabase Storage path), tokens_spent, generation_time
   - Timestamps: created_at, updated_at
   - Row Level Security enabled for user isolation
-  - Migration: `002_create_summaries.sql`
+  - Migration: `002_create_summaries.sql`, `003_update_summaries_rls.sql`
+
+- **`storage.buckets.summaries`** - Supabase Storage bucket for PDF files
+  - Stores generated summary PDFs with user-specific folder structure: `user_id/summary_id.pdf`
+  - Row Level Security policies ensure users can only access their own files
+  - Works across all environments (local dev and production) - no more orphaned files!
+  - Migration: `004_create_storage_bucket.sql`
 
 ### 📋 To Be Implemented
 
@@ -109,11 +117,11 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
 ### ✅ `/api/v1/summary` (POST)
 - Triggers personalized summary generation via n8n webhook
 - Receives PDF response from n8n
-- Saves PDF to local `/files` directory
+- **Uploads PDF to Supabase Storage** bucket (`summaries`) with path: `user_id/summary_id.pdf`
 - Creates database record in `summaries` table with metadata
 - Returns PDF to user for immediate download
 - Extracts optional metrics from headers: `x-tokens-spent`, `x-generation-time`
-- Uses hardcoded user_id for MVP (to be replaced with auth)
+- Implements proper error handling and cleanup (deletes uploaded file if DB insert fails)
 
 ### ✅ `/api/v1/summaries` (GET)
 - Fetches all summaries for the current user
@@ -124,8 +132,14 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
 ### ✅ `/api/v1/summaries/[id]/download` (GET)
 - Downloads a previously generated summary PDF by ID
 - Verifies user ownership before serving file
-- Streams PDF from local `/files` directory
+- **Downloads PDF from Supabase Storage** using stored file_path
 - Returns 404 if file or record not found
+
+### ✅ `/api/v1/summaries/[id]` (DELETE)
+- Deletes a summary and its associated PDF file
+- Verifies user ownership before deletion
+- **Removes PDF from Supabase Storage** before deleting DB record
+- Continues with DB deletion even if storage deletion fails
 
 ### 📋 `/api/v1/books` (GET)
 - Fetch book summaries with embeddings
@@ -157,15 +171,18 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
   - GenerateSummaryModal component with style/length sliders
   - Integration with n8n webhook for AI generation
   - PDF download functionality
-  - Local file storage in `/files` directory
+  - **Supabase Storage integration** - PDFs stored in cloud bucket with user-specific folders
   - Database persistence in `summaries` table
   - No timeout on browser requests (handles long generation times)
+  - Proper error handling with automatic cleanup on failures
 - **My Summaries Page**
   - Grid layout displaying all user summaries
   - Book metadata (title, author) via database join
   - Style and length badges
   - Creation timestamp and generation time display
-  - Download button for saved PDFs
+  - Download button for saved PDFs (from Supabase Storage)
+  - Delete button with loading indicator and confirmation
+  - Improved error messages for missing files
   - Loading, empty, and error states
 - **User Preferences System**
   - Style options: Narrative, Bullet Points, Workbook
@@ -176,19 +193,21 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
   - `user_profiles` table with RLS policies
   - `summaries` table with metadata tracking
 - **File Management**
-  - Local PDF storage in `/files` directory
-  - Unique filenames with timestamp
-  - Download API endpoint with user verification
+  - **✅ Supabase Storage bucket for centralized PDF storage**
+  - User-specific folder structure: `user_id/summary_id.pdf`
+  - Row Level Security ensures users can only access their own files
+  - Works seamlessly across local dev and production environments
+  - Automatic cleanup on failed uploads
+  - Delete summaries removes both DB record and storage file
 
 ### 🚧 Next Steps
-1. Implement authentication flow (sign up, login, profile) and replace hardcoded user_id
-2. Build books table and populate with book data
-3. Implement book library browsing UI
-4. Set up n8n workflows for AI orchestration (if not already done)
-5. Add book chapters table and embeddings for personalization
-6. Implement search and filtering on Library page
-7. Add ability to delete summaries
-8. Consider remote file storage (S3, Supabase Storage) for production scalability
+1. **Run migration**: Execute `004_create_storage_bucket.sql` on your Supabase instance
+2. **Optional**: Migrate existing local PDFs to Supabase Storage (see migration script in `/scripts`)
+3. Build books table and populate with book data
+4. Implement book library browsing UI
+5. Set up n8n workflows for AI orchestration (if not already done)
+6. Add book chapters table and embeddings for personalization
+7. Implement search and filtering on Library page
 
 ## Development Commands
 
@@ -257,6 +276,8 @@ supabase db push
 ### Current Migrations
 - `001_create_user_profiles.sql` - User preferences table
 - `002_create_summaries.sql` - Summaries with metadata tracking
+- `003_update_summaries_rls.sql` - Updated RLS policies for summaries
+- `004_create_storage_bucket.sql` - **NEW: Supabase Storage bucket for PDFs**
 
 ## Future Roadmap
 

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { unlink } from 'fs/promises'
-import { join } from 'path'
 
 export async function DELETE(
   request: NextRequest,
@@ -42,11 +40,17 @@ export async function DELETE(
       )
     }
 
-    // Delete the file from disk if it exists
+    // Delete the file from Supabase Storage if it exists
     if (summary.file_path) {
       try {
-        const filePath = join(process.cwd(), summary.file_path)
-        await unlink(filePath)
+        const { error: storageError } = await supabase.storage
+          .from('summaries')
+          .remove([summary.file_path])
+
+        if (storageError) {
+          console.error('Error deleting file from storage:', storageError)
+          // Continue with database deletion even if file deletion fails
+        }
       } catch (fileError) {
         console.error('Error deleting file:', fileError)
         // Continue with database deletion even if file deletion fails

@@ -11,6 +11,7 @@ export default function SummariesPage() {
   const [summaries, setSummaries] = useState<SummaryWithBook[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetchSummaries()
@@ -40,7 +41,14 @@ export default function SummariesPage() {
       const response = await fetch(`/api/v1/summaries/${summaryId}/download`)
 
       if (!response.ok) {
-        throw new Error('Failed to download summary')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+
+        if (response.status === 404) {
+          alert('PDF file not found. The file may have been deleted or lost. You can delete this summary and regenerate it if needed.')
+        } else {
+          alert(`Failed to download summary: ${errorData.error || 'Unknown error'}`)
+        }
+        return
       }
 
       const blob = await response.blob()
@@ -57,6 +65,7 @@ export default function SummariesPage() {
       }, 100)
     } catch (err) {
       console.error('Error downloading summary:', err)
+      alert('An unexpected error occurred while downloading the summary.')
     }
   }
 
@@ -64,6 +73,8 @@ export default function SummariesPage() {
     if (!confirm('Are you sure you want to delete this summary? This action cannot be undone.')) {
       return
     }
+
+    setDeletingId(summaryId)
 
     try {
       const response = await fetch(`/api/v1/summaries/${summaryId}`, {
@@ -79,6 +90,8 @@ export default function SummariesPage() {
     } catch (err) {
       console.error('Error deleting summary:', err)
       alert('Failed to delete summary. Please try again.')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -207,6 +220,8 @@ export default function SummariesPage() {
                                   variant="light"
                                   color="gray"
                                   onClick={() => handleDelete(summary.id)}
+                                  loading={deletingId === summary.id}
+                                  disabled={deletingId === summary.id}
                                 >
                                   <IconTrash size={14} />
                                 </Button>
@@ -279,6 +294,8 @@ export default function SummariesPage() {
                                     variant="light"
                                     color="gray"
                                     onClick={() => handleDelete(summary.id)}
+                                    loading={deletingId === summary.id}
+                                    disabled={deletingId === summary.id}
                                   >
                                     <IconTrash size={14} />
                                   </Button>
