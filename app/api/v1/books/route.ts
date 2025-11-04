@@ -14,6 +14,42 @@ export async function GET(request: NextRequest) {
     // Parse parameters
     const url = new URL(request.url)
     const all = url.searchParams.get('all') === 'true'
+    const featured = url.searchParams.get('featured') === 'true'
+    const limitParam = url.searchParams.get('limit')
+    
+    // Handle featured books for carousel (simple limit, no pagination)
+    if (featured && limitParam) {
+      const limit = parseInt(limitParam, 10)
+      if (limit < 1 || limit > 50) {
+        return NextResponse.json(
+          { error: 'Invalid limit parameter for featured books' },
+          { status: 400 }
+        )
+      }
+
+      const queryStart = Date.now()
+      const { data: books, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('created_at', { ascending: false }) // Most recent first for featured
+        .limit(limit)
+
+      console.log(`[Books API] Featured books query completed in ${Date.now() - queryStart}ms`)
+
+      if (error) {
+        console.error('Error fetching featured books:', error)
+        return NextResponse.json(
+          { error: 'Failed to fetch featured books' },
+          { status: 500 }
+        )
+      }
+
+      console.log(`[Books API] Success. Fetched ${books?.length || 0} featured books. Total time: ${Date.now() - startTime}ms`)
+
+      return NextResponse.json({
+        books: books as Book[] || []
+      })
+    }
     
     if (all) {
       // Return all books for client-side sorting

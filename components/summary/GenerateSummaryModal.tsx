@@ -62,7 +62,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
       }
 
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // Increased to 10 seconds
 
       const response = await fetch('/api/v1/profile', {
         signal: controller.signal
@@ -82,10 +82,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        console.error('Request timeout - using default preferences')
+        console.warn('Profile request timeout - using default preferences')
+        // Silently continue with defaults instead of showing error
       } else {
         console.error('Error fetching preferences:', error)
       }
+      // Continue with default preferences (already set in state)
     } finally {
       setLoading(false)
     }

@@ -424,6 +424,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@mantine/carousel@^8.3.6":
+  version "8.3.6"
+  resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-8.3.6.tgz#f95522e79676ffd649a3ccd68fbf428d9cb4945e"
+  integrity sha512-4dklWBak94Gv6Lkp6SossI6+pAfDqUmRCub+lHnN8Q2f7DdIDCo1P4vqKn5aoP9GO1e/FXNzFU16zcqKUqKhig==
+
 "@mantine/charts@^8.3.5":
   version "8.3.5"
   resolved "https://registry.npmjs.org/@mantine/charts/-/charts-8.3.5.tgz"
@@ -1417,6 +1422,24 @@ electron-to-chromium@^1.5.227:
   version "1.5.234"
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.234.tgz"
   integrity sha512-RXfEp2x+VRYn8jbKfQlRImzoJU01kyDvVPBmG39eU2iuRVhuS6vQNocB8J0/8GrIMLnPzgz4eW6WiRnJkTuNWg==
+
+embla-carousel-react@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel-react/-/embla-carousel-react-8.6.0.tgz#b737042a32761c38d6614593653b3ac619477bd1"
+  integrity sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==
+  dependencies:
+    embla-carousel "8.6.0"
+    embla-carousel-reactive-utils "8.6.0"
+
+embla-carousel-reactive-utils@8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel-reactive-utils/-/embla-carousel-reactive-utils-8.6.0.tgz#607f1d8ab9921c906a555c206251b2c6db687223"
+  integrity sha512-fMVUDUEx0/uIEDM0Mz3dHznDhfX+znCCDCeIophYb1QGVM7YThSWX+wz11zlYwWFOr74b4QLGg0hrGPJeG2s4A==
+
+embla-carousel@8.6.0, embla-carousel@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/embla-carousel/-/embla-carousel-8.6.0.tgz#abcedff2bff36992ea8ac27cd30080ca5b6a3f58"
+  integrity sha512-SjWyZBHJPbqxHOzckOfo8lHisEaJWmwd23XppYFYVh10bU66/Pn5tkVkbkCMZVdbUE5eTCI2nD8OyIP4Z+uwkA==
 
 enhanced-resolve@^5.18.3:
   version "5.18.3"
