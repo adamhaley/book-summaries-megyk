@@ -73,22 +73,22 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
           />
           <div className={styles.overlay}>
             <Stack gap="xs" align="center">
-              <Text 
+              {/* <Text 
                 size="lg" 
                 fw={700} 
                 c="white" 
                 ta="center"
                 className={styles.bookTitle}
               >
-                {book.title}
+              sdasd  {book.title}
               </Text>
               <Text 
                 size="sm" 
                 c="rgba(255, 255, 255, 0.9)" 
                 ta="center"
               >
-                by {book.author}
-              </Text>
+                by {book.author} TEST
+              </Text> */}
               {book.genre && (
                 <Badge 
                   variant="filled" 
@@ -125,7 +125,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     <Container size="xl" className={styles.carouselContainer}>
       {showTitle && (
         <Title order={2} mb="xl" ta="center" className={styles.carouselTitle}>
-          {title}
+          {title} 
         </Title>
       )}
       
