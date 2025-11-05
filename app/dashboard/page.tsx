@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Grid,
   Card,
@@ -11,13 +12,38 @@ import {
   SimpleGrid,
   Title,
   ThemeIcon,
+  Loader,
+  Center,
+  Alert,
+  Button,
 } from '@mantine/core';
 import {
   IconBook,
   IconBookmark,
   IconClock,
   IconTrendingUp,
+  IconAlertCircle,
 } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+
+interface DashboardStats {
+  totalBooks: number;
+  summariesRead: number;
+  readingTime: string;
+  streak: number;
+  weekSummaries: number;
+  monthSummaries: number;
+}
+
+interface RecentSummary {
+  id: string;
+  created_at: string;
+  book?: {
+    title: string;
+    author: string;
+    genre?: string;
+  };
+}
 
 // Stats card component
 function StatsCard({
@@ -57,82 +83,85 @@ function StatsCard({
   );
 }
 
-// Reading progress card
-function ReadingProgressCard() {
+// Recent summaries card
+function RecentSummariesCard({ summaries }: { summaries: RecentSummary[] }) {
+  const router = useRouter();
+
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInHours < 1) return 'Just now';
+    if (diffInHours < 24) return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${Math.floor(diffInDays / 7) === 1 ? 'week' : 'weeks'} ago`;
+    return `${Math.floor(diffInDays / 30)} ${Math.floor(diffInDays / 30) === 1 ? 'month' : 'months'} ago`;
+  };
+
+  if (summaries.length === 0) {
+    return (
+      <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Stack gap="md">
+          <Text fw={500} size="lg">
+            Recent Summaries
+          </Text>
+          <Center py="xl">
+            <Stack align="center" gap="sm">
+              <Text size="sm" c="dimmed">
+                No summaries yet
+              </Text>
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() => router.push('/dashboard/library')}
+              >
+                Browse Library
+              </Button>
+            </Stack>
+          </Center>
+        </Stack>
+      </Card>
+    );
+  }
+
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Stack gap="md">
         <Group justify="space-between">
-          <Text fw={500}>Current Reading</Text>
-          <Badge color="blue" variant="light">
-            In Progress
-          </Badge>
+          <Text fw={500} size="lg">
+            Recent Summaries
+          </Text>
+          <Button
+            size="xs"
+            variant="subtle"
+            onClick={() => router.push('/dashboard/summaries')}
+          >
+            View All
+          </Button>
         </Group>
-        <Text size="lg" fw={600}>
-          Atomic Habits by James Clear
-        </Text>
-        <Stack gap="xs">
-          <Group justify="space-between">
-            <Text size="sm" c="dimmed">
-              Progress
-            </Text>
-            <Text size="sm" fw={500}>
-              68%
-            </Text>
-          </Group>
-          <Progress value={68} color="blue" size="lg" radius="xl" />
-        </Stack>
-      </Stack>
-    </Card>
-  );
-}
-
-// Recent summaries card
-function RecentSummariesCard() {
-  const summaries = [
-    {
-      title: 'Deep Work',
-      author: 'Cal Newport',
-      date: '2 days ago',
-      category: 'Productivity',
-    },
-    {
-      title: 'Thinking, Fast and Slow',
-      author: 'Daniel Kahneman',
-      date: '5 days ago',
-      category: 'Psychology',
-    },
-    {
-      title: 'The Lean Startup',
-      author: 'Eric Ries',
-      date: '1 week ago',
-      category: 'Business',
-    },
-  ];
-
-  return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Stack gap="md">
-        <Text fw={500} size="lg">
-          Recent Summaries
-        </Text>
-        {summaries.map((summary, index) => (
-          <Card key={index} padding="sm" radius="md" withBorder>
+        {summaries.slice(0, 3).map((summary) => (
+          <Card key={summary.id} padding="sm" radius="md" withBorder>
             <Group justify="space-between" wrap="nowrap">
               <Stack gap={4}>
                 <Text size="sm" fw={500}>
-                  {summary.title}
+                  {summary.book?.title || 'Unknown Book'}
                 </Text>
                 <Text size="xs" c="dimmed">
-                  {summary.author}
+                  {summary.book?.author || 'Unknown Author'}
                 </Text>
               </Stack>
               <Stack gap={4} align="flex-end">
-                <Badge size="sm" variant="light">
-                  {summary.category}
-                </Badge>
+                {summary.book?.genre && (
+                  <Badge size="sm" variant="light">
+                    {summary.book.genre}
+                  </Badge>
+                )}
                 <Text size="xs" c="dimmed">
-                  {summary.date}
+                  {getRelativeTime(summary.created_at)}
                 </Text>
               </Stack>
             </Group>
@@ -144,6 +173,62 @@ function RecentSummariesCard() {
 }
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [recentSummaries, setRecentSummaries] = useState<RecentSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch stats
+      const statsResponse = await fetch('/api/v1/dashboard/stats');
+      if (!statsResponse.ok) {
+        throw new Error('Failed to fetch dashboard stats');
+      }
+      const statsData = await statsResponse.json();
+      setStats(statsData.stats);
+
+      // Fetch recent summaries
+      const summariesResponse = await fetch('/api/v1/summaries');
+      if (!summariesResponse.ok) {
+        throw new Error('Failed to fetch recent summaries');
+      }
+      const summariesData = await summariesResponse.json();
+      setRecentSummaries(summariesData.summaries || []);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Center style={{ minHeight: '400px' }}>
+        <Stack align="center" gap="md">
+          <Loader size="lg" />
+          <Text c="dimmed">Loading dashboard...</Text>
+        </Stack>
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert icon={<IconAlertCircle size={16} />} color="red" title="Error">
+        {error}
+      </Alert>
+    );
+  }
+
   return (
     <Stack gap="lg">
       <Title order={1}>Dashboard</Title>
@@ -152,41 +237,46 @@ export default function DashboardPage() {
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
         <StatsCard
           title="Total Books"
-          value={127}
+          value={stats?.totalBooks || 0}
           icon={IconBook}
           color="blue"
-          description="+12 this month"
+          description={
+            stats?.monthSummaries
+              ? `+${stats.monthSummaries} this month`
+              : 'Available in library'
+          }
         />
         <StatsCard
-          title="Summaries Read"
-          value={45}
+          title="Summaries Generated"
+          value={stats?.summariesRead || 0}
           icon={IconBookmark}
           color="green"
-          description="+8 this week"
+          description={
+            stats?.weekSummaries
+              ? `+${stats.weekSummaries} this week`
+              : 'Start generating!'
+          }
         />
         <StatsCard
           title="Reading Time"
-          value="24h"
+          value={stats?.readingTime || '0m'}
           icon={IconClock}
           color="orange"
           description="This month"
         />
         <StatsCard
           title="Streak"
-          value="15 days"
+          value={stats?.streak ? `${stats.streak} ${stats.streak === 1 ? 'day' : 'days'}` : '0 days'}
           icon={IconTrendingUp}
           color="violet"
-          description="Keep it up!"
+          description={stats?.streak ? 'Keep it up!' : 'Start your streak!'}
         />
       </SimpleGrid>
 
       {/* Main Content Grid */}
       <Grid>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <ReadingProgressCard />
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <RecentSummariesCard />
+        <Grid.Col span={{ base: 12 }}>
+          <RecentSummariesCard summaries={recentSummaries} />
         </Grid.Col>
       </Grid>
     </Stack>
