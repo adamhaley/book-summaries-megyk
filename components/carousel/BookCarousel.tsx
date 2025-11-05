@@ -130,31 +130,38 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
       )}
       
       <div className={styles.carouselWrapper}>
-        <Carousel
-          withIndicators={false}
-          withControls={true}
-          slideSize="300px"
-          slideGap="lg"
-          emblaOptions={{ loop: true }}
-          classNames={{
-            root: styles.carousel,
-            viewport: styles.viewport,
-            container: styles.container,
-            slide: styles.slide,
-            controls: styles.controls,
-            control: styles.control,
-          }}
-          previousControlIcon={<IconChevronLeft size={24} />}
-          nextControlIcon={<IconChevronRight size={24} />}
-          controlsOffset={0}
-          controlSize={50}
-        >
-          {books.map((book) => (
-            <Carousel.Slide key={book.id}>
-              <BookCard book={book} />
-            </Carousel.Slide>
-          ))}
-        </Carousel>
+      <Carousel
+        withIndicators={false}
+        withControls={true}
+        slideSize={{ base: '85%', sm: '45%', md: '33.333%', lg: '25%' }}
+        slideGap="md"
+        align="start"
+        emblaOptions={{ 
+          loop: true,
+          skipSnaps: false,
+          dragFree: false,
+        }}
+        classNames={{
+          root: styles.carousel,
+          viewport: styles.viewport,
+          container: styles.container,
+          slide: styles.slide,
+          controls: styles.controls,
+          control: styles.control,
+        }}
+        previousControlIcon={<IconChevronLeft size={24} />}
+        nextControlIcon={<IconChevronRight size={24} />}
+        controlsOffset={0}
+        controlSize={50}
+      >
+        {books.map((book) => (
+          <Carousel.Slide key={book.id}>
+            <BookCard book={book} />
+          </Carousel.Slide>
+        ))}
+
+      </Carousel>
+            
       </div>
 
       <GenerateSummaryModal
