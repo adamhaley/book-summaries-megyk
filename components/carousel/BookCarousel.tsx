@@ -135,11 +135,13 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
         withControls={true}
         slideSize={{ base: '85%', sm: '45%', md: '33.333%', lg: '25%' }}
         slideGap="md"
-        align="start"
+        align="center"
         emblaOptions={{ 
           loop: true,
           skipSnaps: false,
           dragFree: false,
+          duration: 25, // Faster transition for smoother loop jump
+          containScroll: 'trimSnaps',
         }}
         classNames={{
           root: styles.carousel,

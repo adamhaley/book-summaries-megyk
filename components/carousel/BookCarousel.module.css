@@ -24,23 +24,29 @@
 }
 
 .viewport {
-  overflow: hidden; /* Allow peek effect */
-  /* Ensure touch scrolling only affects carousel */
+  overflow: hidden; /* Required for loop to work */
   touch-action: pan-y pinch-zoom;
+  /* Improve rendering performance */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .container {
   display: flex;
   align-items: center;
+  backface-visibility: hidden; /* Prevent flickering during loop transition */
+  will-change: transform;
 }
 
 .slide {
   flex: 0 0 auto;
-  opacity: 1; /* Add this back - cards need to be visible! */
-
-  transition: opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), 
-              transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  opacity: 1;
+  /* Remove transitions on slides - they conflict with Embla's loop positioning */
+  /* Transitions should only be on the card itself, not the slide container */
   padding: 0 0.5rem;
+  will-change: transform; /* GPU acceleration for smoother animations */
+  backface-visibility: hidden; /* Prevent flickering */
+  -webkit-font-smoothing: antialiased; /* Smoother text during animation */
 }
 
 
