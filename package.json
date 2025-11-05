@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "upload-covers": "tsx scripts/upload-book-covers.ts"
   },
   "repository": "git@github.com:adamhaley/book-summaries-megyk.git",
   "author": "adamhaley <adamhaley@gmail.com>",
@@ -50,6 +51,7 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   }
 }
