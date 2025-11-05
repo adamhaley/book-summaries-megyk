@@ -15,6 +15,10 @@
 import { createClient } from '@supabase/supabase-js'
 import * as fs from 'fs'
 import * as path from 'path'
+import { config } from 'dotenv'
+
+// Load environment variables from .env.local
+config({ path: path.join(process.cwd(), '.env.local') })
 
 // Initialize Supabase client with service role key
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
