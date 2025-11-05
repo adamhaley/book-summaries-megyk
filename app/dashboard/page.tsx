@@ -52,15 +52,39 @@ function StatsCard({
   icon: Icon,
   color,
   description,
+  onClick,
 }: {
   title: string;
   value: string | number;
   icon: any;
   color: string;
   description?: string;
+  onClick?: () => void;
 }) {
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card
+      shadow="sm"
+      padding="lg"
+      radius="md"
+      withBorder
+      style={{
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      }}
+      onMouseEnter={(e) => {
+        if (onClick) {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = 'var(--mantine-shadow-md)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (onClick) {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'var(--mantine-shadow-sm)';
+        }
+      }}
+      onClick={onClick}
+    >
       <Group justify="space-between">
         <Stack gap="xs">
           <Text size="sm" c="dimmed" fw={500}>
@@ -173,6 +197,7 @@ function RecentSummariesCard({ summaries }: { summaries: RecentSummary[] }) {
 }
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentSummaries, setRecentSummaries] = useState<RecentSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -245,6 +270,7 @@ export default function DashboardPage() {
               ? `+${stats.monthSummaries} this month`
               : 'Available in library'
           }
+          onClick={() => router.push('/dashboard/library')}
         />
         <StatsCard
           title="Summaries Generated"
@@ -256,6 +282,7 @@ export default function DashboardPage() {
               ? `+${stats.weekSummaries} this week`
               : 'Start generating!'
           }
+          onClick={() => router.push('/dashboard/summaries')}
         />
         <StatsCard
           title="Reading Time"
