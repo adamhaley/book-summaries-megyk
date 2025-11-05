@@ -148,7 +148,7 @@ export default function Home() {
             <Group gap="lg">
               <Button
                 size="lg"
-                variant="white"
+                variant="filled"
                 color="dark"
                 rightSection={<IconArrowRight size={20} />}
                 onClick={() => router.push('/dashboard')}
