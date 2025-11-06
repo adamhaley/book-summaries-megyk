@@ -69,19 +69,20 @@ export default function Home() {
   // Not authenticated - show sign in prompt
   if (!isAuthenticated) {
     return (
-      <Box style={{ minHeight: '100vh', position: 'relative' }}>
+      <Box style={{ height: 'calc(100vh - 60px)', position: 'relative', overflow: 'hidden' }}>
         <Overlay 
           gradient="linear-gradient(145deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%)"
           opacity={0.6}
+          zIndex={1}
         />
         <Container 
           size="md" 
           style={{ 
-            minHeight: '100vh', 
+            height: '100%', 
             display: 'flex', 
             alignItems: 'center',
             position: 'relative',
-            zIndex: 2
+            zIndex: 10
           }}
         >
           <Center style={{ width: '100%' }}>
