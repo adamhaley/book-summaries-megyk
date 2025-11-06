@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Carousel } from '@mantine/carousel';
 import { 
   Card, 
@@ -15,6 +15,7 @@ import {
   ActionIcon,
   Box
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconSparkles, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
@@ -47,6 +48,35 @@ const getFallbackPlaceholder = (book: Book) => {
 export function BookCarousel({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  
+  // Media queries to match Mantine's breakpoints (aligned with slideSize)
+  // Mantine breakpoints: sm=576px, md=768px, lg=992px
+  const isLargeDesktop = useMediaQuery('(min-width: 992px)', true, { getInitialValueInEffect: false }); // lg: 25%
+  const isMediumDesktop = useMediaQuery('(min-width: 768px)', true, { getInitialValueInEffect: false }); // md: 33.333%
+  const isSmallTablet = useMediaQuery('(min-width: 576px)', true, { getInitialValueInEffect: false }); // sm: 45%
+  // Below 576px is base: 85%
+
+  // Calculate if we have enough books for infinite loop to work
+  // Show controls when loop mode is functional (needs slightly more than visible slides)
+  const shouldShowControls = () => {
+    const bookCount = books.length;
+    
+    if (isLargeDesktop) {
+      // lg: ~4 slides visible, need at least 6 books for smooth loop
+      return bookCount >= 6;
+    } else if (isMediumDesktop) {
+      // md: ~3 slides visible, need at least 5 books for smooth loop
+      return bookCount >= 5;
+    } else if (isSmallTablet) {
+      // sm: ~2.22 slides visible, need at least 4 books for smooth loop
+      return bookCount >= 4;
+    } else {
+      // base: ~1.17 slides visible, need at least 3 books for smooth loop
+      return bookCount >= 3;
+    }
+  };
+  
+  const showControls = shouldShowControls();
 
   const handleGenerateSummary = (book: Book) => {
     setSelectedBook(book);
@@ -132,12 +162,12 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
       <div className={styles.carouselWrapper}>
       <Carousel
         withIndicators={false}
-        withControls={true}
+        withControls={showControls}
         slideSize={{ base: '85%', sm: '45%', md: '33.333%', lg: '25%' }}
         slideGap="md"
-        align="center"
         emblaOptions={{ 
-          loop: true,
+          align: 'center',
+          loop: showControls, // Only enable loop when we have enough slides
           skipSnaps: false,
           dragFree: false,
           duration: 25, // Faster transition for smoother loop jump

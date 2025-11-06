@@ -34,7 +34,7 @@ export default function Home() {
         setIsAuthenticated(true);
         // Load books for carousel
         try {
-          const response = await fetch('/api/v1/books?featured=true&limit=12');
+          const response = await fetch('/api/v1/books?featured=true&limit=20');
           if (response.ok) {
             const data = await response.json();
             setBooks(data.books || []);
