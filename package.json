@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "upload-covers": "tsx scripts/upload-book-covers.ts"
   },
   "repository": "git@github.com:adamhaley/book-summaries-megyk.git",
   "author": "adamhaley <adamhaley@gmail.com>",
@@ -14,6 +15,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
+    "@mantine/carousel": "^8.3.6",
     "@mantine/charts": "^8.3.5",
     "@mantine/core": "^8.3.5",
     "@mantine/dates": "^8.3.5",
@@ -32,6 +34,8 @@
     "apexcharts": "^5.3.5",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "next": "^15.5.4",
     "react": "^19.2.0",
     "react-apexcharts": "^1.8.0",
@@ -45,8 +49,10 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "autoprefixer": "^10.4.21",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }
