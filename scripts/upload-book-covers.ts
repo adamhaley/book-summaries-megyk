@@ -59,9 +59,10 @@ async function getBooks(): Promise<Book[]> {
 function findCoverForBook(book: Book, availableFiles: string[]): string | null {
   // Try to match by ISBN first
   if (book.isbn) {
+    const isbn = book.isbn // Type narrowing for nested scope
     const isbnMatch = availableFiles.find(file => {
       const fileNameWithoutExt = path.basename(file, path.extname(file))
-      return fileNameWithoutExt === book.isbn || fileNameWithoutExt === book.isbn.replace(/-/g, '')
+      return fileNameWithoutExt === isbn || fileNameWithoutExt === isbn.replace(/-/g, '')
     })
     if (isbnMatch) return isbnMatch
   }
