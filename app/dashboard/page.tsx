@@ -107,6 +107,41 @@ function StatsCard({
   );
 }
 
+// Current reading card (placeholder)
+function CurrentReadingCard() {
+  return (
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Stack gap="md">
+        <Group justify="space-between">
+          <Text fw={500} size="lg">
+            Current Reading
+          </Text>
+          <Badge size="sm" color="blue" variant="light">
+            IN PROGRESS
+          </Badge>
+        </Group>
+
+        <Stack gap="sm">
+          <Text fw={600} size="md">
+            Atomic Habits by James Clear
+          </Text>
+
+          <Group justify="space-between">
+            <Text size="sm" c="dimmed">
+              Progress
+            </Text>
+            <Text size="sm" fw={500}>
+              68%
+            </Text>
+          </Group>
+
+          <Progress value={68} color="blue" size="md" radius="md" />
+        </Stack>
+      </Stack>
+    </Card>
+  );
+}
+
 // Recent summaries card
 function RecentSummariesCard({ summaries }: { summaries: RecentSummary[] }) {
   const router = useRouter();
@@ -302,7 +337,10 @@ export default function DashboardPage() {
 
       {/* Main Content Grid */}
       <Grid>
-        <Grid.Col span={{ base: 12 }}>
+        <Grid.Col span={{ base: 12, md: 6 }}>
+          <CurrentReadingCard />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 6 }}>
           <RecentSummariesCard summaries={recentSummaries} />
         </Grid.Col>
       </Grid>

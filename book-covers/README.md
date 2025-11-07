@@ -39,7 +39,7 @@ thinking-fast-and-slow.webp
 2. Make sure they're named correctly (by ISBN or title)
 3. Run the upload script:
    ```bash
-   npm run upload-covers
+   yarn upload-covers
    # or
    npx tsx scripts/upload-book-covers.ts
    ```

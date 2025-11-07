@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Carousel } from '@mantine/carousel';
-import { 
-  Card, 
-  Image, 
-  Text, 
-  Group, 
-  Badge, 
-  Button, 
-  Stack, 
+import {
+  Card,
+  Image,
+  Text,
+  Group,
+  Badge,
+  Button,
+  Stack,
   Container,
   Title,
   ActionIcon,
@@ -19,6 +19,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconSparkles, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
+import type { Embla } from '@mantine/carousel';
 import styles from './BookCarousel.module.css';
 
 interface BookCarouselProps {
@@ -48,7 +49,10 @@ const getFallbackPlaceholder = (book: Book) => {
 export function BookCarousel({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  
+  const [embla, setEmbla] = useState<Embla | null>(null);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+
   // Media queries to match Mantine's breakpoints (aligned with slideSize)
   // Mantine breakpoints: sm=576px, md=768px, lg=992px
   const isLargeDesktop = useMediaQuery('(min-width: 992px)', true, { getInitialValueInEffect: false }); // lg: 25%
@@ -56,27 +60,66 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
   const isSmallTablet = useMediaQuery('(min-width: 576px)', true, { getInitialValueInEffect: false }); // sm: 45%
   // Below 576px is base: 85%
 
-  // Calculate if we have enough books for infinite loop to work
-  // Show controls when loop mode is functional (needs slightly more than visible slides)
+  // Determine if controls should be shown (when there are hidden books)
   const shouldShowControls = () => {
     const bookCount = books.length;
-    
+
     if (isLargeDesktop) {
-      // lg: ~4 slides visible, need at least 6 books for smooth loop
+      // lg: ~4 slides visible at 25% each
+      return bookCount > 4;
+    } else if (isMediumDesktop) {
+      // md: ~3 slides visible at 33.333% each
+      return bookCount > 3;
+    } else if (isSmallTablet) {
+      // sm: ~2.22 slides visible at 45% each
+      return bookCount > 2;
+    } else {
+      // base: ~1.17 slides visible at 85% each
+      return bookCount > 1;
+    }
+  };
+
+  // Determine if infinite loop should be enabled (needs extra books for smooth loop)
+  const shouldEnableLoop = () => {
+    const bookCount = books.length;
+
+    if (isLargeDesktop) {
+      // lg: need at least 6 books for smooth infinite loop
       return bookCount >= 6;
     } else if (isMediumDesktop) {
-      // md: ~3 slides visible, need at least 5 books for smooth loop
+      // md: need at least 5 books for smooth infinite loop
       return bookCount >= 5;
     } else if (isSmallTablet) {
-      // sm: ~2.22 slides visible, need at least 4 books for smooth loop
+      // sm: need at least 4 books for smooth infinite loop
       return bookCount >= 4;
     } else {
-      // base: ~1.17 slides visible, need at least 3 books for smooth loop
+      // base: need at least 3 books for smooth infinite loop
       return bookCount >= 3;
     }
   };
-  
+
   const showControls = shouldShowControls();
+  const enableLoop = shouldEnableLoop();
+
+  // Update scroll button states when embla changes or on scroll
+  const onSelect = useCallback(() => {
+    if (!embla) return;
+    setCanScrollPrev(embla.canScrollPrev());
+    setCanScrollNext(embla.canScrollNext());
+  }, [embla]);
+
+  useEffect(() => {
+    if (!embla) return;
+
+    onSelect();
+    embla.on('select', onSelect);
+    embla.on('reInit', onSelect);
+
+    return () => {
+      embla.off('select', onSelect);
+      embla.off('reInit', onSelect);
+    };
+  }, [embla, onSelect]);
 
   const handleGenerateSummary = (book: Book) => {
     setSelectedBook(book);
@@ -165,9 +208,10 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
         withControls={showControls}
         slideSize={{ base: '85%', sm: '45%', md: '33.333%', lg: '25%' }}
         slideGap="md"
-        emblaOptions={{ 
+        getEmblaApi={setEmbla}
+        emblaOptions={{
           align: 'center',
-          loop: showControls, // Only enable loop when we have enough slides
+          loop: enableLoop, // Only enable loop when we have enough slides for smooth looping
           skipSnaps: false,
           dragFree: false,
           duration: 25, // Faster transition for smoother loop jump
@@ -183,6 +227,18 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
         }}
         previousControlIcon={<IconChevronLeft size={24} />}
         nextControlIcon={<IconChevronRight size={24} />}
+        previousControlProps={{
+          style: {
+            visibility: showControls && canScrollPrev ? 'visible' : 'hidden',
+            pointerEvents: showControls && canScrollPrev ? 'auto' : 'none'
+          }
+        }}
+        nextControlProps={{
+          style: {
+            visibility: showControls && canScrollNext ? 'visible' : 'hidden',
+            pointerEvents: showControls && canScrollNext ? 'auto' : 'none'
+          }
+        }}
         controlsOffset={0}
         controlSize={50}
       >
