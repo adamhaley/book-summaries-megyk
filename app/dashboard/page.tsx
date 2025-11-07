@@ -25,6 +25,7 @@ import {
   IconAlertCircle,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences';
 
 interface DashboardStats {
   totalBooks: number;
@@ -38,6 +39,8 @@ interface DashboardStats {
 interface RecentSummary {
   id: string;
   created_at: string;
+  style: string;
+  length: string;
   book?: {
     title: string;
     author: string;
@@ -161,6 +164,14 @@ function RecentSummariesCard({ summaries }: { summaries: RecentSummary[] }) {
     return `${Math.floor(diffInDays / 30)} ${Math.floor(diffInDays / 30) === 1 ? 'month' : 'months'} ago`;
   };
 
+  const getStyleLabel = (style: string) => {
+    return SUMMARY_STYLE_OPTIONS.find(opt => opt.value === style)?.label || style;
+  };
+
+  const getLengthLabel = (length: string) => {
+    return SUMMARY_LENGTH_OPTIONS.find(opt => opt.value === length)?.label || length;
+  };
+
   if (summaries.length === 0) {
     return (
       <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -204,26 +215,34 @@ function RecentSummariesCard({ summaries }: { summaries: RecentSummary[] }) {
         </Group>
         {summaries.slice(0, 3).map((summary) => (
           <Card key={summary.id} padding="sm" radius="md" withBorder>
-            <Group justify="space-between" wrap="nowrap">
-              <Stack gap={4}>
-                <Text size="sm" fw={500}>
-                  {summary.book?.title || 'Unknown Book'}
+            <Stack gap="xs">
+              <Group justify="space-between" wrap="nowrap" align="flex-start">
+                <Stack gap={4} style={{ flex: 1 }}>
+                  <Text size="sm" fw={500} lineClamp={1}>
+                    {summary.book?.title || 'Unknown Book'}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    {summary.book?.author || 'Unknown Author'}
+                  </Text>
+                </Stack>
+                <Text size="xs" c="dimmed" style={{ flexShrink: 0 }}>
+                  {getRelativeTime(summary.created_at)}
                 </Text>
-                <Text size="xs" c="dimmed">
-                  {summary.book?.author || 'Unknown Author'}
-                </Text>
-              </Stack>
-              <Stack gap={4} align="flex-end">
+              </Group>
+              <Group gap="xs">
+                <Badge size="sm" variant="light" color="green">
+                  {getStyleLabel(summary.style)}
+                </Badge>
+                <Badge size="sm" variant="light" color="blue">
+                  {getLengthLabel(summary.length)}
+                </Badge>
                 {summary.book?.genre && (
-                  <Badge size="sm" variant="light">
+                  <Badge size="sm" variant="light" color="gray">
                     {summary.book.genre}
                   </Badge>
                 )}
-                <Text size="xs" c="dimmed">
-                  {getRelativeTime(summary.created_at)}
-                </Text>
-              </Stack>
-            </Group>
+              </Group>
+            </Stack>
           </Card>
         ))}
       </Stack>

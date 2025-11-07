@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       (summaries || []).map(async (summary) => {
         const { data: book } = await supabase
           .from('books')
-          .select('id, title, author')
+          .select('id, title, author, cover_image_url')
           .eq('id', summary.book_id)
           .single()
 

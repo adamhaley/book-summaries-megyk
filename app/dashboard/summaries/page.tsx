@@ -1,11 +1,28 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Container, Title, Text, Stack, Card, Center, Button, Group, Badge, Loader, Table, SimpleGrid, Box } from '@mantine/core'
+import { Container, Title, Text, Stack, Card, Center, Button, Group, Badge, Loader, Table, SimpleGrid, Box, Image } from '@mantine/core'
 import { IconBookmark, IconDownload, IconTrash } from '@tabler/icons-react'
 import { SummaryWithBook } from '@/lib/types/summaries'
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences'
 import styles from './summaries.module.css'
+
+// Helper functions for book covers
+const getBookCoverPlaceholder = (book: any) => {
+  if (book?.cover_image_url) {
+    return book.cover_image_url;
+  }
+  
+  // Generate a consistent color based on book title
+  const colors = ['3B82F6', '10B981', 'F59E0B', 'EF4444', '8B5CF6', '06B6D4'];
+  const colorIndex = (book?.title?.length || 0) % colors.length;
+  
+  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent((book?.title || 'Book').slice(0, 20))}`;
+};
+
+const getFallbackPlaceholder = (book: any) => {
+  return `https://placehold.co/300x450/64748B/ffffff?text=${encodeURIComponent('Book Cover')}`;
+};
 
 export default function SummariesPage() {
   const [summaries, setSummaries] = useState<SummaryWithBook[]>([])
@@ -178,14 +195,27 @@ export default function SummariesPage() {
                 {books.map((bookGroup, idx) => (
                   <Card key={idx} shadow="sm" padding="lg" radius="md" withBorder>
                     <Stack gap="md">
-                      {/* Book Header */}
-                      <div>
-                        <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
-                        <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
-                        <Text c="dimmed" size="xs" mt={4}>
-                          {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
-                        </Text>
-                      </div>
+                      {/* Book Header with Cover */}
+                      <Group align="flex-start" gap="md" wrap="nowrap">
+                        <Box className={styles.bookCoverMobile}>
+                          <Image
+                            src={getBookCoverPlaceholder(bookGroup.book)}
+                            fallbackSrc={getFallbackPlaceholder(bookGroup.book)}
+                            alt={`Cover of ${bookGroup.book?.title || 'Book'}`}
+                            fit="cover"
+                            radius="md"
+                            h={100}
+                            w={67}
+                          />
+                        </Box>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <Text fw={700} size="xl" lineClamp={2}>{bookGroup.book?.title || 'Unknown Book'}</Text>
+                          <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
+                          <Text c="dimmed" size="xs" mt={4}>
+                            {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
+                          </Text>
+                        </div>
+                      </Group>
 
                       {/* Individual Summaries */}
                       <Stack gap="sm" style={{ paddingLeft: '16px' }}>
@@ -241,14 +271,28 @@ export default function SummariesPage() {
               {books.map((bookGroup, idx) => (
                 <Card key={idx} shadow="sm" padding="0" radius="md" withBorder>
                   <Stack gap="md">
-                    {/* Book Header */}
+                    {/* Book Header with Cover */}
                     <div style={{ padding: '20px 20px 12px 20px', borderBottom: '2px solid var(--mantine-color-gray-3)' }}>
-                      <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
-                      <Group gap="md" mt={4}>
-                        <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
-                        <Text c="dimmed" size="xs">
-                          {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
-                        </Text>
+                      <Group align="flex-start" gap="lg" wrap="nowrap">
+                        <Image
+                          src={getBookCoverPlaceholder(bookGroup.book)}
+                          fallbackSrc={getFallbackPlaceholder(bookGroup.book)}
+                          alt={`Cover of ${bookGroup.book?.title || 'Book'}`}
+                          fit="cover"
+                          radius="md"
+                          h={120}
+                          w={80}
+                          className={styles.bookCover}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
+                          <Group gap="md" mt={4}>
+                            <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
+                            <Text c="dimmed" size="xs">
+                              {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
+                            </Text>
+                          </Group>
+                        </div>
                       </Group>
                     </div>
 
