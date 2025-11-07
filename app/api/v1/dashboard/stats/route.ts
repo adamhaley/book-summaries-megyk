@@ -28,6 +28,19 @@ export async function GET(request: NextRequest) {
       console.error('Error fetching books count:', booksError)
     }
 
+    // Get books added in the last 30 days
+    const thirtyDaysAgoForBooks = new Date()
+    thirtyDaysAgoForBooks.setDate(thirtyDaysAgoForBooks.getDate() - 30)
+
+    const { count: monthBooksCount, error: monthBooksError } = await supabase
+      .from('books')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', thirtyDaysAgoForBooks.toISOString())
+
+    if (monthBooksError) {
+      console.error('Error fetching month books count:', monthBooksError)
+    }
+
     // Get summaries count for this user
     const { count: summariesCount, error: summariesError } = await supabase
       .from('summaries')
@@ -134,6 +147,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       stats: {
         totalBooks: totalBooks || 0,
+        monthBooks: monthBooksCount || 0,
         summariesRead: summariesCount || 0,
         readingTime,
         readingTimeMinutes,

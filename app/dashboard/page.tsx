@@ -29,6 +29,7 @@ import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/prefe
 
 interface DashboardStats {
   totalBooks: number;
+  monthBooks: number;
   summariesRead: number;
   readingTime: string;
   streak: number;
@@ -320,8 +321,8 @@ export default function DashboardPage() {
           icon={IconBook}
           color="blue"
           description={
-            stats?.monthSummaries
-              ? `+${stats.monthSummaries} this month`
+            stats?.monthBooks
+              ? `+${stats.monthBooks} this month`
               : 'Available in library'
           }
           onClick={() => router.push('/dashboard/library')}
