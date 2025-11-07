@@ -1,11 +1,28 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton } from '@mantine/core'
+import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image } from '@mantine/core'
 import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
 import styles from './library.module.css'
+
+// Helper functions for book covers (same as carousel)
+const getBookCoverPlaceholder = (book: Book) => {
+  if (book.cover_image_url) {
+    return book.cover_image_url;
+  }
+  
+  // Generate a consistent color based on book title
+  const colors = ['3B82F6', '10B981', 'F59E0B', 'EF4444', '8B5CF6', '06B6D4'];
+  const colorIndex = book.title.length % colors.length;
+  
+  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(book.title.slice(0, 20))}`;
+};
+
+const getFallbackPlaceholder = (book: Book) => {
+  return `https://placehold.co/300x450/64748B/ffffff?text=${encodeURIComponent('Book Cover')}`;
+};
 
 // Sorting function following Mantine pattern
 function sortData(
@@ -179,49 +196,69 @@ export default function LibraryPage() {
             <SimpleGrid cols={1} spacing="md">
               {displayedBooks.map((book) => (
                 <Card key={book.id} shadow="sm" padding="lg" radius="md" withBorder>
-                  <Stack gap="sm">
-                    <div>
-                      <Text fw={600} size="lg">{book.title}</Text>
-                      <Text c="dimmed" size="sm">by {book.author}</Text>
-                      {book.description && (
-                        <Text size="sm" c="dimmed" mt="xs" lineClamp={2}>
-                          {book.description}
-                        </Text>
-                      )}
-                    </div>
+                  <Group align="flex-start" gap="md" wrap="nowrap">
+                    {/* Book Cover - Clickable */}
+                    <Box 
+                      className={styles.bookCoverMobile}
+                      onClick={() => handleGenerateSummary(book)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <Image
+                        src={getBookCoverPlaceholder(book)}
+                        fallbackSrc={getFallbackPlaceholder(book)}
+                        alt={`Cover of ${book.title}`}
+                        fit="cover"
+                        radius="md"
+                        h={120}
+                        w={80}
+                      />
+                    </Box>
                     
-                    <Group justify="space-between" align="flex-start">
-                      <Stack gap="xs">
-                        {book.genre && (
-                          <Badge variant="light" size="sm">
-                            {book.genre}
-                          </Badge>
+                    {/* Book Details */}
+                    <Stack gap="sm" style={{ flex: 1, minWidth: 0 }}>
+                      <div>
+                        <Text fw={600} size="lg" lineClamp={2}>{book.title}</Text>
+                        <Text c="dimmed" size="sm">by {book.author}</Text>
+                        {book.description && (
+                          <Text size="sm" c="dimmed" mt="xs" lineClamp={2}>
+                            {book.description}
+                          </Text>
                         )}
-                        <Group gap="md">
-                          {book.publication_year && (
-                            <Text size="xs" c="dimmed">
-                              {book.publication_year}
-                            </Text>
-                          )}
-                          {book.page_count && (
-                            <Text size="xs" c="dimmed">
-                              {book.page_count} pages
-                            </Text>
-                          )}
-                        </Group>
-                      </Stack>
+                      </div>
                       
-                      <Button
-                        size="sm"
-                        variant="light"
-                        leftSection={<IconSparkles size={16} />}
-                        onClick={() => handleGenerateSummary(book)}
-                        style={{ flexShrink: 0 }}
-                      >
-                        Generate Summary
-                      </Button>
-                    </Group>
-                  </Stack>
+                      <Group justify="space-between" align="flex-start" wrap="wrap">
+                        <Stack gap="xs">
+                          {book.genre && (
+                            <Badge variant="light" size="sm">
+                              {book.genre}
+                            </Badge>
+                          )}
+                          <Group gap="md">
+                            {book.publication_year && (
+                              <Text size="xs" c="dimmed">
+                                {book.publication_year}
+                              </Text>
+                            )}
+                            {book.page_count && (
+                              <Text size="xs" c="dimmed">
+                                {book.page_count} pages
+                              </Text>
+                            )}
+                          </Group>
+                        </Stack>
+                        
+                        <Button
+                          size="sm"
+                          variant="light"
+                          leftSection={<IconSparkles size={16} />}
+                          onClick={() => handleGenerateSummary(book)}
+                          style={{ flexShrink: 0 }}
+                        >
+                          Generate Summary
+                        </Button>
+                      </Group>
+                    </Stack>
+                  </Group>
                 </Card>
               ))}
             </SimpleGrid>
@@ -229,10 +266,11 @@ export default function LibraryPage() {
           
           {/* Desktop Table View */}
           <Card shadow="sm" padding="lg" radius="md" withBorder className={styles.desktopView}>
-            <Table.ScrollContainer minWidth={800}>
+            <Table.ScrollContainer minWidth={900}>
               <Table striped highlightOnHover>
                 <Table.Thead>
                   <Table.Tr>
+                    <Table.Th style={{ width: 100 }}>Cover</Table.Th>
                     <Table.Th>
                       <UnstyledButton 
                         onClick={() => setSorting('title')} 
@@ -284,6 +322,23 @@ export default function LibraryPage() {
                 <Table.Tbody>
                   {displayedBooks.map((book) => (
                     <Table.Tr key={book.id}>
+                      <Table.Td>
+                        <Box 
+                          onClick={() => handleGenerateSummary(book)}
+                          style={{ cursor: 'pointer', display: 'inline-block' }}
+                        >
+                          <Image
+                            src={getBookCoverPlaceholder(book)}
+                            fallbackSrc={getFallbackPlaceholder(book)}
+                            alt={`Cover of ${book.title}`}
+                            fit="cover"
+                            radius="sm"
+                            h={80}
+                            w={60}
+                            className={styles.bookCover}
+                          />
+                        </Box>
+                      </Table.Td>
                       <Table.Td>
                         <Text fw={600}>{book.title}</Text>
                         {book.description && (

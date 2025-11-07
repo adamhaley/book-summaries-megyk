@@ -6,6 +6,35 @@
   display: none;
 }
 
+/* Book cover styles */
+.bookCover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bookCover:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.bookCoverMobile {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.bookCoverMobile:hover {
+  transform: scale(1.05);
+}
+
+.bookCoverMobile img {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease;
+}
+
+.bookCoverMobile:hover img {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
 /* Sortable header styles */
 .sortableHeader {
   transition: background-color 0.2s ease;
