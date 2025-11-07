@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Carousel } from '@mantine/carousel';
+import type { EmblaCarouselType } from 'embla-carousel';
 import {
   Card,
   Image,
@@ -19,7 +20,6 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconSparkles, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
-import type { Embla } from '@mantine/carousel';
 import styles from './BookCarousel.module.css';
 
 interface BookCarouselProps {
@@ -49,7 +49,7 @@ const getFallbackPlaceholder = (book: Book) => {
 export function BookCarousel({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
-  const [embla, setEmbla] = useState<Embla | null>(null);
+  const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
 
