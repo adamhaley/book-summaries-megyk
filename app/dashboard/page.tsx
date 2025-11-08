@@ -521,8 +521,10 @@ export default function DashboardPage() {
               <Title order={2} c="#FFFFFF">Your Collection</Title>
               <Button
                 variant="subtle"
-                color="cyan"
                 onClick={() => router.push('/dashboard/summaries')}
+                style={{
+                  color: 'rgba(0, 210, 255, 0.8)',
+                }}
               >
                 View All
               </Button>

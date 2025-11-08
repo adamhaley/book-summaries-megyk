@@ -250,6 +250,7 @@ export default function LibraryPage() {
                         <Button
                           size="sm"
                           variant="light"
+                          color="cyan"
                           leftSection={<IconSparkles size={16} />}
                           onClick={() => handleGenerateSummary(book)}
                           style={{ flexShrink: 0 }}
@@ -367,6 +368,7 @@ export default function LibraryPage() {
                         <Button
                           size="xs"
                           variant="light"
+                          color="cyan"
                           leftSection={<IconSparkles size={14} />}
                           onClick={() => handleGenerateSummary(book)}
                         >

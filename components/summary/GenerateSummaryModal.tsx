@@ -271,6 +271,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                       whiteSpace: 'nowrap',
                       fontSize: '0.75rem',
                       transform: 'translateX(-50%)'
+                    },
+                    bar: { backgroundColor: '#00D2FF', opacity: 0.8 },
+                    thumb: { 
+                      borderColor: '#00D2FF',
+                      backgroundColor: '#00D2FF',
+                      opacity: 0.8
                     }
                   }}
                 />
@@ -319,6 +325,12 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                       whiteSpace: 'nowrap',
                       fontSize: '0.75rem',
                       transform: 'translateX(-50%)'
+                    },
+                    bar: { backgroundColor: '#00D2FF', opacity: 0.8 },
+                    thumb: { 
+                      borderColor: '#00D2FF',
+                      backgroundColor: '#00D2FF',
+                      opacity: 0.8
                     }
                   }}
                 />
@@ -347,6 +359,10 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
               onClick={handleGenerate}
               loading={generating}
               disabled={!book}
+              style={{
+                backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                color: '#000000',
+              }}
             >
               Generate Summary
             </Button>

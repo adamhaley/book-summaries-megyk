@@ -178,11 +178,14 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
               )}
               <Button
                 variant="filled"
-                color="cyan"
                 leftSection={<IconSparkles size={16} />}
                 onClick={() => handleGenerateSummary(book)}
                 size="sm"
                 className={styles.generateButton}
+                style={{
+                  backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                  color: '#000000',
+                }}
               >
                 Get Summary
               </Button>
