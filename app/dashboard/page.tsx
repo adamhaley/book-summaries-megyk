@@ -141,7 +141,7 @@ function HeroSection({ router }: { router: any }) {
     >
       {/* Mobile: Stack, Desktop: Horizontal */}
       <Stack 
-        gap={{ base: 'md', sm: 'lg' }}
+        gap="lg"
         style={{ position: 'relative', zIndex: 2 }}
         hiddenFrom="md"
       >
