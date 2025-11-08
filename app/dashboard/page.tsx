@@ -124,13 +124,11 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
     title: book.title,
     author: book.author,
     cover: book.cover_image_url || "https://placehold.co/300x450/7C3AED/FBBF24?text=" + encodeURIComponent(book.title),
-    progress: 45,
     genre: book.genre || "General"
   } : {
     title: "$100M Offers",
     author: "Alex Hormozi",
     cover: "https://placehold.co/300x450/7C3AED/FBBF24?text=$100M+OFFERS&font=roboto",
-    progress: 45,
     genre: "Business"
   };
 
@@ -185,7 +183,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               border: '1px solid rgba(139, 92, 246, 0.4)',
             }}
           >
-            CONTINUE READING
+            FEATURED
           </Badge>
         </Stack>
 
@@ -202,9 +200,6 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             <Badge variant="light" color="violet">
               {currentBook.genre}
             </Badge>
-            <Text size="sm" c="dimmed">
-              {currentBook.progress}% complete
-            </Text>
           </Group>
         </Stack>
 
@@ -213,23 +208,9 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             size="md"
             variant="filled"
             color="cyan"
-            leftSection={<IconPlayerPlay size={18} />}
+            leftSection={<IconSparkles size={18} />}
             onClick={() => router.push('/dashboard/library')}
             style={{ fontWeight: 600 }}
-            fullWidth
-          >
-            Continue Reading
-          </Button>
-          <Button
-            size="md"
-            variant="outline"
-            c="#FFFFFF"
-            leftSection={<IconSparkles size={18} />}
-            style={{ 
-              borderColor: '#FFFFFF',
-              fontWeight: 600
-            }}
-            onClick={() => router.push('/dashboard/library')}
             fullWidth
           >
             Discover More
@@ -283,7 +264,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               width: 'fit-content'
             }}
           >
-            CONTINUE READING
+            FEATURED
           </Badge>
           
           <Title order={1} size="2.5rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
@@ -298,9 +279,6 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             <Badge variant="light" color="violet">
               {currentBook.genre}
             </Badge>
-            <Text size="sm" c="dimmed">
-              {currentBook.progress}% complete
-            </Text>
           </Group>
 
           <Group gap="md" mt="md">
@@ -308,22 +286,9 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               size="lg"
               variant="filled"
               color="cyan"
-              leftSection={<IconPlayerPlay size={20} />}
+              leftSection={<IconSparkles size={20} />}
               onClick={() => router.push('/dashboard/library')}
               style={{ fontWeight: 600 }}
-            >
-              Continue Reading
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              c="#FFFFFF"
-              leftSection={<IconSparkles size={20} />}
-              style={{ 
-                borderColor: '#FFFFFF',
-                fontWeight: 600
-              }}
-              onClick={() => router.push('/dashboard/library')}
             >
               Discover More
             </Button>
