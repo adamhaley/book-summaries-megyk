@@ -149,10 +149,10 @@ export default function SummariesPage() {
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
-          <Title order={1} mb="xs">
-            My Summaries
+          <Title order={1} mb="xs" c="#FFFFFF">
+            My Collection
           </Title>
-          <Text size="lg" c="dimmed">
+          <Text size="lg" c="#AAAAAA">
             Access all your personalized book summaries
           </Text>
         </div>
