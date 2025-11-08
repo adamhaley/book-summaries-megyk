@@ -203,7 +203,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
   return (
     <Container size="xl" className={styles.carouselContainer}>
       {showTitle && (
-        <Title order={2} mb="xl" ta="center" className={styles.carouselTitle}>
+        <Title order={2} mb="xl" ta="right" className={styles.carouselTitle}>
           {title} 
         </Title>
       )}

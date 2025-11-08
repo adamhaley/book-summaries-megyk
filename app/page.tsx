@@ -206,9 +206,9 @@ export default function Home() {
         }}
       >
         <Container size="md">
-          <Stack align="center" gap="lg" ta="center">
-            <Title order={2} c="#FFFFFF">Ready to dive deeper?</Title>
-            <Text size="lg" c="#AAAAAA">
+          <Stack gap="lg">
+            <Title order={2} c="#FFFFFF" ta="right">Ready to dive deeper?</Title>
+            <Text size="lg" c="#AAAAAA" ta="right">
               Explore your personalized dashboard or browse our complete library
             </Text>
             <Group gap="md">

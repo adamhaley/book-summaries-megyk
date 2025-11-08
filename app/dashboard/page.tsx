@@ -187,7 +187,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           </Badge>
         </Stack>
 
-        <Stack gap="sm" align="center" ta="center">
+        <Stack gap="sm" align="flex-end">
           <Title order={1} size="1.75rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
             {currentBook.title}
           </Title>
@@ -501,8 +501,8 @@ export default function DashboardPage() {
       {recommendedBooks.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Title order={2} c="#FFFFFF">Recommended For You</Title>
-            <Text size="lg" c="#AAAAAA">
+            <Title order={2} c="#FFFFFF" ta="right">Recommended For You</Title>
+            <Text size="lg" c="#AAAAAA" ta="right">
               Handpicked books based on your interests
             </Text>
           </Stack>
@@ -517,18 +517,7 @@ export default function DashboardPage() {
       {recentSummaries.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Group justify="space-between" align="center">
-              <Title order={2} c="#FFFFFF">Your Collection</Title>
-              <Button
-                variant="subtle"
-                onClick={() => router.push('/dashboard/summaries')}
-                style={{
-                  color: 'rgba(0, 210, 255, 0.8)',
-                }}
-              >
-                View All
-              </Button>
-            </Group>
+            <Title order={2} c="#FFFFFF" ta="right">Your Collection</Title>
           </Stack>
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
             {recentSummaries.slice(0, 3).map((summary) => (

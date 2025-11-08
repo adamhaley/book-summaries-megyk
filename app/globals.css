@@ -64,6 +64,14 @@ body:has(.mantine-AppShell-root) {
   color: #FFFFFF;
 }
 
+/* Right-align H1 and H2 headers for editorial feel */
+[data-mantine-color-scheme='dark'] h1,
+[data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='1'],
+[data-mantine-color-scheme='dark'] h2,
+[data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='2'] {
+  text-align: right;
+}
+
 /* Buttons - vibrant on black */
 [data-mantine-color-scheme='dark'] .mantine-Button-root[data-variant='filled'] {
   box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3);
