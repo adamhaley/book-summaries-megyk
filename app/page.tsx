@@ -58,7 +58,7 @@ export default function Home() {
       <Container size="xs" py="xl" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
         <Center style={{ width: '100%' }}>
           <Stack align="center" gap="md">
-            <Loader size="lg" />
+            <Loader size="lg" color="cyan" />
             <Text c="dimmed">Loading...</Text>
           </Stack>
         </Center>
@@ -102,10 +102,13 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="filled"
-                  color="cyan"
                   rightSection={<IconArrowRight size={20} />}
                   onClick={() => router.push('/auth/signin')}
-                  style={{ fontWeight: 600 }}
+                  style={{ 
+                    fontWeight: 600,
+                    backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                    color: '#000000',
+                  }}
                 >
                   Get Started
                 </Button>
@@ -158,10 +161,13 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="filled"
-                color="cyan"
                 rightSection={<IconArrowRight size={20} />}
                 onClick={() => router.push('/dashboard')}
-                style={{ fontWeight: 600 }}
+                style={{ 
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                  color: '#000000',
+                }}
               >
                 Go to Dashboard
               </Button>
@@ -208,9 +214,12 @@ export default function Home() {
             <Group gap="md">
               <Button
                 variant="filled"
-                color="cyan"
                 leftSection={<IconSparkles size={16} />}
                 onClick={() => router.push('/dashboard')}
+                style={{ 
+                  backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                  color: '#000000',
+                }}
               >
                 View Dashboard
               </Button>

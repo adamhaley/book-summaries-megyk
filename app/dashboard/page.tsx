@@ -207,10 +207,13 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           <Button
             size="md"
             variant="filled"
-            color="cyan"
             leftSection={<IconSparkles size={18} />}
             onClick={() => router.push('/dashboard/library')}
-            style={{ fontWeight: 600 }}
+            style={{ 
+              fontWeight: 600,
+              backgroundColor: 'rgba(0, 210, 255, 0.8)',
+              color: '#000000',
+            }}
             fullWidth
           >
             Discover More
@@ -285,10 +288,13 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             <Button
               size="lg"
               variant="filled"
-              color="cyan"
               leftSection={<IconSparkles size={20} />}
               onClick={() => router.push('/dashboard/library')}
-              style={{ fontWeight: 600 }}
+              style={{ 
+                fontWeight: 600,
+                backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                color: '#000000',
+              }}
             >
               Discover More
             </Button>
