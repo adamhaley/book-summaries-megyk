@@ -198,7 +198,7 @@ export default function LibraryPage() {
                 <Card key={book.id} shadow="sm" padding="lg" radius="md" withBorder>
                   <Group align="flex-start" gap="md" wrap="nowrap">
                     {/* Book Cover - Clickable */}
-                    <Box 
+                    <Box
                       className={styles.bookCoverMobile}
                       onClick={() => handleGenerateSummary(book)}
                       style={{ cursor: 'pointer' }}
@@ -323,7 +323,7 @@ export default function LibraryPage() {
                   {displayedBooks.map((book) => (
                     <Table.Tr key={book.id}>
                       <Table.Td>
-                        <Box 
+                        <Box
                           onClick={() => handleGenerateSummary(book)}
                           style={{ cursor: 'pointer', display: 'inline-block' }}
                         >
