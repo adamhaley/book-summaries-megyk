@@ -132,14 +132,101 @@ function HeroSection({ router }: { router: any }) {
     <Box 
       style={{
         background: 'linear-gradient(135deg, #1a1a1a 0%, #2a1545 100%)',
-        padding: '3rem 2rem',
         borderRadius: '16px',
         position: 'relative',
         overflow: 'hidden',
         border: '1px solid rgba(139, 92, 246, 0.2)',
       }}
+      p={{ base: 'lg', sm: 'xl', md: '3rem 2rem' }}
     >
-      <Group align="center" gap="xl" wrap="nowrap" style={{ position: 'relative', zIndex: 2 }}>
+      {/* Mobile: Stack, Desktop: Horizontal */}
+      <Stack 
+        gap={{ base: 'md', sm: 'lg' }}
+        style={{ position: 'relative', zIndex: 2 }}
+        hiddenFrom="md"
+      >
+        {/* Mobile Layout - Centered */}
+        <Stack align="center" gap="md">
+          <Image
+            src={currentBook.cover}
+            alt={currentBook.title}
+            h={200}
+            w={133}
+            radius="md"
+            style={{
+              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(139, 92, 246, 0.3)',
+            }}
+          />
+          
+          <Badge 
+            size="md" 
+            variant="filled"
+            style={{ 
+              backgroundColor: 'rgba(139, 92, 246, 0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(139, 92, 246, 0.4)',
+            }}
+          >
+            CONTINUE READING
+          </Badge>
+        </Stack>
+
+        <Stack gap="sm" align="center" ta="center">
+          <Title order={1} size="1.75rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
+            {currentBook.title}
+          </Title>
+          
+          <Text size="lg" c="#AAAAAA">
+            by {currentBook.author}
+          </Text>
+
+          <Group gap="xs" justify="center">
+            <Badge variant="light" color="violet">
+              {currentBook.genre}
+            </Badge>
+            <Text size="sm" c="dimmed">
+              {currentBook.progress}% complete
+            </Text>
+          </Group>
+        </Stack>
+
+        <Stack gap="sm" mt="xs">
+          <Button
+            size="md"
+            variant="filled"
+            color="cyan"
+            leftSection={<IconPlayerPlay size={18} />}
+            onClick={() => router.push('/dashboard/library')}
+            style={{ fontWeight: 600 }}
+            fullWidth
+          >
+            Continue Reading
+          </Button>
+          <Button
+            size="md"
+            variant="outline"
+            c="#FFFFFF"
+            leftSection={<IconSparkles size={18} />}
+            style={{ 
+              borderColor: '#FFFFFF',
+              fontWeight: 600
+            }}
+            onClick={() => router.push('/dashboard/library')}
+            fullWidth
+          >
+            Discover More
+          </Button>
+        </Stack>
+      </Stack>
+
+      {/* Desktop Layout - Horizontal */}
+      <Group 
+        align="center" 
+        gap="xl" 
+        wrap="nowrap" 
+        style={{ position: 'relative', zIndex: 2 }}
+        visibleFrom="md"
+      >
         {/* Book Cover */}
         <Box
           style={{
