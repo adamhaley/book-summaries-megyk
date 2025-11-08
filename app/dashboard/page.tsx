@@ -118,14 +118,20 @@ function StatsCard({
 }
 
 // Hero section - consumer-friendly book showcase
-function HeroSection({ router }: { router: any }) {
-  // Placeholder data - in production this would come from user's current reading
-  const currentBook = {
-    title: "Atomic Habits",
-    author: "James Clear",
-    cover: "https://placehold.co/300x450/8B5CF6/ffffff?text=Atomic+Habits",
-    progress: 68,
-    genre: "Self-Help"
+function HeroSection({ router, book }: { router: any; book?: Book }) {
+  // Default placeholder if no book provided
+  const currentBook = book ? {
+    title: book.title,
+    author: book.author,
+    cover: book.cover_image_url || "https://placehold.co/300x450/7C3AED/FBBF24?text=" + encodeURIComponent(book.title),
+    progress: 45,
+    genre: book.genre || "General"
+  } : {
+    title: "$100M Offers",
+    author: "Alex Hormozi",
+    cover: "https://placehold.co/300x450/7C3AED/FBBF24?text=$100M+OFFERS&font=roboto",
+    progress: 45,
+    genre: "Business"
   };
 
   return (
@@ -147,16 +153,28 @@ function HeroSection({ router }: { router: any }) {
       >
         {/* Mobile Layout - Centered */}
         <Stack align="center" gap="md">
-          <Image
-            src={currentBook.cover}
-            alt={currentBook.title}
-            h={200}
-            w={133}
-            radius="md"
+          <Box
             style={{
-              boxShadow: '0 12px 40px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(139, 92, 246, 0.3)',
+              perspective: '1200px',
+              position: 'relative',
             }}
-          />
+          >
+            <Image
+              src={currentBook.cover}
+              alt={currentBook.title}
+              h={260}
+              w={173}
+              radius="md"
+              style={{
+                transform: 'rotateX(-22deg) rotateY(12deg)',
+                transformStyle: 'preserve-3d',
+                boxShadow: 
+                  '8px -6px 24px rgba(0, 0, 0, 0.6), ' +
+                  '12px -10px 40px rgba(0, 0, 0, 0.4), ' +
+                  '4px -3px 12px rgba(139, 92, 246, 0.3)',
+              }}
+            />
+          </Box>
           
           <Badge 
             size="md" 
@@ -233,6 +251,7 @@ function HeroSection({ router }: { router: any }) {
             flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
+            perspective: '1500px',
           }}
         >
           <Image
@@ -242,7 +261,12 @@ function HeroSection({ router }: { router: any }) {
             width={187}
             radius="md"
             style={{
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(139, 92, 246, 0.3)',
+              transform: 'rotateX(-25deg) rotateY(15deg)',
+              transformStyle: 'preserve-3d',
+              boxShadow: 
+                '12px -10px 35px rgba(0, 0, 0, 0.7), ' +
+                '18px -15px 60px rgba(0, 0, 0, 0.5), ' +
+                '6px -5px 18px rgba(139, 92, 246, 0.4)',
             }}
           />
         </Box>
@@ -500,7 +524,7 @@ export default function DashboardPage() {
       <Title order={1} c="#FFFFFF">For You</Title>
 
       {/* Hero Section - Continue Reading */}
-      <HeroSection router={router} />
+      <HeroSection router={router} book={recommendedBooks[0]} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
