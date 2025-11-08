@@ -154,7 +154,7 @@ export default function Home() {
             <Text size="xl" c="#AAAAAA" maw={600}>
               Discover your next great read from our curated collection
             </Text>
-            <Group gap="lg">
+            <Group gap="lg" justify="center">
               <Button
                 size="lg"
                 variant="filled"
