@@ -18,6 +18,7 @@ import {
   Button,
   Box,
   Image,
+  Container,
 } from '@mantine/core';
 import {
   IconBook,
@@ -491,11 +492,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <Stack gap="xl">
-      <Title order={1} c="#FFFFFF">For You</Title>
+    <Container size="xl" pt="0" pb="xl">
+      <Stack gap="xl">
+        <Title order={1} c="#FFFFFF">For You</Title>
 
-      {/* Hero Section - Continue Reading */}
-      <HeroSection router={router} book={recommendedBooks[0]} />
+        {/* Hero Section - Continue Reading */}
+        <HeroSection router={router} book={recommendedBooks[0]} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
@@ -567,6 +569,7 @@ export default function DashboardPage() {
           </SimpleGrid>
         </Box>
       )}
-    </Stack>
+      </Stack>
+    </Container>
   );
 }
