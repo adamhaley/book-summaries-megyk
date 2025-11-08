@@ -6,9 +6,10 @@
 }
 
 .carouselTitle {
-  color: var(--mantine-color-text);
+  color: #FFFFFF;
   margin-bottom: 2rem;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 2rem;
 }
 
 .carouselWrapper {
@@ -60,7 +61,7 @@
 
 }
 
-/* Book Card Styling */
+/* Book Card Styling - High Contrast */
 .bookCard {
   position: relative;
   height: 450px;
@@ -69,12 +70,19 @@
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #0a0a0a;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .bookCard:hover {
   transform: scale(1.05);
+  border-color: rgba(0, 210, 255, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.6),
+    0 4px 16px rgba(0, 210, 255, 0.2);
 }
 
 .cardContent {
@@ -144,14 +152,18 @@
 
 .generateButton {
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 210, 255, 0.5);
   transition: all 0.2s ease;
+  background: rgba(0, 210, 255, 0.9) !important;
+  color: #000000 !important;
+  font-weight: 600;
 }
 
 .generateButton:hover {
-  background: rgba(255, 255, 255, 1) !important;
+  background: rgba(0, 210, 255, 1) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);
+  border-color: rgba(0, 210, 255, 1);
 }
 
 /* Custom Controls */
@@ -168,10 +180,10 @@
 }
 
 .control {
-  background: rgba(0, 0, 0, 0.5);
-  border: none;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  color: white;
+  color: #FFFFFF;
   width: 50px;
   height: 50px;
   display: flex;
@@ -194,7 +206,9 @@
 }
 
 .control:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 210, 255, 0.2);
+  border-color: rgba(0, 210, 255, 0.6);
+  color: #00D2FF;
 }
 
 .control:hover:first-child {
@@ -247,18 +261,21 @@
   }
 }
 
-/* Dark mode adjustments */
+/* Dark mode is now default - high contrast everywhere */
 @media (prefers-color-scheme: dark) {
   .carouselTitle {
-    color: var(--mantine-color-white);
+    color: #FFFFFF;
   }
   
-  .control {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+  .bookCard {
+    box-shadow: 
+      0 10px 32px rgba(0, 0, 0, 0.6),
+      0 4px 12px rgba(0, 0, 0, 0.4);
   }
   
-  .control:hover {
-    background: rgba(255, 255, 255, 0.2);
+  .bookCard:hover {
+    box-shadow: 
+      0 16px 48px rgba(0, 0, 0, 0.8),
+      0 6px 20px rgba(0, 210, 255, 0.3);
   }
 }

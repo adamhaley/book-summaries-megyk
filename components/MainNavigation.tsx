@@ -57,14 +57,23 @@ export function MainNavigation() {
 
   return (
     <>
-      <nav style={{ borderBottom: '1px solid var(--mantine-color-default-border)', height: '60px' }}>
+      <nav style={{ 
+        borderBottom: '1px solid #2a2a2a', 
+        height: '60px',
+        backgroundColor: '#000000'
+      }}>
         <Group h="100%" px="md" justify="space-between">
           <Text
             size="xl"
-            fw={700}
+            fw={800}
             component="a"
             href="/"
-            style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+            style={{ 
+              textDecoration: 'none', 
+              color: '#FFFFFF', 
+              cursor: 'pointer',
+              transition: 'color 0.2s ease'
+            }}
             className="hover:opacity-80"
           >
             Megyk Books
@@ -93,6 +102,11 @@ export function MainNavigation() {
               variant="default"
               onClick={() => toggleColorScheme()}
               size="lg"
+              style={{
+                backgroundColor: '#0a0a0a',
+                border: '1px solid #2a2a2a',
+                color: '#FFFFFF'
+              }}
             >
               {mounted && colorScheme === 'dark' ? (
                 <IconSun size={20} />
@@ -107,6 +121,11 @@ export function MainNavigation() {
                 size="lg"
                 onClick={handleLogout}
                 title="Logout"
+                style={{
+                  backgroundColor: '#0a0a0a',
+                  border: '1px solid #2a2a2a',
+                  color: '#FFFFFF'
+                }}
               >
                 <IconLogout size={20} />
               </ActionIcon>
@@ -119,6 +138,11 @@ export function MainNavigation() {
               variant="default"
               onClick={() => toggleColorScheme()}
               size="lg"
+              style={{
+                backgroundColor: '#0a0a0a',
+                border: '1px solid #2a2a2a',
+                color: '#FFFFFF'
+              }}
             >
               {mounted && colorScheme === 'dark' ? (
                 <IconSun size={20} />
@@ -126,7 +150,12 @@ export function MainNavigation() {
                 <IconMoon size={20} />
               )}
             </ActionIcon>
-            <Burger opened={opened} onClick={toggle} size="sm" />
+            <Burger 
+              opened={opened} 
+              onClick={toggle} 
+              size="sm"
+              color="#FFFFFF"
+            />
           </Group>
         </Group>
       </nav>

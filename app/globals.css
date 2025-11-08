@@ -22,7 +22,7 @@ body:has(.mantine-AppShell-root) {
   overflow: hidden;
 }
 
-/* Dark mode true black background */
+/* Dark mode true black background - High Contrast */
 [data-mantine-color-scheme='dark'] {
   --mantine-color-body: #000000;
   --mantine-color-default: #000000;
@@ -30,6 +30,16 @@ body:has(.mantine-AppShell-root) {
   --mantine-color-dark-8: #0a0a0a;
   --mantine-color-dark-7: #1a1a1a;
   --mantine-color-dark-6: #2a2a2a;
+  --mantine-color-dark-5: #3a3a3a;
+  --mantine-color-dark-4: #4a4a4a;
+  
+  /* High contrast text */
+  --mantine-color-text: #FFFFFF;
+  --mantine-color-dimmed: #AAAAAA;
+  
+  /* Card backgrounds - subtle lift from true black */
+  --mantine-color-default-bg: #0a0a0a;
+  --mantine-color-default-border: #2a2a2a;
 }
 
 /* Force AppShell backgrounds to true black */
@@ -38,6 +48,35 @@ body:has(.mantine-AppShell-root) {
 [data-mantine-color-scheme='dark'] .mantine-AppShell-header,
 [data-mantine-color-scheme='dark'] .mantine-AppShell-navbar {
   background-color: #000000;
+}
+
+/* High contrast cards and surfaces */
+[data-mantine-color-scheme='dark'] .mantine-Card-root {
+  background-color: #0a0a0a;
+  border-color: #2a2a2a;
+}
+
+/* Pure white text for high contrast */
+[data-mantine-color-scheme='dark'] .mantine-Title-root,
+[data-mantine-color-scheme='dark'] h1,
+[data-mantine-color-scheme='dark'] h2,
+[data-mantine-color-scheme='dark'] h3 {
+  color: #FFFFFF;
+}
+
+/* Buttons - vibrant on black */
+[data-mantine-color-scheme='dark'] .mantine-Button-root[data-variant='filled'] {
+  box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3);
+}
+
+[data-mantine-color-scheme='dark'] .mantine-Button-root[data-variant='filled']:hover {
+  box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Badges - higher contrast */
+[data-mantine-color-scheme='dark'] .mantine-Badge-root {
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Fix AppShell height and prevent extra scroll space */

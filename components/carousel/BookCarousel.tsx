@@ -165,17 +165,20 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
               {book.genre && (
                 <Badge 
                   variant="filled" 
-                  color="rgba(255, 255, 255, 0.2)"
-                  c="white"
+                  color="dark"
+                  c="#FFFFFF"
                   size="sm"
+                  style={{ 
+                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                  }}
                 >
                   {book.genre}
                 </Badge>
               )}
               <Button
                 variant="filled"
-                color="rgba(255, 255, 255, 0.9)"
-                c="dark"
+                color="cyan"
                 leftSection={<IconSparkles size={16} />}
                 onClick={() => handleGenerateSummary(book)}
                 size="sm"
