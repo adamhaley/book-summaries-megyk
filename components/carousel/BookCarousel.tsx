@@ -184,7 +184,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                 size="sm"
                 className={styles.generateButton}
               >
-                Generate Summary
+                Get Summary
               </Button>
             </Stack>
           </div>

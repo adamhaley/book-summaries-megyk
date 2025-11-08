@@ -174,11 +174,11 @@ export default function LibraryPage() {
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
-          <Title order={1} mb="xs">
-            Book Library
+          <Title order={1} mb="xs" c="#FFFFFF">
+            Discover Books
           </Title>
-          <Text size="lg" c="dimmed">
-            Browse our collection of books and generate personalized summaries
+          <Text size="lg" c="#AAAAAA">
+            Explore our collection and get instant summaries
           </Text>
         </div>
 
@@ -254,7 +254,7 @@ export default function LibraryPage() {
                           onClick={() => handleGenerateSummary(book)}
                           style={{ flexShrink: 0 }}
                         >
-                          Generate Summary
+                          Get Summary
                         </Button>
                       </Group>
                     </Stack>
@@ -370,7 +370,7 @@ export default function LibraryPage() {
                           leftSection={<IconSparkles size={14} />}
                           onClick={() => handleGenerateSummary(book)}
                         >
-                          Generate Summary
+                          Get Summary
                         </Button>
                       </Table.Td>
                     </Table.Tr>

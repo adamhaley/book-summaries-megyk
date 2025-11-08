@@ -16,6 +16,8 @@ import {
   Center,
   Alert,
   Button,
+  Box,
+  Image,
 } from '@mantine/core';
 import {
   IconBook,
@@ -23,9 +25,13 @@ import {
   IconClock,
   IconTrendingUp,
   IconAlertCircle,
+  IconPlayerPlay,
+  IconSparkles,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences';
+import { BookCarousel } from '@/components/carousel/BookCarousel';
+import { Book } from '@/lib/types/books';
 
 interface DashboardStats {
   totalBooks: number;
@@ -111,38 +117,123 @@ function StatsCard({
   );
 }
 
-// Current reading card (placeholder)
-function CurrentReadingCard() {
+// Hero section - consumer-friendly book showcase
+function HeroSection({ router }: { router: any }) {
+  // Placeholder data - in production this would come from user's current reading
+  const currentBook = {
+    title: "Atomic Habits",
+    author: "James Clear",
+    cover: "https://placehold.co/300x450/8B5CF6/ffffff?text=Atomic+Habits",
+    progress: 68,
+    genre: "Self-Help"
+  };
+
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Stack gap="md">
-        <Group justify="space-between">
-          <Text fw={500} size="lg">
-            Current Reading
-          </Text>
-          <Badge size="sm" color="blue" variant="light">
-            IN PROGRESS
+    <Box 
+      style={{
+        background: 'linear-gradient(135deg, #1a1a1a 0%, #2a1545 100%)',
+        padding: '3rem 2rem',
+        borderRadius: '16px',
+        position: 'relative',
+        overflow: 'hidden',
+        border: '1px solid rgba(139, 92, 246, 0.2)',
+      }}
+    >
+      <Group align="center" gap="xl" wrap="nowrap" style={{ position: 'relative', zIndex: 2 }}>
+        {/* Book Cover */}
+        <Box
+          style={{
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <Image
+            src={currentBook.cover}
+            alt={currentBook.title}
+            height={280}
+            width={187}
+            radius="md"
+            style={{
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(139, 92, 246, 0.3)',
+            }}
+          />
+        </Box>
+
+        {/* Book Info */}
+        <Stack gap="md" style={{ flex: 1, minWidth: 0 }}>
+          <Badge 
+            size="lg" 
+            variant="filled"
+            style={{ 
+              backgroundColor: 'rgba(139, 92, 246, 0.2)',
+              color: '#FFFFFF',
+              border: '1px solid rgba(139, 92, 246, 0.4)',
+              width: 'fit-content'
+            }}
+          >
+            CONTINUE READING
           </Badge>
-        </Group>
-
-        <Stack gap="sm">
-          <Text fw={600} size="md">
-            Atomic Habits by James Clear
+          
+          <Title order={1} size="2.5rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
+            {currentBook.title}
+          </Title>
+          
+          <Text size="xl" c="#AAAAAA">
+            by {currentBook.author}
           </Text>
 
-          <Group justify="space-between">
+          <Group gap="xs">
+            <Badge variant="light" color="violet">
+              {currentBook.genre}
+            </Badge>
             <Text size="sm" c="dimmed">
-              Progress
-            </Text>
-            <Text size="sm" fw={500}>
-              68%
+              {currentBook.progress}% complete
             </Text>
           </Group>
 
-          <Progress value={68} color="blue" size="md" radius="md" />
+          <Group gap="md" mt="md">
+            <Button
+              size="lg"
+              variant="filled"
+              color="cyan"
+              leftSection={<IconPlayerPlay size={20} />}
+              onClick={() => router.push('/dashboard/library')}
+              style={{ fontWeight: 600 }}
+            >
+              Continue Reading
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              c="#FFFFFF"
+              leftSection={<IconSparkles size={20} />}
+              style={{ 
+                borderColor: '#FFFFFF',
+                fontWeight: 600
+              }}
+              onClick={() => router.push('/dashboard/library')}
+            >
+              Discover More
+            </Button>
+          </Group>
         </Stack>
-      </Stack>
-    </Card>
+      </Group>
+
+      {/* Subtle background decoration */}
+      <Box
+        style={{
+          position: 'absolute',
+          top: '-50px',
+          right: '-50px',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+        }}
+      />
+    </Box>
   );
 }
 
@@ -255,6 +346,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recentSummaries, setRecentSummaries] = useState<RecentSummary[]>([]);
+  const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -267,7 +359,7 @@ export default function DashboardPage() {
     setError(null);
 
     try {
-      // Fetch stats
+      // Fetch stats (keeping for now, but not displaying prominently)
       const statsResponse = await fetch('/api/v1/dashboard/stats');
       if (!statsResponse.ok) {
         throw new Error('Failed to fetch dashboard stats');
@@ -282,6 +374,13 @@ export default function DashboardPage() {
       }
       const summariesData = await summariesResponse.json();
       setRecentSummaries(summariesData.summaries || []);
+
+      // Fetch recommended books for carousel
+      const booksResponse = await fetch('/api/v1/books?limit=12');
+      if (booksResponse.ok) {
+        const booksData = await booksResponse.json();
+        setRecommendedBooks(booksData.books || []);
+      }
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
       setError('Failed to load dashboard data');
@@ -310,60 +409,91 @@ export default function DashboardPage() {
   }
 
   return (
-    <Stack gap="lg">
-      <Title order={1}>Dashboard</Title>
+    <Stack gap="xl">
+      <Title order={1} c="#FFFFFF">For You</Title>
 
-      {/* Stats Grid */}
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
-        <StatsCard
-          title="Total Books"
-          value={stats?.totalBooks || 0}
-          icon={IconBook}
-          color="blue"
-          description={
-            stats?.monthBooks
-              ? `+${stats.monthBooks} this month`
-              : 'Available in library'
-          }
-          onClick={() => router.push('/dashboard/library')}
-        />
-        <StatsCard
-          title="Summaries Generated"
-          value={stats?.summariesRead || 0}
-          icon={IconBookmark}
-          color="green"
-          description={
-            stats?.weekSummaries
-              ? `+${stats.weekSummaries} this week`
-              : 'Start generating!'
-          }
-          onClick={() => router.push('/dashboard/summaries')}
-        />
-        <StatsCard
-          title="Reading Time"
-          value={stats?.readingTime || '0m'}
-          icon={IconClock}
-          color="orange"
-          description="This month"
-        />
-        <StatsCard
-          title="Streak"
-          value={stats?.streak ? `${stats.streak} ${stats.streak === 1 ? 'day' : 'days'}` : '0 days'}
-          icon={IconTrendingUp}
-          color="violet"
-          description={stats?.streak ? 'Keep it up!' : 'Start your streak!'}
-        />
-      </SimpleGrid>
+      {/* Hero Section - Continue Reading */}
+      <HeroSection router={router} />
 
-      {/* Main Content Grid */}
-      <Grid>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <CurrentReadingCard />
-        </Grid.Col>
-        <Grid.Col span={{ base: 12, md: 6 }}>
-          <RecentSummariesCard summaries={recentSummaries} />
-        </Grid.Col>
-      </Grid>
+      {/* Recommended Books Carousel */}
+      {recommendedBooks.length > 0 && (
+        <Box>
+          <Stack gap="md" mb="md">
+            <Title order={2} c="#FFFFFF">Recommended For You</Title>
+            <Text size="lg" c="#AAAAAA">
+              Handpicked books based on your interests
+            </Text>
+          </Stack>
+          <BookCarousel 
+            books={recommendedBooks}
+            showTitle={false}
+          />
+        </Box>
+      )}
+
+      {/* Recent Summaries - More compact, less prominent */}
+      {recentSummaries.length > 0 && (
+        <Box>
+          <Stack gap="md" mb="md">
+            <Group justify="space-between" align="center">
+              <Title order={2} c="#FFFFFF">Your Collection</Title>
+              <Button
+                variant="subtle"
+                color="cyan"
+                onClick={() => router.push('/dashboard/summaries')}
+              >
+                View All
+              </Button>
+            </Group>
+          </Stack>
+          <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+            {recentSummaries.slice(0, 3).map((summary) => (
+              <Card 
+                key={summary.id} 
+                padding="lg" 
+                radius="md" 
+                withBorder
+                style={{
+                  backgroundColor: '#0a0a0a',
+                  borderColor: '#2a2a2a',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(0, 210, 255, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#2a2a2a';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onClick={() => router.push('/dashboard/summaries')}
+              >
+                <Stack gap="sm">
+                  <Group justify="space-between" wrap="nowrap" align="flex-start">
+                    <Stack gap={4} style={{ flex: 1 }}>
+                      <Text size="lg" fw={600} lineClamp={2} c="#FFFFFF">
+                        {summary.book?.title || 'Unknown Book'}
+                      </Text>
+                      <Text size="sm" c="#AAAAAA">
+                        by {summary.book?.author || 'Unknown Author'}
+                      </Text>
+                    </Stack>
+                  </Group>
+                  <Group gap="xs">
+                    <Badge size="sm" variant="light" color="green">
+                      {SUMMARY_STYLE_OPTIONS.find(opt => opt.value === summary.style)?.label || summary.style}
+                    </Badge>
+                    <Badge size="sm" variant="light" color="blue">
+                      {SUMMARY_LENGTH_OPTIONS.find(opt => opt.value === summary.length)?.label || summary.length}
+                    </Badge>
+                  </Group>
+                </Stack>
+              </Card>
+            ))}
+          </SimpleGrid>
+        </Box>
+      )}
     </Stack>
   );
 }
