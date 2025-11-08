@@ -187,8 +187,8 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           </Badge>
         </Stack>
 
-        <Stack gap="sm" align="flex-end">
-          <Title order={1} size="1.75rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
+        <Stack gap="sm" align="center">
+          <Title order={1} size="1.75rem" c="#FFFFFF" style={{ lineHeight: 1.2, textAlign: 'left' }}>
             {currentBook.title}
           </Title>
           
@@ -270,7 +270,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             FEATURED
           </Badge>
           
-          <Title order={1} size="2.5rem" c="#FFFFFF" style={{ lineHeight: 1.2 }}>
+          <Title order={1} size="2.5rem" c="#FFFFFF" style={{ lineHeight: 1.2, textAlign: 'left' }}>
             {currentBook.title}
           </Title>
           
