@@ -74,6 +74,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       label={item.label}
       leftSection={<item.icon size={20} stroke={1.5} />}
       href={item.href}
+      color="cyan"
     />
   ));
 

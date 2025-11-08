@@ -167,7 +167,12 @@ export function PreferencesForm() {
               }))}
               size="lg"
               styles={{
-                markLabel: { marginTop: 8, whiteSpace: 'nowrap' }
+                markLabel: { marginTop: 8, whiteSpace: 'nowrap' },
+                bar: { backgroundColor: '#00D2FF' },
+                thumb: { 
+                  borderColor: '#00D2FF',
+                  backgroundColor: '#00D2FF'
+                }
               }}
             />
           </Box>
@@ -212,7 +217,12 @@ export function PreferencesForm() {
               }))}
               size="lg"
               styles={{
-                markLabel: { marginTop: 8, whiteSpace: 'nowrap' }
+                markLabel: { marginTop: 8, whiteSpace: 'nowrap' },
+                bar: { backgroundColor: '#00D2FF' },
+                thumb: { 
+                  borderColor: '#00D2FF',
+                  backgroundColor: '#00D2FF'
+                }
               }}
             />
           </Box>
