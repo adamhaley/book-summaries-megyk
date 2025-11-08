@@ -226,8 +226,13 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .carouselContainer {
+    padding: 2rem 0.5rem; /* Reduced horizontal padding */
+  }
+  
   .carouselWrapper {
-    margin: 0 -1rem;
+    margin: 0 -0.5rem;
+    padding: 0 2.5rem; /* Reduced from 4rem for tighter mobile layout */
   }
   
   .slide {
@@ -250,6 +255,15 @@
 }
 
 @media (max-width: 480px) {
+  .carouselContainer {
+    padding: 2rem 0.25rem; /* Even tighter on small phones */
+  }
+  
+  .carouselWrapper {
+    margin: 0 -0.25rem;
+    padding: 0 2rem; /* Less padding for arrow space */
+  }
+  
   .bookCard {
     height: 350px;
     width: 220px;
