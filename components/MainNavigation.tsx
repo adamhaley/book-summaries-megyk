@@ -103,7 +103,7 @@ export function MainNavigation() {
               onClick={() => toggleColorScheme()}
               size="lg"
               style={{
-                backgroundColor: '#0a0a0a',
+                backgroundColor: '#000000',
                 border: '1px solid #2a2a2a',
                 color: '#FFFFFF'
               }}
@@ -122,7 +122,7 @@ export function MainNavigation() {
                 onClick={handleLogout}
                 title="Logout"
                 style={{
-                  backgroundColor: '#0a0a0a',
+                  backgroundColor: '#000000',
                   border: '1px solid #2a2a2a',
                   color: '#FFFFFF'
                 }}
@@ -139,7 +139,7 @@ export function MainNavigation() {
               onClick={() => toggleColorScheme()}
               size="lg"
               style={{
-                backgroundColor: '#0a0a0a',
+                backgroundColor: '#000000',
                 border: '1px solid #2a2a2a',
                 color: '#FFFFFF'
               }}

@@ -541,7 +541,7 @@ export default function DashboardPage() {
                 radius="md" 
                 withBorder
                 style={{
-                  backgroundColor: '#0a0a0a',
+                  backgroundColor: '#000000',
                   borderColor: '#2a2a2a',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',

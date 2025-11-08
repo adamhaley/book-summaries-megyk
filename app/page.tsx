@@ -195,7 +195,7 @@ export default function Home() {
       <Box 
         py="xl" 
         style={{ 
-          backgroundColor: '#0a0a0a',
+          backgroundColor: '#000000',
           borderTop: '1px solid #2a2a2a'
         }}
       >
