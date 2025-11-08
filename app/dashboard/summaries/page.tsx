@@ -272,7 +272,7 @@ export default function SummariesPage() {
                 <Card key={idx} shadow="sm" padding="0" radius="md" withBorder>
                   <Stack gap="md">
                     {/* Book Header with Cover */}
-                    <div style={{ padding: '20px 20px 12px 20px', borderBottom: '2px solid var(--mantine-color-gray-3)' }}>
+                    <div style={{ padding: '20px 20px 12px 20px', borderBottom: '1px solid #1a1a1a' }}>
                       <Group align="flex-start" gap="lg" wrap="nowrap">
                         <Image
                           src={getBookCoverPlaceholder(bookGroup.book)}

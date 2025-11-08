@@ -79,6 +79,29 @@ body:has(.mantine-AppShell-root) {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+/* Tables - subtle borders for high contrast theme */
+[data-mantine-color-scheme='dark'] .mantine-Table-table {
+  border-color: #1a1a1a;
+}
+
+[data-mantine-color-scheme='dark'] .mantine-Table-tr {
+  border-color: #1a1a1a;
+}
+
+[data-mantine-color-scheme='dark'] .mantine-Table-thead {
+  border-color: #1a1a1a;
+}
+
+[data-mantine-color-scheme='dark'] .mantine-Table-th {
+  border-color: #1a1a1a;
+  color: #AAAAAA;
+  font-weight: 600;
+}
+
+[data-mantine-color-scheme='dark'] .mantine-Table-td {
+  border-color: #1a1a1a;
+}
+
 /* Fix AppShell height and prevent extra scroll space */
 .mantine-AppShell-root {
   position: fixed;

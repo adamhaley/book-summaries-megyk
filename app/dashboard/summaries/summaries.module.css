@@ -8,7 +8,7 @@
 
 /* Book cover styles */
 .bookCover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   flex-shrink: 0;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .bookCoverMobile img {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Switch to desktop table view at a larger breakpoint to avoid button cutoff */
