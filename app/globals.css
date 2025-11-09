@@ -64,12 +64,34 @@ body:has(.mantine-AppShell-root) {
   color: #FFFFFF;
 }
 
-/* Right-align H1 and H2 headers for editorial feel */
+/* Right-align H1 and H2 headers for editorial feel on desktop */
+/* Center on mobile for better UX */
 [data-mantine-color-scheme='dark'] h1,
 [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='1'],
 [data-mantine-color-scheme='dark'] h2,
 [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='2'] {
-  text-align: right;
+  text-align: center;
+}
+
+/* Subheadings follow same alignment pattern */
+[data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='1'] + .mantine-Text-root,
+[data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='2'] + .mantine-Text-root {
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  [data-mantine-color-scheme='dark'] h1,
+  [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='1'],
+  [data-mantine-color-scheme='dark'] h2,
+  [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='2'] {
+    text-align: right;
+  }
+  
+  /* Subheadings also right-aligned on desktop */
+  [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='1'] + .mantine-Text-root,
+  [data-mantine-color-scheme='dark'] .mantine-Title-root[data-order='2'] + .mantine-Text-root {
+    text-align: right;
+  }
 }
 
 /* Buttons - vibrant on black */

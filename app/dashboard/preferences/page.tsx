@@ -9,7 +9,7 @@ export default function PreferencesPage() {
           <Title order={1} mb="xs">
             Summary Preferences
           </Title>
-          <Text size="lg" c="dimmed" ta="right">
+          <Text size="lg" c="dimmed">
             Customize how your book summaries are generated and presented
           </Text>
         </div>

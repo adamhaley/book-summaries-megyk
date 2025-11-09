@@ -105,7 +105,7 @@ export default function ProfilePage() {
           <Title order={1} mb="xs">
             Profile Settings
           </Title>
-          <Text size="lg" c="dimmed" ta="right">
+          <Text size="lg" c="dimmed">
             Manage your account email and password
           </Text>
         </div>

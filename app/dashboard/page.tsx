@@ -503,8 +503,8 @@ export default function DashboardPage() {
       {recommendedBooks.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Title order={2} c="#FFFFFF" ta="right">Recommended For You</Title>
-            <Text size="lg" c="#AAAAAA" ta="right">
+            <Title order={2} c="#FFFFFF">Recommended For You</Title>
+            <Text size="lg" c="#AAAAAA">
               Handpicked books based on your interests
             </Text>
           </Stack>
@@ -519,7 +519,7 @@ export default function DashboardPage() {
       {recentSummaries.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Title order={2} c="#FFFFFF" ta="right">Your Collection</Title>
+            <Title order={2} c="#FFFFFF">Your Collection</Title>
           </Stack>
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
             {recentSummaries.slice(0, 3).map((summary) => (

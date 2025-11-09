@@ -177,7 +177,7 @@ export default function LibraryPage() {
           <Title order={1} mb="xs" c="#FFFFFF">
             Discover Books
           </Title>
-          <Text size="lg" c="#AAAAAA" ta="right">
+          <Text size="lg" c="#AAAAAA">
             Explore our collection and get instant summaries
           </Text>
         </div>

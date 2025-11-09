@@ -152,7 +152,7 @@ export default function SummariesPage() {
           <Title order={1} mb="xs" c="#FFFFFF">
             My Collection
           </Title>
-          <Text size="lg" c="#AAAAAA" ta="right">
+          <Text size="lg" c="#AAAAAA">
             Access all your personalized book summaries
           </Text>
         </div>
