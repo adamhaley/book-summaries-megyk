@@ -4,25 +4,18 @@ import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   AppShell,
-  Burger,
   Group,
   Text,
   NavLink,
-  useMantineTheme,
   ActionIcon,
-  useMantineColorScheme,
   UnstyledButton,
-  Stack,
   Box,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import {
   IconHome,
   IconBook,
   IconUser,
   IconLogout,
-  IconSun,
-  IconMoon,
   IconBookmark,
   IconAdjustments,
 } from '@tabler/icons-react';
@@ -41,19 +34,14 @@ const navigation = [
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [opened, { toggle }] = useDisclosure();
-  const [mounted, setMounted] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [showMobileNav, setShowMobileNav] = useState(true);
   const lastScrollY = useRef(0);
   const pathname = usePathname();
   const router = useRouter();
-  const theme = useMantineTheme();
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  // Prevent hydration mismatch and load user data
+  // Load user data
   useEffect(() => {
-    setMounted(true);
     loadUserData();
   }, []);
 
@@ -145,22 +133,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   {userEmail}
                 </Text>
               )}
-              <ActionIcon
-                variant="default"
-                onClick={() => toggleColorScheme()}
-                size="lg"
-                style={{
-                  backgroundColor: '#000000',
-                  border: '1px solid #2a2a2a',
-                  color: '#FFFFFF'
-                }}
-              >
-                {mounted && colorScheme === 'dark' ? (
-                  <IconSun size={20} />
-                ) : (
-                  <IconMoon size={20} />
-                )}
-              </ActionIcon>
               <ActionIcon 
                 variant="default" 
                 size="lg" 

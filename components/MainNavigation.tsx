@@ -6,26 +6,16 @@ import {
   Group,
   Text,
   ActionIcon,
-  useMantineColorScheme,
-  Burger,
-  Drawer,
-  Stack,
-  Button,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import {
-  IconSun,
-  IconMoon,
   IconLogout,
 } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
 
 export function MainNavigation() {
   const [mounted, setMounted] = useState(false);
-  const [opened, { toggle, close }] = useDisclosure(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const router = useRouter();
 
   useEffect(() => {
@@ -98,23 +88,6 @@ export function MainNavigation() {
               </Text>
             )}
 
-            <ActionIcon
-              variant="default"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-              style={{
-                backgroundColor: '#000000',
-                border: '1px solid #2a2a2a',
-                color: '#FFFFFF'
-              }}
-            >
-              {mounted && colorScheme === 'dark' ? (
-                <IconSun size={20} />
-              ) : (
-                <IconMoon size={20} />
-              )}
-            </ActionIcon>
-
             {isAuthenticated && (
               <ActionIcon
                 variant="default"
@@ -132,82 +105,13 @@ export function MainNavigation() {
             )}
           </Group>
 
-          {/* Mobile Navigation */}
+          {/* Mobile Navigation - Space for logo */}
           <Group gap="sm" hiddenFrom="sm">
-            <ActionIcon
-              variant="default"
-              onClick={() => toggleColorScheme()}
-              size="lg"
-              style={{
-                backgroundColor: '#000000',
-                border: '1px solid #2a2a2a',
-                color: '#FFFFFF'
-              }}
-            >
-              {mounted && colorScheme === 'dark' ? (
-                <IconSun size={20} />
-              ) : (
-                <IconMoon size={20} />
-              )}
-            </ActionIcon>
-            <Burger 
-              opened={opened} 
-              onClick={toggle} 
-              size="sm"
-              color="#FFFFFF"
-            />
+            {/* Logo will go here */}
           </Group>
         </Group>
       </nav>
 
-      {/* Mobile Drawer */}
-      <Drawer
-        opened={opened}
-        onClose={close}
-        size="xs"
-        padding="md"
-        title="Navigation"
-        position="right"
-      >
-        <Stack gap="md">
-          {isAuthenticated && userEmail && (
-            <Text size="sm" c="dimmed">
-              {userEmail}
-            </Text>
-          )}
-
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={close}
-              style={{
-                color: 'inherit',
-                textDecoration: 'none',
-                fontSize: '1.125rem',
-                fontWeight: 500
-              }}
-              className="hover:opacity-80"
-            >
-              {link.label}
-            </a>
-          ))}
-
-          {isAuthenticated && (
-            <Button
-              variant="default"
-              leftSection={<IconLogout size={16} />}
-              onClick={() => {
-                close();
-                handleLogout();
-              }}
-              fullWidth
-            >
-              Logout
-            </Button>
-          )}
-        </Stack>
-      </Drawer>
     </>
   );
 }
