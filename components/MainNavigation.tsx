@@ -53,21 +53,22 @@ export function MainNavigation() {
         backgroundColor: '#000000'
       }}>
         <Group h="100%" px="md" justify="space-between">
-          <Text
-            size="xl"
-            fw={800}
-            component="a"
+          <a
             href="/"
             style={{ 
               textDecoration: 'none', 
-              color: '#FFFFFF', 
               cursor: 'pointer',
-              transition: 'color 0.2s ease'
+              display: 'flex',
+              alignItems: 'center',
             }}
             className="hover:opacity-80"
           >
-            Megyk Books
-          </Text>
+            <img 
+              src="/logo.png" 
+              alt="Megyk Books" 
+              style={{ height: '40px', width: 'auto' }}
+            />
+          </a>
 
           {/* Desktop Navigation */}
           <Group gap="md" visibleFrom="sm">

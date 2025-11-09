@@ -211,7 +211,7 @@ export default function Home() {
             <Text size="lg" c="#AAAAAA">
               Explore your personalized dashboard or browse our complete library
             </Text>
-            <Group gap="md">
+            <Group gap="md" justify={{ base: 'center', sm: 'flex-start' }}>
               <Button
                 variant="filled"
                 leftSection={<IconSparkles size={16} />}

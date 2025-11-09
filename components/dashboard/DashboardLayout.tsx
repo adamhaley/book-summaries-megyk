@@ -115,17 +115,17 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         <AppShell.Header>
           <Group h="100%" px="md" justify="space-between">
-            <Group>
-              <Text 
-                size="xl" 
-                fw={800}
-                component="a" 
-                href="/" 
-                style={{ textDecoration: 'none', color: '#FFFFFF', cursor: 'pointer' }}
-                className="hover:opacity-80"
-              >
-                Megyk Books
-              </Text>
+            <Group
+              component="a"
+              href="/"
+              style={{ textDecoration: 'none', cursor: 'pointer' }}
+              className="hover:opacity-80"
+            >
+              <img 
+                src="/logo.png" 
+                alt="Megyk Books" 
+                style={{ height: '40px', width: 'auto' }}
+              />
             </Group>
             <Group gap="md">
               {userEmail && (
