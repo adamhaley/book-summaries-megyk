@@ -31,8 +31,15 @@ export default function RootLayout({
             <Notifications />
         <MainNavigation />
         <main>{children}</main>
-        <footer style={{ borderTop: '1px solid var(--mantine-color-default-border)', marginTop: '5rem' }}>
-          <div className="container mx-auto px-4 py-8 text-center" style={{ color: 'var(--mantine-color-dimmed)' }}>
+        <footer style={{ 
+          borderTop: '1px solid #2a2a2a', 
+          marginTop: '5rem',
+          backgroundColor: '#000000'
+        }}>
+          <div className="container mx-auto px-4 py-8 text-center" style={{ color: '#666666' }}>
+            <p style={{ margin: 0, fontSize: '0.875rem' }}>
+              © {new Date().getFullYear()} Megyk Books.
+            </p>
           </div>
         </footer>
           </ModalsProvider>
