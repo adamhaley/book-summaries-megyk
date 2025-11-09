@@ -193,7 +193,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             {currentBook.title}
           </Title>
           
-          <Text size="lg" c="#AAAAAA">
+          <Text size="lg" c="#AAAAAA" style={{ textAlign: 'left' }}>
             by {currentBook.author}
           </Text>
 
@@ -275,7 +275,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             {currentBook.title}
           </Title>
           
-          <Text size="xl" c="#AAAAAA">
+          <Text size="xl" c="#AAAAAA" style={{ textAlign: 'left' }}>
             by {currentBook.author}
           </Text>
 
