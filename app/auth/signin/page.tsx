@@ -26,7 +26,12 @@ export default function SignInPage() {
       })
 
       if (error) {
-        setError(error.message)
+        // Provide more helpful error messages
+        if (error.message.includes('Email not confirmed')) {
+          setError('Please verify your email address before signing in. Check your inbox for the confirmation link.')
+        } else {
+          setError(error.message)
+        }
         return
       }
 

@@ -27,6 +27,11 @@ A personalized book summarizer platform that delivers AI-generated, reader-perso
     /summary       # POST - Trigger summary generation via n8n, save PDF & DB record
     /summaries     # GET - Fetch user's generated summaries
       /[id]/download  # GET - Download saved summary PDF
+  /auth
+    /signin        # Sign in page
+    /signup        # Sign up page with email verification
+    /confirm       # Email confirmation callback handler
+    /error         # Authentication error page
   /dashboard
     /library       # Book library with "Generate Summary" functionality
     /summaries     # My Summaries page - displays all generated summaries
@@ -81,6 +86,41 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 N8N_WEBHOOK_URL=your-n8n-webhook-url
 ```
+
+## Email Verification Setup
+
+The platform uses **Resend.com** for transactional emails via Supabase Auth.
+
+### Configuration Steps
+
+1. **Resend SMTP Settings** (Supabase Dashboard → Authentication → SMTP Settings):
+   ```
+   Host: smtp.resend.com
+   Port: 587
+   Sender email: noreply@megyk.com
+   Sender name: Book Summaries
+   Username: resend
+   Password: [Your Resend API Key]
+   ```
+
+2. **Email Confirmation Requirement** (Authentication → Email Auth):
+   - Enable "Confirm email"
+   - Confirmation URL: `https://megyk.com/auth/confirm` (production) or `http://localhost:3000/auth/confirm` (dev)
+
+### Auth Flow
+
+1. User signs up at `/auth/signup`
+2. Verification email sent via Resend
+3. User clicks confirmation link → redirected to `/auth/confirm`
+4. Route handler verifies token and redirects to dashboard
+5. Unverified users cannot sign in (error message shown)
+
+### Routes
+
+- `/auth/signup` - User registration with email verification
+- `/auth/signin` - Login (blocks unverified users)
+- `/auth/confirm` - Email confirmation callback handler
+- `/auth/error` - Authentication error display page
 
 ## Database Schema
 
@@ -163,6 +203,12 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
   - Mobile scrolling fixes with `dvh` units and `-webkit-overflow-scrolling`
 - Supabase client utilities created
 - Auth middleware configured
+- **Email Verification with Resend**
+  - Custom SMTP integration with Resend.com
+  - Email confirmation flow for new signups
+  - Confirmation callback handler at `/auth/confirm`
+  - Error handling for unverified users
+  - Domain verified: megyk.com
 - Basic folder structure following PRD monorepo design
 - Basic layout with nav and footer
 - Landing page with hero and features sections

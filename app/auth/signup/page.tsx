@@ -47,13 +47,18 @@ export default function SignUpPage() {
         return
       }
 
-      setSuccess(true)
-
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        router.push('/dashboard')
-        router.refresh()
-      }, 2000)
+      // Check if email confirmation is required
+      if (data.user && !data.user.confirmed_at) {
+        setSuccess(true)
+        // Don't redirect - user needs to confirm email first
+      } else {
+        // Auto-confirm is enabled, redirect to dashboard
+        setSuccess(true)
+        setTimeout(() => {
+          router.push('/dashboard')
+          router.refresh()
+        }, 2000)
+      }
     } catch (err) {
       setError('An unexpected error occurred')
     } finally {
@@ -80,7 +85,7 @@ export default function SignUpPage() {
 
           {success && (
             <Alert icon={<IconCheck size={16} />} color="green" title="Success!">
-              Account created successfully! Redirecting to dashboard...
+              Account created successfully! Please check your email to verify your account.
             </Alert>
           )}
 
