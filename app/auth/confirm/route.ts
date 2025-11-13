@@ -8,6 +8,9 @@ export async function GET(request: NextRequest) {
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') || '/dashboard'
 
+  // Use the correct public URL, not the internal origin
+  const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://megyk.com'
+
   if (token_hash && type) {
     const supabase = await createClient()
 
@@ -18,17 +21,17 @@ export async function GET(request: NextRequest) {
 
     if (!error) {
       // Redirect to the specified URL or dashboard on success
-      return NextResponse.redirect(new URL(next, requestUrl.origin))
+      return NextResponse.redirect(new URL(next, publicUrl))
     }
 
     // If there's an error, redirect to an error page
     return NextResponse.redirect(
-      new URL('/auth/error?message=Email verification failed', requestUrl.origin)
+      new URL('/auth/error?message=Email verification failed', publicUrl)
     )
   }
 
   // Missing token_hash or type
   return NextResponse.redirect(
-    new URL('/auth/error?message=Invalid verification link', requestUrl.origin)
+    new URL('/auth/error?message=Invalid verification link', publicUrl)
   )
 }
