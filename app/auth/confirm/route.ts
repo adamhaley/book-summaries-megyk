@@ -6,12 +6,15 @@ export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
 
   const requestUrl = new URL(request.url)
-  const token_hash = requestUrl.searchParams.get('token_hash')
+  // Support both 'token_hash' (new) and 'token' (legacy) parameter names
+  const token_hash = requestUrl.searchParams.get('token_hash') || requestUrl.searchParams.get('token')
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') || '/dashboard'
 
   console.log('🔵 [CONFIRM ROUTE] Full URL:', request.url)
-  console.log('🔵 [CONFIRM ROUTE] token_hash:', token_hash ? `${token_hash.substring(0, 20)}...` : 'MISSING')
+  console.log('🔵 [CONFIRM ROUTE] token_hash param:', requestUrl.searchParams.get('token_hash') ? 'present' : 'missing')
+  console.log('🔵 [CONFIRM ROUTE] token param:', requestUrl.searchParams.get('token') ? 'present' : 'missing')
+  console.log('🔵 [CONFIRM ROUTE] Using token:', token_hash ? `${token_hash.substring(0, 20)}...` : 'MISSING')
   console.log('🔵 [CONFIRM ROUTE] type:', type)
 
   // Use the correct public URL, not the internal origin
