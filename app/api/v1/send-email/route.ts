@@ -1,9 +1,9 @@
 import { Resend } from 'resend'
 import { NextRequest, NextResponse } from 'next/server'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: NextRequest) {
+  // Initialize Resend at runtime (not build time) to access env vars
+  const resend = new Resend(process.env.RESEND_API_KEY)
   try {
     // Verify request is from Supabase (optional but recommended)
     const authHeader = request.headers.get('authorization')
