@@ -81,46 +81,260 @@ middleware.ts      # Next.js middleware for Supabase auth
 Create `.env.local` from `.env.local.example`:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://supabase.megyk.com
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
-N8N_WEBHOOK_URL=your-n8n-webhook-url
+
+# n8n Webhook
+N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook/get_book_summary
+N8N_WEBHOOK_URL_TEST=https://n8n.megyk.com/webhook-test/get_book_summary
+
+# Resend API (for email sending via custom endpoint)
+RESEND_API_KEY=your-resend-api-key
+
+# Public Site URL (REQUIRED for auth redirects)
+NEXT_PUBLIC_SITE_URL=https://megyk.com
 ```
+
+**Important**: `NEXT_PUBLIC_SITE_URL` is required for proper email confirmation redirects. Without it, the app may redirect to internal server addresses (0.0.0.0:3200) instead of the public domain.
 
 ## Email Verification Setup
 
-The platform uses **Resend.com** for transactional emails via Supabase Auth.
+The platform uses **Resend.com** for transactional emails via Supabase Auth (self-hosted).
 
-### Configuration Steps
+### Configuration Overview
 
-1. **Resend SMTP Settings** (Supabase Dashboard → Authentication → SMTP Settings):
-   ```
-   Host: smtp.resend.com
-   Port: 587
-   Sender email: noreply@megyk.com
-   Sender name: Book Summaries
-   Username: resend
-   Password: [Your Resend API Key]
-   ```
+For self-hosted Supabase, email verification requires configuring GoTrue (Supabase's auth service) with SMTP settings. The configuration is split between:
+1. **Supabase GoTrue environment variables** (in docker-compose.yml)
+2. **Next.js environment variables** (in .env.local)
+3. **Custom route handlers** (in /app/auth/confirm)
 
-2. **Email Confirmation Requirement** (Authentication → Email Auth):
-   - Enable "Confirm email"
-   - Confirmation URL: `https://megyk.com/auth/confirm` (production) or `http://localhost:3000/auth/confirm` (dev)
+### Supabase GoTrue Configuration
+
+**File**: `/root/supabase/docker/docker-compose.yml` on Supabase droplet
+
+Critical GoTrue environment variables:
+
+```yaml
+auth:
+  environment:
+    # API URLs - controls where email links point
+    GOTRUE_SITE_URL: ${SITE_URL}
+    GOTRUE_API_EXTERNAL_URL: https://megyk.com
+
+    # Email link generation - DOMAIN ORDER MATTERS!
+    # First domain in list is used for email confirmation links
+    GOTRUE_MAILER_EXTERNAL_HOSTS: megyk.com,supabase.megyk.com,localhost,kong
+    GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/confirm
+    GOTRUE_MAILER_URLPATHS_INVITE: /auth/confirm
+    GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/confirm
+
+    # SMTP Settings - Resend.com
+    GOTRUE_SMTP_HOST: smtp.resend.com
+    GOTRUE_SMTP_PORT: 587  # Use 587 or 2525 (Digital Ocean may block port 25)
+    GOTRUE_SMTP_USER: resend
+    GOTRUE_SMTP_PASS: ${RESEND_API_KEY}  # From .env file
+    GOTRUE_SMTP_ADMIN_EMAIL: noreply@megyk.com
+    GOTRUE_MAILER_AUTOCONFIRM: false  # Require email confirmation
+```
+
+**Critical Configuration Notes**:
+1. **Domain Ordering**: `GOTRUE_MAILER_EXTERNAL_HOSTS` uses the FIRST domain for email links. Put your public domain first.
+2. **Port Selection**: Use port 587 or 2525 for SMTP. Port 25 may be blocked by hosting providers.
+3. **API External URL**: Must match your public domain, not internal Supabase URL.
+
+### Next.js Configuration
+
+**File**: `.env.local` in Next.js project root
+
+```bash
+# Public Site URL (REQUIRED for auth redirects)
+NEXT_PUBLIC_SITE_URL=https://megyk.com
+
+# Supabase connection
+NEXT_PUBLIC_SUPABASE_URL=https://supabase.megyk.com
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Resend API (for custom email endpoint at /api/v1/send-email)
+RESEND_API_KEY=your-resend-api-key
+```
 
 ### Auth Flow
 
-1. User signs up at `/auth/signup`
-2. Verification email sent via Resend
-3. User clicks confirmation link → redirected to `/auth/confirm`
-4. Route handler verifies token and redirects to dashboard
-5. Unverified users cannot sign in (error message shown)
+1. User signs up at `/auth/signup` with email and password
+2. Next.js calls `supabase.auth.signUp()` with `emailRedirectTo: ${origin}/auth/confirm`
+3. Supabase GoTrue sends verification email via Resend SMTP
+4. Email contains link: `https://megyk.com/auth/confirm?token=...&type=signup`
+5. User clicks link → Next.js route handler at `/app/auth/confirm/route.ts`
+6. Handler calls `supabase.auth.verifyOtp()` with token
+7. On success: redirect to `/dashboard`
+8. On failure: redirect to `/auth/error?message=...`
 
-### Routes
+### Route Handlers
 
-- `/auth/signup` - User registration with email verification
-- `/auth/signin` - Login (blocks unverified users)
-- `/auth/confirm` - Email confirmation callback handler
-- `/auth/error` - Authentication error display page
+**Key Files**:
+- `/app/auth/signup/page.tsx` - Sign up form with `emailRedirectTo` option
+- `/app/auth/confirm/route.ts` - Confirmation callback (verifies token, handles redirects)
+- `/app/auth/error/page.tsx` - Error display with Suspense boundary for `useSearchParams()`
+- `/app/api/v1/send-email/route.ts` - Custom endpoint for sending emails via Resend (future use)
+
+**Important Implementation Details**:
+- `/app/auth/confirm/route.ts` accepts both `token` and `token_hash` parameters for compatibility
+- Uses `NEXT_PUBLIC_SITE_URL` for redirect URLs (not `request.url` origin due to reverse proxy)
+- Error page requires Suspense boundary around `useSearchParams()` (Next.js 15 requirement)
+
+### Email Template Customization
+
+Supabase uses default email templates. To customize:
+1. GoTrue templates are in the Supabase container
+2. Override with `GOTRUE_MAILER_TEMPLATES_*` environment variables
+3. Or use custom `/api/v1/send-email` endpoint for fully custom emails
+
+### Troubleshooting Guide
+
+#### Issue 1: SMTP Port Blocking (Digital Ocean, AWS, etc.)
+
+**Symptoms**: Timeout errors when sending emails, `telnet smtp.resend.com 587` fails
+
+**Cause**: Many cloud providers (Digital Ocean, AWS) block outbound SMTP ports by default to prevent spam.
+
+**Solution**:
+1. **Test connectivity**: `timeout 5 bash -c 'cat < /dev/null > /dev/tcp/smtp.resend.com/587'`
+2. If timeout occurs, contact hosting provider support to unblock SMTP ports
+3. Digital Ocean: Submit support ticket requesting SMTP port access (usually approved within 24hrs)
+4. Alternative: Use port 2525 instead of 587 (sometimes unblocked)
+
+**Verification**:
+```bash
+# Test SMTP authentication with swaks
+swaks --to test@example.com \
+  --from noreply@megyk.com \
+  --server smtp.resend.com:587 \
+  --auth LOGIN \
+  --auth-user resend \
+  --auth-password YOUR_API_KEY
+```
+
+#### Issue 2: Resend API Key Case Sensitivity
+
+**Symptoms**: `535 API key not found` error from Resend, even though key looks correct
+
+**Cause**: Resend API keys are case-sensitive. Common issue: trailing character copied with wrong case (e.g., 'C' vs 'c').
+
+**Solution**:
+1. Double-check API key in Resend dashboard
+2. Verify exact case in both `.env` file and `docker-compose.yml`
+3. Check for trailing whitespace or invisible characters
+4. Regenerate API key if needed
+
+**Example**: Key ending in `...3yAC` (uppercase C) vs `...3yAc` (lowercase c) will cause auth failure.
+
+#### Issue 3: Wrong Domain in Email Links
+
+**Symptoms**: Confirmation links point to `supabase.megyk.com` instead of `megyk.com`, or redirect to internal IPs
+
+**Cause**: `GOTRUE_MAILER_EXTERNAL_HOSTS` uses FIRST domain in comma-separated list for email link generation.
+
+**Solution**:
+1. Check `GOTRUE_MAILER_EXTERNAL_HOSTS` in docker-compose.yml
+2. Ensure public domain is FIRST: `megyk.com,supabase.megyk.com,localhost,kong`
+3. Restart Supabase auth service: `cd /root/supabase/docker && docker-compose restart auth`
+
+**Before**: `GOTRUE_MAILER_EXTERNAL_HOSTS: supabase.megyk.com,megyk.com` ❌
+**After**: `GOTRUE_MAILER_EXTERNAL_HOSTS: megyk.com,supabase.megyk.com` ✅
+
+#### Issue 4: Redirect to Internal IP (0.0.0.0:3200)
+
+**Symptoms**: After clicking email link, user redirected to `0.0.0.0:3200/auth/error` instead of public domain
+
+**Cause**: Using `requestUrl.origin` in route handler returns internal server address when behind reverse proxy.
+
+**Solution**:
+1. Add `NEXT_PUBLIC_SITE_URL` to `.env.local`: `NEXT_PUBLIC_SITE_URL=https://megyk.com`
+2. Update `/app/auth/confirm/route.ts` to use environment variable:
+   ```typescript
+   const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://megyk.com'
+   return NextResponse.redirect(new URL(next, publicUrl))
+   ```
+3. Rebuild Next.js: `yarn build && sudo systemctl restart megyk-books.service`
+
+#### Issue 5: "Invalid verification link" Error
+
+**Symptoms**: Confirmation page shows "Invalid verification link" immediately, no verification attempted
+
+**Cause**: Parameter name mismatch - email uses `token=...` but code expects `token_hash=...`
+
+**Solution**: Support both parameter names in `/app/auth/confirm/route.ts`:
+```typescript
+const token_hash = requestUrl.searchParams.get('token_hash') || requestUrl.searchParams.get('token')
+```
+
+This provides backward compatibility with different Supabase versions.
+
+#### Issue 6: Next.js Build Failure - useSearchParams
+
+**Symptoms**: Build fails with error: `useSearchParams() should be wrapped in a suspense boundary`
+
+**Cause**: Next.js 15 requires `useSearchParams()` to be wrapped in Suspense for proper SSR.
+
+**Solution**: Extract component using `useSearchParams()` and wrap in Suspense:
+```typescript
+function ErrorContent() {
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message') || 'An error occurred'
+  return <Alert>{message}</Alert>
+}
+
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <ErrorContent />
+    </Suspense>
+  )
+}
+```
+
+### Debugging Commands
+
+**Check Supabase logs**:
+```bash
+# On Supabase droplet
+cd /root/supabase/docker
+docker-compose logs -f auth --tail=100
+```
+
+**Check Next.js logs**:
+```bash
+# On production server
+sudo journalctl -u megyk-books.service -f
+```
+
+**Test SMTP connectivity**:
+```bash
+# Test port 587
+timeout 5 bash -c 'cat < /dev/null > /dev/tcp/smtp.resend.com/587' && echo "Port 587 open" || echo "Port 587 blocked"
+
+# Test port 2525
+timeout 5 bash -c 'cat < /dev/null > /dev/tcp/smtp.resend.com/2525' && echo "Port 2525 open" || echo "Port 2525 blocked"
+```
+
+**Verify email links**:
+1. Sign up with test account
+2. Check email source (View → Message Source in Gmail)
+3. Look for confirmation URL structure
+4. Verify domain matches `GOTRUE_MAILER_EXTERNAL_HOSTS` first entry
+
+### Production Status
+
+✅ **Fully implemented and tested** (as of Nov 2025)
+- Resend.com SMTP integration working
+- Email verification flow end-to-end tested
+- Debug logging active in `/app/auth/confirm/route.ts` for monitoring
+- All major issues resolved and documented above
+
+**Note**: Debug `console.log` statements are intentionally left in place for monitoring. Remove after multi-user testing confirms stability.
 
 ## Database Schema
 
@@ -203,12 +417,19 @@ All API routes follow versioned pattern (`/api/v1/...`) for future SDK/public AP
   - Mobile scrolling fixes with `dvh` units and `-webkit-overflow-scrolling`
 - Supabase client utilities created
 - Auth middleware configured
-- **Email Verification with Resend**
-  - Custom SMTP integration with Resend.com
-  - Email confirmation flow for new signups
-  - Confirmation callback handler at `/auth/confirm`
-  - Error handling for unverified users
+- **Email Verification with Resend** ✅ Production-Ready
+  - Self-hosted Supabase GoTrue SMTP integration with Resend.com
+  - Email confirmation flow for new signups (end-to-end tested)
+  - Confirmation callback handler at `/app/auth/confirm/route.ts`
+  - Error handling for unverified users with Suspense boundaries
   - Domain verified: megyk.com
+  - Comprehensive troubleshooting documentation for common issues:
+    - SMTP port blocking resolution
+    - API key case sensitivity
+    - Domain ordering in GoTrue configuration
+    - Reverse proxy redirect handling
+    - Token parameter compatibility
+  - Debug logging active for production monitoring
 - Basic folder structure following PRD monorepo design
 - Basic layout with nav and footer
 - Landing page with hero and features sections
