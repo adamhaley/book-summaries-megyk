@@ -46,8 +46,23 @@ export async function GET(request: NextRequest) {
 
       console.log(`[Books API] Success. Fetched ${books?.length || 0} featured books. Total time: ${Date.now() - startTime}ms`)
 
+      // Simple genre mapping (TODO: fetch from database)
+      const genreMap = {
+        1: 'Productivity',
+        2: 'Psychology', 
+        3: 'Business',
+        4: 'Leadership',
+        5: 'Management'
+      }
+      
+      // Transform the data to map genre_id to genre name
+      const transformedBooks = books?.map(book => ({
+        ...book,
+        genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+      })) || []
+
       return NextResponse.json({
-        books: books as Book[] || []
+        books: transformedBooks as Book[]
       })
     }
     
@@ -71,8 +86,23 @@ export async function GET(request: NextRequest) {
 
       console.log(`[Books API] Success. Fetched all ${books?.length || 0} books. Total time: ${Date.now() - startTime}ms`)
 
+      // Simple genre mapping (TODO: fetch from database)
+      const genreMap = {
+        1: 'Productivity',
+        2: 'Psychology', 
+        3: 'Business',
+        4: 'Leadership',
+        5: 'Management'
+      }
+      
+      // Transform the data to map genre_id to genre name
+      const transformedBooks = books?.map(book => ({
+        ...book,
+        genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+      })) || []
+
       return NextResponse.json({
-        books: books as Book[] || [],
+        books: transformedBooks as Book[],
         total: count || 0
       })
     }
@@ -121,8 +151,23 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Books API] Success. Fetched ${books?.length || 0} books (page ${page}/${totalPages}, sorted by ${validSortColumn} ${validSortOrder}). Total time: ${Date.now() - startTime}ms`)
 
+    // Simple hardcoded genre mapping for now
+    const genreMap = {
+      1: 'Productivity',
+      2: 'Psychology', 
+      3: 'Business',
+      4: 'Leadership',
+      5: 'Management'
+    };
+    
+    // Transform the data to map genre_id to genre name
+    const transformedBooks = books?.map(book => ({
+      ...book,
+      genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+    })) || []
+
     return NextResponse.json({
-      books: books as Book[] || [],
+      books: transformedBooks as Book[],
       pagination: {
         page,
         limit,

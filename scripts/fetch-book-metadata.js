@@ -6,6 +6,10 @@
  */
 
 const https = require('https');
+const path = require('path');
+
+// Load environment variables from .env.local
+require('dotenv').config({ path: path.join(process.cwd(), '.env.local') });
 
 // Supabase configuration
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -100,10 +104,23 @@ async function fetchBookMetadata(isbn) {
 
     // Extract metadata
     const metadata = {
-      genre_name: null
+      genre_name: null,
+      publication_year: null,
+      page_count: null
     };
 
-    // No publication year, page count, or cover images in current schema
+    // Extract publication year
+    if (bookData.publish_date) {
+      const yearMatch = bookData.publish_date.match(/\d{4}/);
+      if (yearMatch) {
+        metadata.publication_year = parseInt(yearMatch[0]);
+      }
+    }
+
+    // Extract page count
+    if (bookData.number_of_pages) {
+      metadata.page_count = bookData.number_of_pages;
+    }
 
     // Extract genre/subjects - Open Library uses subjects
     if (bookData.subjects && bookData.subjects.length > 0) {
@@ -178,6 +195,8 @@ async function updateBookMetadata(bookId, metadata) {
       }
     }
     
+    if (metadata.publication_year) updates.publication_year = metadata.publication_year;
+    if (metadata.page_count) updates.page_count = metadata.page_count;
     
     if (Object.keys(updates).length === 0) {
       console.log(`⚠️  No new metadata to update for book ${bookId}`);
@@ -211,7 +230,7 @@ async function main() {
   
   try {
     // Fetch books that have ISBNs but missing metadata
-    const response = await supabaseRequest('/rest/v1/books?select=id,title,author,isbn,book_genre_id&isbn=not.is.null');
+    const response = await supabaseRequest('/rest/v1/books?select=id,title,author,isbn,book_genre_id,publication_year,page_count&isbn=not.is.null');
     
     if (response.status !== 200) {
       console.error('Supabase response:', response);
@@ -227,7 +246,7 @@ async function main() {
 
     for (const book of books) {
       // Check if book already has complete metadata
-      const hasMetadata = book.book_genre_id;
+      const hasMetadata = book.book_genre_id && book.publication_year && book.page_count;
       
       if (hasMetadata) {
         console.log(`⏭️  Skipping "${book.title}" - already has metadata`);
