@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       console.log(`[Books API] Success. Fetched ${books?.length || 0} featured books. Total time: ${Date.now() - startTime}ms`)
 
       // Simple genre mapping (TODO: fetch from database)
-      const genreMap = {
+      const genreMap: Record<number, string> = {
         1: 'Productivity',
         2: 'Psychology', 
         3: 'Business',
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       console.log(`[Books API] Success. Fetched all ${books?.length || 0} books. Total time: ${Date.now() - startTime}ms`)
 
       // Simple genre mapping (TODO: fetch from database)
-      const genreMap = {
+      const genreMap: Record<number, string> = {
         1: 'Productivity',
         2: 'Psychology', 
         3: 'Business',
@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
     console.log(`[Books API] Success. Fetched ${books?.length || 0} books (page ${page}/${totalPages}, sorted by ${validSortColumn} ${validSortOrder}). Total time: ${Date.now() - startTime}ms`)
 
     // Simple hardcoded genre mapping for now
-    const genreMap = {
+    const genreMap: Record<number, string> = {
       1: 'Productivity',
       2: 'Psychology', 
       3: 'Business',
