@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       // Transform the data to map genre_id to genre name
       const transformedBooks = books?.map(book => ({
         ...book,
-        genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+        genre: book.book_genre_id ? genreMap[book.book_genre_id as number] || null : null
       })) || []
 
       return NextResponse.json({
@@ -98,7 +98,7 @@ export async function GET(request: NextRequest) {
       // Transform the data to map genre_id to genre name
       const transformedBooks = books?.map(book => ({
         ...book,
-        genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+        genre: book.book_genre_id ? genreMap[book.book_genre_id as number] || null : null
       })) || []
 
       return NextResponse.json({
@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
     // Transform the data to map genre_id to genre name
     const transformedBooks = books?.map(book => ({
       ...book,
-      genre: book.book_genre_id ? genreMap[book.book_genre_id] || null : null
+      genre: book.book_genre_id ? genreMap[book.book_genre_id as number] || null : null
     })) || []
 
     return NextResponse.json({
