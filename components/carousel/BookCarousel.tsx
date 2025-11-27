@@ -17,7 +17,7 @@ import {
   Box
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSparkles, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
 import styles from './BookCarousel.module.css';
@@ -126,6 +126,16 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     setModalOpened(true);
   };
 
+  const handleGetSummary = (book: Book) => {
+    if (book.default_summary_pdf_url) {
+      // Download pre-generated summary
+      window.open(book.default_summary_pdf_url, '_blank');
+    } else {
+      // Fallback to customization modal if no default summary exists
+      handleGenerateSummary(book);
+    }
+  };
+
   const BookCard = ({ book }: { book: Book }) => (
     <Card 
       className={styles.bookCard}
@@ -176,19 +186,49 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                   {book.genre}
                 </Badge>
               )}
-              <Button
-                variant="filled"
-                leftSection={<IconSparkles size={16} />}
-                onClick={() => handleGenerateSummary(book)}
-                size="sm"
-                className={styles.generateButton}
-                style={{
-                  backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                  color: '#000000',
-                }}
-              >
-                Get Summary
-              </Button>
+              {book.default_summary_pdf_url ? (
+                <Group gap={8}>
+                  <Button
+                    variant="filled"
+                    leftSection={<IconSparkles size={14} />}
+                    onClick={() => handleGetSummary(book)}
+                    size="sm"
+                    className={styles.generateButton}
+                    style={{
+                      backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                      color: '#000000',
+                    }}
+                  >
+                    Get Summary
+                  </Button>
+                  <Button
+                    variant="light"
+                    leftSection={<IconSettings size={14} />}
+                    onClick={() => handleGenerateSummary(book)}
+                    size="sm"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      color: '#000000',
+                    }}
+                  >
+                    Custom
+                  </Button>
+                </Group>
+              ) : (
+                <Button
+                  variant="filled"
+                  leftSection={<IconSparkles size={16} />}
+                  onClick={() => handleGetSummary(book)}
+                  size="sm"
+                  className={styles.generateButton}
+                  style={{
+                    backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                    color: '#000000',
+                  }}
+                >
+                  Get Summary
+                </Button>
+              )}
             </Stack>
           </div>
         </div>

@@ -8,6 +8,7 @@ export interface Book {
   description?: string
   cover_image_url?: string
   page_count?: number
+  default_summary_pdf_url?: string
   created_at: string
   updated_at: string
 }

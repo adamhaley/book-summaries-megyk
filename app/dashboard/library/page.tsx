@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image } from '@mantine/core'
-import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector } from '@tabler/icons-react'
+import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
 import styles from './library.module.css'
@@ -149,6 +149,16 @@ export default function LibraryPage() {
     setModalOpened(true)
   }
 
+  const handleGetSummary = (book: Book) => {
+    if (book.default_summary_pdf_url) {
+      // Download pre-generated summary
+      window.open(book.default_summary_pdf_url, '_blank')
+    } else {
+      // Fallback to customization modal if no default summary exists
+      handleGenerateSummary(book)
+    }
+  }
+
   if (loading) {
     return (
       <Container size="xl" pt="0" pb="xl">
@@ -200,7 +210,7 @@ export default function LibraryPage() {
                     {/* Book Cover - Clickable */}
                     <Box
                       className={styles.bookCoverMobile}
-                      onClick={() => handleGenerateSummary(book)}
+                      onClick={() => handleGetSummary(book)}
                       style={{ cursor: 'pointer' }}
                     >
                       <Image
@@ -247,16 +257,41 @@ export default function LibraryPage() {
                           </Group>
                         </Stack>
                         
-                        <Button
-                          size="sm"
-                          variant="light"
-                          color="cyan"
-                          leftSection={<IconSparkles size={16} />}
-                          onClick={() => handleGenerateSummary(book)}
-                          style={{ flexShrink: 0 }}
-                        >
-                          Get Summary
-                        </Button>
+                        {book.default_summary_pdf_url ? (
+                          <Group gap="xs">
+                            <Button
+                              size="sm"
+                              variant="filled"
+                              color="cyan"
+                              leftSection={<IconSparkles size={16} />}
+                              onClick={() => handleGetSummary(book)}
+                              style={{ flexShrink: 0 }}
+                            >
+                              Get Summary
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="light"
+                              color="gray"
+                              leftSection={<IconSettings size={16} />}
+                              onClick={() => handleGenerateSummary(book)}
+                              style={{ flexShrink: 0 }}
+                            >
+                              Customize
+                            </Button>
+                          </Group>
+                        ) : (
+                          <Button
+                            size="sm"
+                            variant="light"
+                            color="cyan"
+                            leftSection={<IconSparkles size={16} />}
+                            onClick={() => handleGetSummary(book)}
+                            style={{ flexShrink: 0 }}
+                          >
+                            Get Summary
+                          </Button>
+                        )}
                       </Group>
                     </Stack>
                   </Group>
@@ -325,7 +360,7 @@ export default function LibraryPage() {
                     <Table.Tr key={book.id}>
                       <Table.Td>
                         <Box
-                          onClick={() => handleGenerateSummary(book)}
+                          onClick={() => handleGetSummary(book)}
                           style={{ cursor: 'pointer', display: 'inline-block' }}
                         >
                           <Image
@@ -365,15 +400,38 @@ export default function LibraryPage() {
                         {book.page_count || <Text c="dimmed" size="sm">—</Text>}
                       </Table.Td>
                       <Table.Td>
-                        <Button
-                          size="xs"
-                          variant="light"
-                          color="cyan"
-                          leftSection={<IconSparkles size={14} />}
-                          onClick={() => handleGenerateSummary(book)}
-                        >
-                          Get Summary
-                        </Button>
+                        {book.default_summary_pdf_url ? (
+                          <Group gap={4}>
+                            <Button
+                              size="xs"
+                              variant="filled"
+                              color="cyan"
+                              leftSection={<IconSparkles size={12} />}
+                              onClick={() => handleGetSummary(book)}
+                            >
+                              Get
+                            </Button>
+                            <Button
+                              size="xs"
+                              variant="light"
+                              color="gray"
+                              leftSection={<IconSettings size={12} />}
+                              onClick={() => handleGenerateSummary(book)}
+                            >
+                              Custom
+                            </Button>
+                          </Group>
+                        ) : (
+                          <Button
+                            size="xs"
+                            variant="light"
+                            color="cyan"
+                            leftSection={<IconSparkles size={14} />}
+                            onClick={() => handleGetSummary(book)}
+                          >
+                            Get Summary
+                          </Button>
+                        )}
                       </Table.Td>
                     </Table.Tr>
                   ))}
