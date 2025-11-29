@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
       const { data: books, error } = await supabase
         .from('books')
         .select('*')
+        .eq('live', true)
         .order('created_at', { ascending: false }) // Most recent first for featured
         .limit(limit)
 
@@ -72,6 +73,7 @@ export async function GET(request: NextRequest) {
       const { data: books, error, count } = await supabase
         .from('books')
         .select('*', { count: 'exact' })
+        .eq('live', true)
         .order('title', { ascending: true })
 
       console.log(`[Books API] Database query completed in ${Date.now() - queryStart}ms`)
@@ -134,6 +136,7 @@ export async function GET(request: NextRequest) {
     const { data: books, error, count } = await supabase
       .from('books')
       .select('*', { count: 'exact' })
+      .eq('live', true)
       .order(validSortColumn, { ascending: validSortOrder === 'asc' })
       .range(offset, offset + limit - 1)
 

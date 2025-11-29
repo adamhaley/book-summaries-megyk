@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
     const { count: totalBooks, error: booksError } = await supabase
       .from('books')
       .select('*', { count: 'exact', head: true })
+      .eq('live', true)
 
     if (booksError) {
       console.error('Error fetching books count:', booksError)
@@ -35,6 +36,7 @@ export async function GET(request: NextRequest) {
     const { count: monthBooksCount, error: monthBooksError } = await supabase
       .from('books')
       .select('*', { count: 'exact', head: true })
+      .eq('live', true)
       .gte('created_at', thirtyDaysAgoForBooks.toISOString())
 
     if (monthBooksError) {
