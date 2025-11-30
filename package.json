@@ -16,6 +16,11 @@
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
     "type-check": "yarn workspaces run type-check"
   },
+  "resolutions": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "@types/react": "~19.1.0"
+  },
   "devDependencies": {
     "typescript": "^5.9.3"
   },

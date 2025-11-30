@@ -3,17 +3,23 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@megyk/types": ["../../packages/types"],
-      "@megyk/api-client": ["../../packages/api-client"],
-      "@megyk/lib": ["../../packages/lib"],
-      "@megyk/config": ["../../packages/config"]
+      "@megyk/types": [
+        "../../packages/types"
+      ],
+      "@megyk/api-client": [
+        "../../packages/api-client"
+      ],
+      "@megyk/lib": [
+        "../../packages/lib"
+      ],
+      "@megyk/config": [
+        "../../packages/config"
+      ]
     }
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

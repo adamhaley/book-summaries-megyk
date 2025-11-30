@@ -1,7 +1,7 @@
 {
   "name": "@megyk/expo",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -10,18 +10,26 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@expo/metro-config": "^54.0.9",
     "@gluestack-style/react": "^1.0.57",
     "@gluestack-ui/nativewind-utils": "^1.0.28",
     "@gluestack-ui/themed": "1.1.69",
+    "@megyk/api-client": "*",
     "@megyk/types": "*",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "expo": "~54.0.25",
+    "expo-constants": "^18.0.10",
+    "expo-linking": "^8.0.9",
+    "expo-router": "^6.0.15",
     "expo-status-bar": "~3.0.8",
     "nativewind": "^4.2.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-svg": "^15.15.0",
-    "react-native-web": "~0.19.13"
+    "react-native-safe-area-context": "^5.6.2",
+    "react-native-screens": "~4.16.0",
+    "react-native-svg": "15.12.1",
+    "react-native-web": "^0.21.0"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
