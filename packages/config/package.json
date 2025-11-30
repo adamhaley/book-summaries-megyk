@@ -1,0 +1,10 @@
+{
+  "name": "@megyk/config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared configuration files for ESLint, TypeScript, etc.",
+  "files": [
+    "eslint",
+    "typescript"
+  ]
+}
