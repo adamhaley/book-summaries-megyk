@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useTheme } from '../../theme';
 
 export interface BadgeProps {
   children: React.ReactNode;
@@ -8,79 +7,56 @@ export interface BadgeProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-export function Badge({ 
-  children, 
+export function Badge({
+  children,
   variant = 'primary',
-  size = 'md' 
+  size = 'md'
 }: BadgeProps) {
-  const { theme } = useTheme();
+  // Base classes
+  const baseClasses = 'rounded-full self-start';
 
-  const sizeStyles = {
-    sm: {
-      paddingVertical: 2,
-      paddingHorizontal: 6,
-      fontSize: 10,
-    },
-    md: {
-      paddingVertical: 4,
-      paddingHorizontal: 8,
-      fontSize: 12,
-    },
-    lg: {
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      fontSize: 14,
-    },
+  // Size classes
+  const sizeClasses = {
+    sm: 'py-0.5 px-1.5',
+    md: 'py-1 px-2',
+    lg: 'py-1.5 px-3',
   }[size];
 
-  const variantStyles = {
-    primary: {
-      backgroundColor: theme.colors.primary[100],
-      textColor: theme.colors.primary[700],
-    },
-    secondary: {
-      backgroundColor: theme.colors.secondary[100],
-      textColor: theme.colors.secondary[700],
-    },
-    accent: {
-      backgroundColor: theme.colors.accent[100],
-      textColor: theme.colors.accent[700],
-    },
-    success: {
-      backgroundColor: theme.colors.success.light,
-      textColor: theme.colors.success.dark,
-    },
-    warning: {
-      backgroundColor: theme.colors.warning.light,
-      textColor: theme.colors.warning.dark,
-    },
-    error: {
-      backgroundColor: theme.colors.error.light,
-      textColor: theme.colors.error.dark,
-    },
-    neutral: {
-      backgroundColor: theme.colors.gray[100],
-      textColor: theme.colors.gray[700],
-    },
+  // Text size classes
+  const textSizeClasses = {
+    sm: 'text-xs',
+    md: 'text-xs',
+    lg: 'text-sm',
+  }[size];
+
+  // Variant classes (background + text color)
+  const variantClasses = {
+    primary: 'bg-primary-100',
+    secondary: 'bg-secondary-100',
+    accent: 'bg-accent-100',
+    success: 'bg-green-100',
+    warning: 'bg-yellow-100',
+    error: 'bg-red-100',
+    neutral: 'bg-gray-100',
   }[variant];
 
+  const textVariantClasses = {
+    primary: 'text-primary-700',
+    secondary: 'text-secondary-700',
+    accent: 'text-accent-700',
+    success: 'text-green-700',
+    warning: 'text-yellow-700',
+    error: 'text-red-700',
+    neutral: 'text-gray-700',
+  }[variant];
+
+  // Combine classes
+  const containerClasses = `${baseClasses} ${sizeClasses} ${variantClasses}`.trim();
+  const textClasses = `${textSizeClasses} ${textVariantClasses} font-semibold`.trim();
+
   return (
-    <View
-      style={{
-        backgroundColor: variantStyles.backgroundColor,
-        paddingVertical: sizeStyles.paddingVertical,
-        paddingHorizontal: sizeStyles.paddingHorizontal,
-        borderRadius: theme.borderRadius.full,
-        alignSelf: 'flex-start',
-      }}
-    >
-      <Text
-        style={{
-          color: variantStyles.textColor,
-          fontSize: sizeStyles.fontSize,
-          fontWeight: '600',
-        }}
-      >
+    <View className={containerClasses}>
+      <Text className={textClasses}>
         {children}
       </Text>
     </View>

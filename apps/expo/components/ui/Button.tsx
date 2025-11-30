@@ -1,6 +1,5 @@
 import React from 'react';
 import { Pressable, Text, ActivityIndicator, View } from 'react-native';
-import { useTheme } from '../../theme';
 
 export interface ButtonProps {
   title: string;
@@ -25,110 +24,70 @@ export function Button({
   leftIcon,
   rightIcon,
 }: ButtonProps) {
-  const { theme } = useTheme();
-  
   const isDisabled = disabled || loading;
 
-  // Size styles
-  const sizeStyles = {
-    sm: {
-      height: theme.components.button.height.sm,
-      paddingHorizontal: 12,
-      fontSize: 14,
-    },
-    md: {
-      height: theme.components.button.height.md,
-      paddingHorizontal: 16,
-      fontSize: 16,
-    },
-    lg: {
-      height: theme.components.button.height.lg,
-      paddingHorizontal: 20,
-      fontSize: 18,
-    },
-    xl: {
-      height: theme.components.button.height.xl,
-      paddingHorizontal: 24,
-      fontSize: 20,
-    },
+  // Base classes - always applied
+  const baseClasses = 'rounded-lg flex-row items-center justify-center shadow-md';
+
+  // Size classes
+  const sizeClasses = {
+    sm: 'h-9 px-3',
+    md: 'h-11 px-4',
+    lg: 'h-12 px-5',
+    xl: 'h-14 px-6',
   }[size];
 
-  // Variant styles
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: theme.colors.primary.DEFAULT,
-          borderColor: theme.colors.primary.DEFAULT,
-          textColor: '#FFFFFF',
-        };
-      case 'secondary':
-        return {
-          backgroundColor: theme.colors.secondary.DEFAULT,
-          borderColor: theme.colors.secondary.DEFAULT,
-          textColor: '#FFFFFF',
-        };
-      case 'accent':
-        return {
-          backgroundColor: theme.colors.accent.DEFAULT,
-          borderColor: theme.colors.accent.DEFAULT,
-          textColor: '#FFFFFF',
-        };
-      case 'outline':
-        return {
-          backgroundColor: 'transparent',
-          borderColor: theme.colors.primary.DEFAULT,
-          textColor: theme.colors.primary.DEFAULT,
-        };
-      case 'ghost':
-        return {
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          textColor: theme.colors.primary.DEFAULT,
-        };
-    }
-  };
+  // Variant classes
+  const variantClasses = {
+    primary: 'bg-primary border-primary active:bg-primary-700',
+    secondary: 'bg-secondary border-secondary active:bg-secondary-700',
+    accent: 'bg-accent border-accent active:bg-accent-700',
+    outline: 'bg-transparent border-2 border-primary active:bg-primary-50',
+    ghost: 'bg-transparent border-transparent active:bg-gray-100',
+  }[variant];
 
-  const variantStyles = getVariantStyles();
+  // Text color classes
+  const textColorClasses = {
+    primary: 'text-white',
+    secondary: 'text-white',
+    accent: 'text-white',
+    outline: 'text-primary',
+    ghost: 'text-primary',
+  }[variant];
+
+  // Text size classes
+  const textSizeClasses = {
+    sm: 'text-sm',
+    md: 'text-base',
+    lg: 'text-lg',
+    xl: 'text-xl',
+  }[size];
+
+  // Disabled state classes
+  const disabledClasses = isDisabled ? 'bg-gray-300 opacity-60' : '';
+
+  // Width class
+  const widthClass = fullWidth ? 'w-full' : '';
+
+  // Combine all classes
+  const buttonClasses = `${baseClasses} ${sizeClasses} ${variantClasses} ${disabledClasses} ${widthClass}`.trim();
+  const textClasses = `${textColorClasses} ${textSizeClasses} font-semibold`.trim();
 
   return (
     <Pressable
       onPress={isDisabled ? undefined : onPress}
-      style={({ pressed }) => ({
-        height: sizeStyles.height,
-        paddingHorizontal: sizeStyles.paddingHorizontal,
-        backgroundColor: isDisabled 
-          ? theme.colors.gray[300] 
-          : pressed 
-            ? theme.colors.primary[700] 
-            : variantStyles.backgroundColor,
-        borderWidth: variant === 'outline' ? 2 : 0,
-        borderColor: variantStyles.borderColor,
-        borderRadius: theme.borderRadius.DEFAULT,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        opacity: isDisabled ? 0.6 : 1,
-        width: fullWidth ? '100%' : undefined,
-        ...theme.shadows.DEFAULT,
-      })}
+      className={buttonClasses}
       disabled={isDisabled}
     >
       {loading ? (
-        <ActivityIndicator color={variantStyles.textColor} />
+        <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? '#264653' : '#FFFFFF'} />
       ) : (
         <>
-          {leftIcon && <View style={{ marginRight: 8 }}>{leftIcon}</View>}
-          <Text
-            style={{
-              color: isDisabled ? theme.colors.gray[500] : variantStyles.textColor,
-              fontSize: sizeStyles.fontSize,
-              fontWeight: '600',
-            }}
-          >
+          {leftIcon && <View className="mr-2">{leftIcon}</View>}
+          <Text className={textClasses}>
             {title}
           </Text>
-          {rightIcon && <View style={{ marginLeft: 8 }}>{rightIcon}</View>}
+          {rightIcon && <View className="ml-2">{rightIcon}</View>}
         </>
       )}
     </Pressable>

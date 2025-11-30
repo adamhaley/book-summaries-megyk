@@ -24,18 +24,31 @@ export function HStack({
 }: HStackProps) {
   const childrenArray = React.Children.toArray(children);
 
+  // Alignment classes
+  const alignClasses = {
+    'flex-start': 'items-start',
+    'center': 'items-center',
+    'flex-end': 'items-end',
+    'stretch': 'items-stretch',
+  }[align];
+
+  // Justify classes
+  const justifyClasses = {
+    'flex-start': 'justify-start',
+    'center': 'justify-center',
+    'flex-end': 'justify-end',
+    'space-between': 'justify-between',
+    'space-around': 'justify-around',
+    'space-evenly': 'justify-evenly',
+  }[justify];
+
+  // Wrap classes
+  const wrapClass = wrap ? 'flex-wrap' : 'flex-nowrap';
+
+  const containerClasses = `flex-row ${alignClasses} ${justifyClasses} ${wrapClass}`.trim();
+
   return (
-    <View
-      style={[
-        {
-          flexDirection: 'row',
-          alignItems: align,
-          justifyContent: justify,
-          flexWrap: wrap ? 'wrap' : 'nowrap',
-        },
-        style,
-      ]}
-    >
+    <View className={containerClasses} style={style}>
       {childrenArray.map((child, index) => (
         <View
           key={index}

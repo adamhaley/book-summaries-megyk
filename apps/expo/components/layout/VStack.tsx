@@ -22,17 +22,28 @@ export function VStack({
 }: VStackProps) {
   const childrenArray = React.Children.toArray(children);
 
+  // Alignment classes
+  const alignClasses = {
+    'flex-start': 'items-start',
+    'center': 'items-center',
+    'flex-end': 'items-end',
+    'stretch': 'items-stretch',
+  }[align];
+
+  // Justify classes
+  const justifyClasses = {
+    'flex-start': 'justify-start',
+    'center': 'justify-center',
+    'flex-end': 'justify-end',
+    'space-between': 'justify-between',
+    'space-around': 'justify-around',
+    'space-evenly': 'justify-evenly',
+  }[justify];
+
+  const containerClasses = `flex-col ${alignClasses} ${justifyClasses}`.trim();
+
   return (
-    <View
-      style={[
-        {
-          flexDirection: 'column',
-          alignItems: align,
-          justifyContent: justify,
-        },
-        style,
-      ]}
-    >
+    <View className={containerClasses} style={style}>
       {childrenArray.map((child, index) => (
         <View
           key={index}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useTheme } from '../../theme';
 
 export interface ContainerProps {
   children: React.ReactNode;
@@ -21,37 +20,34 @@ export function Container({
   center = true,
   style,
 }: ContainerProps) {
-  const { theme } = useTheme();
+  // Base class
+  const baseClass = 'w-full';
 
-  const maxWidths: number | string = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    full: '100%',
+  // Size classes (max-width)
+  const sizeClasses = {
+    sm: 'max-w-[640px]',
+    md: 'max-w-[768px]',
+    lg: 'max-w-[1024px]',
+    xl: 'max-w-[1280px]',
+    full: '',
   }[size];
 
-  const paddingValues = {
-    none: 0,
-    sm: theme.spacing[2],
-    md: theme.spacing[4],
-    lg: theme.spacing[6],
-    xl: theme.spacing[8],
+  // Padding classes
+  const paddingClasses = {
+    none: 'p-0',
+    sm: 'p-2',
+    md: 'p-4',
+    lg: 'p-6',
+    xl: 'p-8',
   }[padding];
 
+  // Center class
+  const centerClass = center ? 'self-center' : '';
+
+  const containerClasses = `${baseClass} ${sizeClasses} ${paddingClasses} ${centerClass}`.trim();
+
   return (
-    <View
-      style={[
-        {
-          width: '100%',
-          ...(typeof maxWidths === 'number' ? { maxWidth: maxWidths } : {}),
-          paddingHorizontal: paddingValues,
-          paddingVertical: paddingValues,
-          alignSelf: center ? 'center' : 'auto',
-        },
-        style,
-      ]}
-    >
+    <View className={containerClasses} style={style}>
       {children}
     </View>
   );

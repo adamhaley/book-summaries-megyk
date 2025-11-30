@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useTheme } from '../../theme';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -9,54 +8,35 @@ export interface CardProps {
   style?: ViewStyle;
 }
 
-export function Card({ 
-  children, 
+export function Card({
+  children,
   variant = 'elevated',
   padding = 'md',
-  style 
+  style
 }: CardProps) {
-  const { theme } = useTheme();
+  // Base classes
+  const baseClasses = 'rounded-lg';
 
-  const paddingStyles = {
-    none: 0,
-    sm: theme.spacing[2],
-    md: theme.spacing[4],
-    lg: theme.spacing[6],
+  // Padding classes
+  const paddingClasses = {
+    none: 'p-0',
+    sm: 'p-2',
+    md: 'p-4',
+    lg: 'p-6',
   }[padding];
 
-  const variantStyles = () => {
-    switch (variant) {
-      case 'elevated':
-        return {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 0,
-          ...theme.shadows.md,
-        };
-      case 'outlined':
-        return {
-          backgroundColor: '#FFFFFF',
-          borderWidth: 1,
-          borderColor: theme.colors.gray[200],
-        };
-      case 'filled':
-        return {
-          backgroundColor: theme.colors.gray[50],
-          borderWidth: 0,
-        };
-    }
-  };
+  // Variant classes
+  const variantClasses = {
+    elevated: 'bg-white shadow-md',
+    outlined: 'bg-white border border-gray-200',
+    filled: 'bg-gray-50',
+  }[variant];
+
+  // Combine classes
+  const cardClasses = `${baseClasses} ${paddingClasses} ${variantClasses}`.trim();
 
   return (
-    <View
-      style={[
-        {
-          borderRadius: theme.borderRadius.lg,
-          padding: paddingStyles,
-          ...variantStyles(),
-        },
-        style,
-      ]}
-    >
+    <View className={cardClasses} style={style}>
       {children}
     </View>
   );

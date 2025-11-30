@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 .yarn/*
@@ -11,6 +11,12 @@
 !.yarn/sdks
 !.yarn/versions
 .yarn/install-state.gz
+
+# Expo
+.expo/
+.expo-shared/
+dist/
+web-build/
 
 # testing
 /coverage
