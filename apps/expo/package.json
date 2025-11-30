@@ -1,0 +1,32 @@
+{
+  "name": "@megyk/expo",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gluestack-style/react": "^1.0.57",
+    "@gluestack-ui/nativewind-utils": "^1.0.28",
+    "@gluestack-ui/themed": "1.1.69",
+    "@megyk/types": "*",
+    "expo": "~54.0.25",
+    "expo-status-bar": "~3.0.8",
+    "nativewind": "^4.2.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-svg": "^15.15.0",
+    "react-native-web": "~0.19.13"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "tailwindcss": "^4.1.17",
+    "typescript": "~5.9.2"
+  },
+  "private": true
+}
