@@ -42,26 +42,67 @@ export default defineConfig({
 
   // Configure projects for major browsers
   projects: [
+    // Setup project - runs once before all other projects
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+
+    // Authenticated tests - use saved auth state
+    {
+      name: 'chromium-auth',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.auth\.spec\.ts/,
+    },
+    {
+      name: 'firefox-auth',
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.auth\.spec\.ts/,
+    },
+    {
+      name: 'webkit-auth',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['setup'],
+      testMatch: /.*\.auth\.spec\.ts/,
+    },
+
+    // Unauthenticated tests - run without auth state
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: /.*\.auth\.spec\.ts/,
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: /.*\.auth\.spec\.ts/,
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: /.*\.auth\.spec\.ts/,
     },
     // Mobile viewports
     {
       name: 'mobile-chrome',
       use: { ...devices['Pixel 5'] },
+      testIgnore: /.*\.auth\.spec\.ts/,
     },
     {
       name: 'mobile-safari',
       use: { ...devices['iPhone 12'] },
+      testIgnore: /.*\.auth\.spec\.ts/,
     },
   ],
 

@@ -95,3 +95,4 @@ Desktop.ini
 /test-results/
 /playwright-report/
 /test-results.xml
+/.auth/
