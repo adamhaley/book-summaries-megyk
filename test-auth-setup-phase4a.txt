@@ -1,0 +1,7 @@
+
+Running 1 test using 1 worker
+
+✅ Authentication successful - saving auth state
+  ✓  1 [setup] › tests/e2e/auth.setup.ts:6:6 › authenticate (1.7s)
+
+  1 passed (2.7s)

@@ -120,6 +120,7 @@ export default function SignInScreen() {
               disabled={!email || !password || loading}
               fullWidth
               size="lg"
+              testID="signin-button"
             />
           </VStack>
 

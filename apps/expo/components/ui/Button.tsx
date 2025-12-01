@@ -11,6 +11,7 @@ export interface ButtonProps {
   fullWidth?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  testID?: string;
 }
 
 export function Button({
@@ -23,6 +24,7 @@ export function Button({
   fullWidth = false,
   leftIcon,
   rightIcon,
+  testID,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
@@ -78,6 +80,7 @@ export function Button({
       onPress={isDisabled ? undefined : onPress}
       className={buttonClasses}
       disabled={isDisabled}
+      testID={testID}
     >
       {loading ? (
         <ActivityIndicator color={variant === 'outline' || variant === 'ghost' ? '#264653' : '#FFFFFF'} />

@@ -8,15 +8,15 @@ setup('authenticate', async ({ page }) => {
   await page.goto('/auth/signin');
   await page.waitForLoadState('domcontentloaded');
 
-  // Wait for form to be visible
-  await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+  // Wait for form to be visible (React Native uses testID instead of HTML attributes)
+  await page.waitForSelector('[data-testid="email-input"]', { timeout: 10000 });
 
   // Fill in credentials
-  await page.locator('input[type="email"]').fill('test@example.com');
-  await page.locator('input[type="password"]').fill('testpassword123');
+  await page.locator('[data-testid="email-input"]').fill('test@example.com');
+  await page.locator('[data-testid="password-input"]').fill('testpassword123');
 
   // Click sign-in button
-  await page.locator('button[type="submit"]').click();
+  await page.locator('[data-testid="signin-button"]').click();
 
   // Wait for redirect to dashboard or for URL to change
   await page.waitForURL('**/dashboard**', { timeout: 10000 }).catch(async () => {
