@@ -23,6 +23,12 @@ web-build/
 *.lcov
 .nyc_output
 
+# Test results
+/test-results/
+/playwright-report/
+/test-results.xml
+/.auth/
+
 # next.js
 /.next/
 /out/

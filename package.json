@@ -10,11 +10,20 @@
     "dev": "echo 'Use yarn dev:api or yarn dev:expo to run specific apps'",
     "dev:api": "yarn workspace @megyk/api dev",
     "dev:expo": "yarn workspace @megyk/expo start",
+    "web": "yarn workspace @megyk/expo web",
     "build": "yarn workspaces run build",
     "build:api": "yarn workspace @megyk/api build",
     "build:expo": "yarn workspace @megyk/expo build",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules",
-    "type-check": "yarn workspaces run type-check"
+    "type-check": "yarn workspaces run type-check",
+    "test:e2e": "TS_NODE_PROJECT=./tsconfig.test.json cucumber-js tests/e2e/features/*.feature",
+    "test:e2e:auth": "TS_NODE_PROJECT=./tsconfig.test.json cucumber-js tests/e2e/features/authentication.feature",
+    "test:e2e:library": "TS_NODE_PROJECT=./tsconfig.test.json cucumber-js tests/e2e/features/book-library.feature",
+    "test:e2e:summary": "TS_NODE_PROJECT=./tsconfig.test.json cucumber-js tests/e2e/features/summary-generation.feature",
+    "test:playwright": "playwright test",
+    "test:playwright:ui": "playwright test --ui",
+    "test:playwright:headed": "playwright test --headed",
+    "test:playwright:debug": "playwright test --debug"
   },
   "resolutions": {
     "react": "19.1.0",
@@ -22,6 +31,12 @@
     "@types/react": "~19.1.0"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.2.0",
+    "@cucumber/gherkin": "^37.0.0",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^24.10.1",
+    "playwright": "^1.57.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "engines": {
