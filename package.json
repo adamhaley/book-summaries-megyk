@@ -7,7 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "upload-covers": "tsx scripts/upload-book-covers.ts"
+    "upload-covers": "tsx scripts/upload-book-covers.ts",
+    "test:e2e": "cucumber-js --require-module ts-node/register tests/e2e/features/*.feature",
+    "test:e2e:auth": "cucumber-js --require-module ts-node/register tests/e2e/features/authentication.feature",
+    "test:e2e:library": "cucumber-js --require-module ts-node/register tests/e2e/features/book-library.feature",
+    "test:e2e:summary": "cucumber-js --require-module ts-node/register tests/e2e/features/summary-generation.feature",
+    "test:playwright": "playwright test",
+    "test:playwright:ui": "playwright test --ui",
+    "test:playwright:headed": "playwright test --headed",
+    "test:playwright:debug": "playwright test --debug"
   },
   "repository": "git@github.com:adamhaley/book-summaries-megyk.git",
   "author": "adamhaley <adamhaley@gmail.com>",
@@ -49,7 +57,7 @@
     "@cucumber/gherkin": "^37.0.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.14",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "autoprefixer": "^10.4.21",
@@ -57,6 +65,7 @@
     "playwright": "^1.57.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }

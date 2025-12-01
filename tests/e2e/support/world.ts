@@ -7,7 +7,20 @@ import { Browser, BrowserContext, Page, chromium } from '@playwright/test';
 export class CustomWorld extends World {
   browser?: Browser;
   context?: BrowserContext;
-  page?: Page;
+  page!: Page; // Non-null assertion since it's set in Before hook
+
+  // Test state properties
+  authenticatedUser?: string;
+  hasDefaultSummary?: boolean;
+  hasSummaries?: boolean;
+  expectedBookCount?: number;
+  userPreferences?: {
+    style: string;
+    length: string;
+  };
+  previousSummaries?: string[];
+  generationStartTime?: number;
+  intent?: string;
 
   constructor(options: IWorldOptions) {
     super(options);
