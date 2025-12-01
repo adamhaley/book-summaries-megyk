@@ -4,7 +4,11 @@ import { Page } from '@playwright/test';
  * Base Page Object that all page classes extend
  */
 export class BasePage {
-  constructor(protected page: Page) {}
+  protected page: Page;
+
+  constructor(page: Page) {
+    this.page = page;
+  }
 
   async goto(url: string) {
     await this.page.goto(url);

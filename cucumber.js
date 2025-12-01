@@ -8,6 +8,7 @@ module.exports = {
       'tests/e2e/support/**/*.ts'
     ],
     requireModule: ['ts-node/register'],
+    loader: ['ts-node/esm'],
     format: [
       'progress-bar',
       'html:test-results/cucumber-report.html',
@@ -20,3 +21,8 @@ module.exports = {
     publishQuiet: true,
   }
 };
+
+// Configure ts-node to use the test tsconfig
+require('ts-node').register({
+  project: './tsconfig.test.json'
+});
