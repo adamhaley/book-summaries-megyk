@@ -6,9 +6,12 @@ const authFile = path.join(__dirname, '../../.auth/user.json');
 setup('authenticate', async ({ page }) => {
   // Navigate to sign-in page
   await page.goto('/auth/signin');
+  await page.waitForLoadState('domcontentloaded');
+
+  // Wait for form to be visible
+  await page.waitForSelector('input[type="email"]', { timeout: 10000 });
 
   // Fill in credentials
-  // TODO: Replace with your test user credentials
   await page.locator('input[type="email"]').fill('test@example.com');
   await page.locator('input[type="password"]').fill('testpassword123');
 

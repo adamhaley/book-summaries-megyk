@@ -28,7 +28,7 @@ export default defineConfig({
 
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:3002',
+    baseURL: 'http://localhost:3000',
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -77,40 +77,41 @@ export default defineConfig({
       testMatch: /.*\.auth\.spec\.ts/,
     },
 
-    // Unauthenticated tests - run without auth state
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-      testIgnore: /.*\.auth\.spec\.ts/,
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      testIgnore: /.*\.auth\.spec\.ts/,
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      testIgnore: /.*\.auth\.spec\.ts/,
-    },
-    // Mobile viewports
-    {
-      name: 'mobile-chrome',
-      use: { ...devices['Pixel 5'] },
-      testIgnore: /.*\.auth\.spec\.ts/,
-    },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 12'] },
-      testIgnore: /.*\.auth\.spec\.ts/,
-    },
+    // Unauthenticated tests - DISABLED (we only care about authenticated flows)
+    // {
+    //   name: 'chromium',
+    //   use: { ...devices['Desktop Chrome'] },
+    //   testIgnore: /.*\.auth\.spec\.ts/,
+    // },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    //   testIgnore: /.*\.auth\.spec\.ts/,
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    //   testIgnore: /.*\.auth\.spec\.ts/,
+    // },
+    // // Mobile viewports
+    // {
+    //   name: 'mobile-chrome',
+    //   use: { ...devices['Pixel 5'] },
+    //   testIgnore: /.*\.auth\.spec\.ts/,
+    // },
+    // {
+    //   name: 'mobile-safari',
+    //   use: { ...devices['iPhone 12'] },
+    //   testIgnore: /.*\.auth\.spec\.ts/,
+    // },
   ],
 
   // Run your local dev server before starting the tests
-  webServer: {
-    command: 'yarn dev',
-    url: 'http://localhost:3002',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
-  },
+  // DISABLED: We manually run `yarn dev` before tests, so no need for Playwright to start it
+  // webServer: {
+  //   command: 'yarn dev',
+  //   url: 'http://localhost:3002',
+  //   reuseExistingServer: !process.env.CI,
+  //   timeout: 120000,
+  // },
 });

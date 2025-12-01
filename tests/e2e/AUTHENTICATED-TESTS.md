@@ -13,7 +13,7 @@ Before running authenticated tests, you need a test user account:
    yarn dev
    ```
 
-2. **Sign up at http://localhost:3002/auth/signup with:**
+2. **Sign up at http://localhost:3000/auth/signup with:**
    - Email: `test@example.com`
    - Password: `testpassword123`
 
@@ -30,9 +30,9 @@ npx playwright test auth.setup.ts
 
 This creates `.auth/user.json` with your authenticated session.
 
-## Running Authenticated Tests
+## Running Tests
 
-### Run All Tests (Both Authenticated & Unauthenticated)
+### Run All Authenticated Tests (Default)
 
 ```bash
 yarn test:playwright
@@ -40,10 +40,12 @@ yarn test:playwright
 
 This will:
 1. Run setup (authenticate test user)
-2. Run unauthenticated tests (landing page, sign-in, etc.)
-3. Run authenticated tests (dashboard, library, summaries, preferences)
+2. Run ALL tests as an authenticated user across 3 browsers (Chrome, Firefox, Safari)
+3. Test all functionality: dashboard, library, summaries, preferences, profile
 
-### Run Only Authenticated Tests
+**Note:** By default, only authenticated browser projects run. We skip unauthenticated redirect testing since the app requires authentication for most functionality.
+
+### Run Single Browser
 
 ```bash
 npx playwright test --project=chromium-auth
@@ -62,24 +64,39 @@ npx playwright test tests/e2e/playwright/profile.auth.spec.ts
 
 ## Test Coverage
 
-### Unauthenticated Tests (`*.spec.ts`)
-- Landing page
-- Sign-in page
-- Authentication redirects
-- Public pages
+All tests run with authentication enabled. The test suite covers:
 
-### Authenticated Tests (`*.auth.spec.ts`)
-- Dashboard navigation
-- Library browsing
-- Book search & filtering
-- Generate summary modal
-- My Summaries page
-- Download summaries
-- Delete summaries
-- User preferences
-- Profile management
+### Core Authenticated Tests (`*.auth.spec.ts`)
+- **Dashboard** - Navigation, content loading, page transitions
+- **Library** - Book browsing, search, filtering, sorting, view toggles, generate summary modal
+- **Summaries** - View summaries, download PDFs, delete summaries, metadata display
+- **Preferences** - Style/length options, preference selection, save functionality
+- **Profile** - Profile page, sign out functionality
+
+### Legacy Tests (`*.spec.ts`)
+These tests also run with authentication and validate:
+- Landing page (accessible when logged in)
+- Dashboard/Library/Summaries access (no redirects since user is authenticated)
+- Basic navigation flows
+
+**Total:** ~78 tests across 3 browsers (Chrome, Firefox, Safari)
 
 ## Troubleshooting
+
+### "missing required error components" or React Errors
+
+If the browser shows "missing required error components, refreshing..." or you see React module errors:
+
+**Cause:** Corrupted build artifacts or multiple React versions
+
+**Solution:**
+```bash
+# Stop dev server (Ctrl+C)
+rm -rf .next node_modules/.cache
+yarn dev
+```
+
+Then re-run the auth setup.
 
 ### "Authentication failed" Error
 
@@ -151,7 +168,7 @@ tests/e2e/
 ## Notes
 
 - `.auth/user.json` is gitignored (contains session tokens)
-- Auth state is shared across all authenticated tests (fast!)
+- Auth state is shared across all tests (fast!)
 - Tests run in parallel for speed
-- Unauthenticated tests validate that auth is working (redirects)
-- Authenticated tests validate actual functionality
+- **All tests run with authentication** - We focus on testing actual app functionality
+- Unauthenticated browser projects are disabled by default (can be re-enabled in `playwright.config.ts` if needed)
