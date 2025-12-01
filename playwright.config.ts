@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Playwright configuration for Megyk Books E2E testing
- * Tests the Mantine UI application on master branch
+ * Tests the Expo React Native Web application
  */
 export default defineConfig({
   testDir: './tests/e2e',
@@ -28,7 +28,7 @@ export default defineConfig({
 
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:8081',
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',

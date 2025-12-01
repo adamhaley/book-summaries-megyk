@@ -1,0 +1,35 @@
+
+Running 79 tests using 6 workers
+
+  ✘   1 [setup] › tests/e2e/auth.setup.ts:6:6 › authenticate (11.2s)
+
+
+  1) [setup] › tests/e2e/auth.setup.ts:6:6 › authenticate ──────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[type="email"]') to be visible[22m
+
+
+      10 |
+      11 |   // Wait for form to be visible
+    > 12 |   await page.waitForSelector('input[type="email"]', { timeout: 10000 });
+         |              ^
+      13 |
+      14 |   // Fill in credentials
+      15 |   await page.locator('input[type="email"]').fill('test@example.com');
+        at /var/www/html/book-summaries-megyk/tests/e2e/auth.setup.ts:12:14
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/auth.setup.ts-authenticate-setup/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/auth.setup.ts-authenticate-setup/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/auth.setup.ts-authenticate-setup/error-context.md
+
+  1 failed
+    [setup] › tests/e2e/auth.setup.ts:6:6 › authenticate ───────────────────────────────────────────
+  78 did not run
