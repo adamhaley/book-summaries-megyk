@@ -90,3 +90,8 @@ Desktop.ini
 *.tmp
 *.temp
 *.log
+
+# Test results
+/test-results/
+/playwright-report/
+/test-results.xml
