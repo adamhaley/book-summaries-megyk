@@ -5,8 +5,8 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    // Wait for navigation to be visible
-    await page.waitForSelector('nav, [role="navigation"], a[href*="library"]', { timeout: 10000 });
+    // Wait for navigation to be visible (React Native uses testID instead of semantic nav element)
+    await page.waitForSelector('[data-testid="main-navigation"], a[href*="library"]', { timeout: 10000 });
 
     // Should not redirect to sign-in
     expect(page.url()).not.toContain('/auth/signin');

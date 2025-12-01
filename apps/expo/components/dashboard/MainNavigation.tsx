@@ -30,13 +30,15 @@ export function MainNavigation({ items = defaultNavItems }: MainNavigationProps)
   const pathname = usePathname();
 
   return (
-    <View style={{ paddingVertical: theme.spacing[2] }}>
+    <View style={{ paddingVertical: theme.spacing[2] }} testID="main-navigation">
       {items.map((item) => {
         const isActive = pathname === item.href;
-        
+        const testId = `nav-link-${item.label.toLowerCase().replace(/\s+/g, '-')}`;
+
         return (
           <Link key={item.href} href={item.href} asChild>
             <Pressable
+              testID={testId}
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
