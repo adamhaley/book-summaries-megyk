@@ -6,7 +6,7 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Wait for navigation to be visible (React Native uses testID instead of semantic nav element)
-    await page.waitForSelector('[data-testid="main-navigation"], a[href*="library"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="main-navigation"]', { timeout: 10000 });
 
     // Should not redirect to sign-in
     expect(page.url()).not.toContain('/auth/signin');
@@ -22,12 +22,12 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    // Wait for navigation links
-    await page.waitForSelector('a[href*="library"]', { timeout: 10000 });
+    // Wait for navigation links using testID selectors
+    await page.waitForSelector('[data-testid="main-navigation"]', { timeout: 10000 });
 
     // Should see navigation links
-    const libraryLink = page.locator('a[href*="library"]');
-    const summariesLink = page.locator('a[href*="summaries"]');
+    const libraryLink = page.locator('[data-testid="nav-link-library"]');
+    const summariesLink = page.locator('[data-testid="nav-link-my-summaries"]');
 
     expect(await libraryLink.count()).toBeGreaterThan(0);
     expect(await summariesLink.count()).toBeGreaterThan(0);
@@ -37,9 +37,9 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    await page.waitForSelector('a[href*="library"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="nav-link-library"]', { timeout: 10000 });
 
-    const libraryLink = page.locator('a[href*="library"]').first();
+    const libraryLink = page.locator('[data-testid="nav-link-library"]').first();
 
     if (await libraryLink.count() > 0) {
       await libraryLink.click();
@@ -57,9 +57,9 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    await page.waitForSelector('a[href*="summaries"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="nav-link-my-summaries"]', { timeout: 10000 });
 
-    const summariesLink = page.locator('a[href*="summaries"]').first();
+    const summariesLink = page.locator('[data-testid="nav-link-my-summaries"]').first();
 
     if (await summariesLink.count() > 0) {
       await summariesLink.click();
@@ -77,9 +77,9 @@ test.describe('Dashboard (Authenticated)', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    await page.waitForSelector('a[href*="preferences"]', { timeout: 10000 });
+    await page.waitForSelector('[data-testid="nav-link-preferences"]', { timeout: 10000 });
 
-    const preferencesLink = page.locator('a[href*="preferences"]').first();
+    const preferencesLink = page.locator('[data-testid="nav-link-preferences"]').first();
 
     if (await preferencesLink.count() > 0) {
       await preferencesLink.click();
