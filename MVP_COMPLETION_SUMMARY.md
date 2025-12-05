@@ -61,7 +61,7 @@ CREATE POLICY "Users can read own summaries"
 - **Streak** - Consecutive days with summary generation
 
 **Smart Calculations:**
-- Reading time estimates: 1pg=3min, 5pg=15min, 15pg=45min
+- Reading time estimates: short=3min, medium=15min, long=45min
 - Week/month summary counts for context
 - Streak calculation based on consecutive days
 - Relative time formatting (e.g., "2 hours ago", "5 days ago")

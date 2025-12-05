@@ -79,7 +79,7 @@ test.describe('Profile & Preferences (Authenticated)', () => {
     await page.goto('/dashboard/preferences');
     await page.waitForLoadState('networkidle');
 
-    const shortOption = page.locator('input[value*="short"], input[value*="1pg"], label:has-text("Short")').first();
+    const shortOption = page.locator('input[value*="short"], label:has-text("Short")').first();
 
     if (await shortOption.count() > 0) {
       await shortOption.click();

@@ -87,8 +87,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
 # n8n Webhook
-N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook/get_book_summary
-N8N_WEBHOOK_URL_TEST=https://n8n.megyk.com/webhook-test/get_book_summary
+N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook/get_summary_v2
+N8N_WEBHOOK_URL_TEST=https://n8n.megyk.com/webhook-test/get_summary_v2
 
 # Resend API (for email sending via custom endpoint)
 RESEND_API_KEY=your-resend-api-key
@@ -341,7 +341,7 @@ timeout 5 bash -c 'cat < /dev/null > /dev/tcp/smtp.resend.com/2525' && echo "Por
 ### ✅ Implemented Tables
 
 - **`user_profiles`** - User demographics & preferences (JSONB)
-  - Stores style (narrative/bullet_points/workbook) and length (1pg/5pg/15pg) preferences
+  - Stores style (narrative/bullet_points/workbook) and length (short/medium/long) preferences
   - One profile per user with automatic creation on signup
   - Migration: `001_create_user_profiles.sql`
 

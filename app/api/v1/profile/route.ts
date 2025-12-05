@@ -94,7 +94,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validate length
-    const validLengths = ['1pg', '5pg', '15pg']
+    const validLengths = ['short', 'medium', 'long']
     if (length && !validLengths.includes(length)) {
       return NextResponse.json(
         { error: `Invalid length. Must be one of: ${validLengths.join(', ')}` },

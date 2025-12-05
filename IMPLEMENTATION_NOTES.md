@@ -32,7 +32,7 @@ When a user clicks "Generate Summary", the following JSON payload is sent to the
   "book_id": "string",
   "preferences": {
     "style": "narrative" | "bullet_points" | "workbook",
-    "length": "1pg" | "5pg" | "15pg"
+    "length": "short" | "medium" | "long"
   },
   "user_id": "anonymous",
   "timestamp": "2025-10-19T23:55:00.000Z"
@@ -44,7 +44,7 @@ When a user clicks "Generate Summary", the following JSON payload is sent to the
 Make sure `.env.local` has the n8n webhook URL configured:
 
 ```bash
-N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook-test/get_book_summary
+N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook-test/get_summary_v2
 ```
 
 ## Testing the Flow
@@ -117,14 +117,14 @@ curl -X POST http://localhost:3001/api/v1/summary \
     "book_id": "test-book-123",
     "preferences": {
       "style": "narrative",
-      "length": "5pg"
+      "length": "medium"
     }
   }'
 ```
 
 ## Next Steps for Client
 
-1. **Set up n8n workflow** at `https://n8n.megyk.com/webhook-test/get_book_summary`
+1. **Set up n8n workflow** at `https://n8n.megyk.com/webhook-test/get_summary_v2`
    - Configure it to accept POST requests
    - Process the `book_id` and `preferences` from the payload
    - Return a JSON response (structure TBD)

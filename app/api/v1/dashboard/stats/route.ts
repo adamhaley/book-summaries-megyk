@@ -94,11 +94,11 @@ export async function GET(request: NextRequest) {
 
     // Calculate estimated reading time based on summary length
     const readingTimeMinutes = (allSummaries || []).reduce((total, summary) => {
-      // Rough estimates: 1pg = 3 min, 5pg = 15 min, 15pg = 45 min
+      // Rough estimates: short = 3 min, medium = 15 min, long = 45 min
       const timeMap: Record<string, number> = {
-        '1pg': 3,
-        '5pg': 15,
-        '15pg': 45
+        'short': 3,
+        'medium': 15,
+        'long': 45
       }
       return total + (timeMap[summary.length] || 15)
     }, 0)

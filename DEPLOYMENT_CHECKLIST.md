@@ -25,7 +25,7 @@ Ensure all required environment variables are set:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook-test/get_book_summary
+N8N_WEBHOOK_URL=https://n8n.megyk.com/webhook-test/get_summary_v2
 ```
 
 ### 3. Verify Database Tables
@@ -156,7 +156,7 @@ WHERE schemaname = 'public';
     "book_id": "uuid",
     "preferences": {
       "style": "narrative|bullet_points|workbook",
-      "length": "1pg|5pg|15pg"
+      "length": "short|medium|long"
     },
     "user_id": "uuid",
     "timestamp": "2025-11-05T..."
