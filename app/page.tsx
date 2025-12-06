@@ -48,7 +48,7 @@ export default function Home() {
               </Text>
             </Stack>
             
-            <Group gap="lg" justify={{ base: 'center', sm: 'flex-start' }}>
+            <Group gap="lg" justify="center">
               <Button
                 size="lg"
                 variant="filled"
