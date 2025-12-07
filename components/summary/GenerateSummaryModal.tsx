@@ -128,10 +128,22 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
           const blob = await response.blob()
           console.log('Blob size:', blob.size, 'bytes')
 
+          // Sanitize filename helper
+          const sanitizeFilename = (str: string) => {
+            return str
+              .replace(/[^a-z0-9]/gi, '_')
+              .replace(/_+/g, '_')
+              .replace(/^_|_$/g, '')
+              .toLowerCase()
+          }
+
+          const sanitizedTitle = sanitizeFilename(book.title)
+          const filename = `${sanitizedTitle}_${length}_${style}.pdf`
+
           const url = window.URL.createObjectURL(blob)
           const a = document.createElement('a')
           a.href = url
-          a.download = `${book.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_summary.pdf`
+          a.download = filename
           document.body.appendChild(a)
           a.click()
 

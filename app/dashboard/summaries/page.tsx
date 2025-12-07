@@ -53,7 +53,7 @@ export default function SummariesPage() {
     }
   }
 
-  const handleDownload = async (summaryId: string, bookTitle: string) => {
+  const handleDownload = async (summaryId: string, bookTitle: string, length: string, style: string) => {
     try {
       const response = await fetch(`/api/v1/summaries/${summaryId}/download`)
 
@@ -68,11 +68,23 @@ export default function SummariesPage() {
         return
       }
 
+      // Sanitize filename helper
+      const sanitizeFilename = (str: string) => {
+        return str
+          .replace(/[^a-z0-9]/gi, '_')
+          .replace(/_+/g, '_')
+          .replace(/^_|_$/g, '')
+          .toLowerCase()
+      }
+
+      const sanitizedTitle = sanitizeFilename(bookTitle)
+      const filename = `${sanitizedTitle}_${length}_${style}.pdf`
+
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${bookTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_summary.pdf`
+      a.download = filename
       document.body.appendChild(a)
       a.click()
 
@@ -240,7 +252,7 @@ export default function SummariesPage() {
                                   size="xs"
                                   variant="light"
                                   leftSection={<IconDownload size={14} />}
-                                  onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
+                                  onClick={() => handleDownload(summary.id, summary.book?.title || 'summary', summary.length, summary.style)}
                                   style={{ flex: 1 }}
                                 >
                                   Download PDF
@@ -329,7 +341,7 @@ export default function SummariesPage() {
                                     size="xs"
                                     variant="light"
                                     leftSection={<IconDownload size={14} />}
-                                    onClick={() => handleDownload(summary.id, summary.book?.title || 'summary')}
+                                    onClick={() => handleDownload(summary.id, summary.book?.title || 'summary', summary.length, summary.style)}
                                   >
                                     Download PDF
                                   </Button>

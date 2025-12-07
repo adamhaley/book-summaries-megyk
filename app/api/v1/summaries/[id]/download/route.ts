@@ -49,6 +49,26 @@ export async function GET(
       )
     }
 
+    // Fetch book title for filename
+    const { data: book } = await supabase
+      .from('books')
+      .select('title')
+      .eq('id', summary.book_id)
+      .single()
+
+    // Sanitize filename: replace spaces/special chars with underscores, lowercase
+    const sanitizeFilename = (str: string) => {
+      return str
+        .replace(/[^a-z0-9]/gi, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .toLowerCase()
+    }
+
+    const bookTitle = book?.title || 'book'
+    const sanitizedTitle = sanitizeFilename(bookTitle)
+    const filename = `${sanitizedTitle}_${summary.length}_${summary.style}.pdf`
+
     // Convert blob to array buffer
     const fileBuffer = await fileData.arrayBuffer()
 
@@ -57,7 +77,7 @@ export async function GET(
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="summary-${summary.book_id}.pdf"`,
+        'Content-Disposition': `attachment; filename="${filename}"`,
         'Content-Length': fileBuffer.byteLength.toString(),
       },
     })

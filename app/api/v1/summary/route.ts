@@ -123,12 +123,32 @@ export async function POST(request: NextRequest) {
           )
         }
 
+        // Fetch book title for filename
+        const { data: book } = await supabase
+          .from('books')
+          .select('title')
+          .eq('id', book_id)
+          .single()
+
+        // Sanitize filename: replace spaces/special chars with underscores, lowercase
+        const sanitizeFilename = (str: string) => {
+          return str
+            .replace(/[^a-z0-9]/gi, '_')
+            .replace(/_+/g, '_')
+            .replace(/^_|_$/g, '')
+            .toLowerCase()
+        }
+
+        const bookTitle = book?.title || 'book'
+        const sanitizedTitle = sanitizeFilename(bookTitle)
+        const filename = `${sanitizedTitle}_${preferences.length}_${preferences.style}.pdf`
+
         // Return PDF with appropriate headers for download
         return new NextResponse(pdfBuffer, {
           status: 200,
           headers: {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="book-summary-${book_id}.pdf"`,
+            'Content-Disposition': `attachment; filename="${filename}"`,
             'Content-Length': pdfBuffer.byteLength.toString(),
           },
         })
