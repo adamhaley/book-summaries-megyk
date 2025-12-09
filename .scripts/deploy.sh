@@ -8,4 +8,3 @@ yarn install
 yarn build
 
 echo "Deploy complete!"
-
