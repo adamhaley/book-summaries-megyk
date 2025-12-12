@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Megyk Book Summary</title>
+
+  <style>
+    /* -------------------------
+       Fonts (recommended: bake into html2pdf container)
+       Put TTFs in /usr/share/fonts/truetype/custom/
+    -------------------------- */
+
+    /* Open Sans Condensed (headers) */
+    @font-face {
+      font-family: "Open Sans Condensed";
+      src: url("file:///usr/share/fonts/truetype/custom/OpenSansCondensed-Bold.ttf") format("truetype");
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: "Open Sans Condensed";
+      src: url("file:///usr/share/fonts/truetype/custom/OpenSansCondensed-Light.ttf") format("truetype");
+      font-weight: 300;
+      font-style: normal;
+    }
+
+    /* Times New Roman (body) – if not present, Nimbus Roman is a good Linux fallback */
+    body {
+      font-family: "Times New Roman", "Nimbus Roman", serif;
+      font-size: 11pt;
+      line-height: 1.35;
+      color: #111;
+      margin: 0;
+    }
+
+    /* Page + margins */
+    @page {
+      size: Letter;              /* mockup looks like US Letter */
+      margin: 0.65in 0.7in;
+    }
+
+    /* Layout container */
+    .page {
+      position: relative;
+    }
+
+    /* Top header */
+    .top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .top-left h1 {
+      font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
+      font-weight: 700;
+      font-size: 34pt;
+      margin: 0 0 6px 0;
+      line-height: 1.0;
+    }
+
+    .top-left .subtitle {
+      font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
+      font-weight: 700;
+      font-size: 14pt;
+      margin: 0;
+    }
+
+    .logo {
+      width: 165px;
+      height: auto;
+      margin-top: 4px;
+    }
+
+    /* Core Idea box */
+    .core-box {
+      border: 1.5px solid #333;
+      padding: 10px 12px;
+      margin: 10px 0 16px 0;
+    }
+
+    .core-box .label {
+      font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
+      font-weight: 700;
+      font-size: 12.5pt;
+      margin-bottom: 4px;
+    }
+
+    .core-box p {
+      margin: 0;
+    }
+
+    /* Two-column grid */
+    .columns {
+      display: flex;
+      gap: 34px;                 /* matches the airy center gutter in mockup */
+    }
+
+    .col-left {
+      flex: 1.05;                /* slightly wider on left, like mockup */
+    }
+
+    .col-right {
+      flex: 0.95;
+    }
+
+    /* Section headings (bold) */
+    .section h3 {
+      font-family: "Times New Roman", "Nimbus Roman", serif; /* mockup headings are bold serif */
+      font-weight: 700;
+      font-size: 13pt;
+      margin: 12px 0 6px 0;
+    }
+
+    .section p {
+      margin: 0 0 10px 0;
+    }
+
+    /* Bullets on right */
+    ul {
+      margin: 6px 0 10px 18px;
+      padding: 0;
+    }
+
+    li {
+      margin: 0 0 7px 0;
+    }
+
+    /* TL;DR quote block */
+    .quote {
+      margin-top: 18px;
+      font-weight: 700;
+      font-size: 14pt;
+    }
+
+    .quote span {
+      font-weight: 700;
+    }
+
+    /* Footer line + footer row */
+    .footer-rule {
+      border: none;
+      border-top: 1px solid #333;
+      margin: 20px 0 8px 0;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 8.5pt;
+      color: #222;
+    }
+
+    .footer .site {
+      font-family: "Times New Roman", "Nimbus Roman", serif;
+      font-weight: 700;
+      font-size: 12pt;
+    }
+
+    /* Small print disclaimer style */
+    .disclaimer {
+      max-width: 75%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <div class="top">
+      <div class="top-left">
+        <h1>{{TITLE}}</h1>
+        <p class="subtitle">{{AUTHOR}}’s Megyk Book Summary</p>
+      </div>
+
+      <!-- Replace with your real logo path or data URI -->
+      <img class="logo" src="{{LOGO_URL_OR_DATA_URI}}" alt="Megyk Books" />
+    </div>
+
+    <div class="core-box">
+      <div class="label">Core Idea</div>
+      <p>{{CORE_IDEA}}</p>
+    </div>
+
+    <div class="columns">
+      <div class="col-left">
+        <div class="section">
+          <h3>What problem does the book solve?</h3>
+          <p>{{PROBLEM_SOLVED}}</p>
+        </div>
+
+        <div class="section">
+          <h3>Why does this problem matter?</h3>
+          <p>{{WHY_IT_MATTERS}}</p>
+        </div>
+
+        <div class="section">
+          <h3>What is the author’s main thesis?</h3>
+          <p>{{MAIN_THESIS}}</p>
+        </div>
+      </div>
+
+      <div class="col-right">
+        <div class="section">
+          <h3>Biggest insights/principles?</h3>
+          <ul>
+            {{INSIGHTS_LI}}
+          </ul>
+        </div>
+
+        <div class="section">
+          <h3>Practical steps</h3>
+          <ul>
+            {{STEPS_LI}}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote">
+      “{{TLDR_QUOTE_OR_SUMMARY_LINE}}”
+    </div>
+
+    <hr class="footer-rule" />
+
+    <div class="footer">
+      <div class="disclaimer">
+        Disclaimer: AI-generated summary. Not affiliated with or endorsed by the original author or publisher.<br/>
+        All trademarks belong to their respective owners.
+      </div>
+      <div class="site">www.megyk.com</div>
+    </div>
+
+  </div>
+</body>
+</html>
+
