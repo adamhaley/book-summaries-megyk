@@ -442,33 +442,49 @@ export default function DashboardPage() {
     setError(null);
 
     try {
+      console.log('[DashboardPage] Fetching dashboard data...');
+      
+      // Add timeout to prevent infinite loading
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      
       // Fetch stats (keeping for now, but not displaying prominently)
-      const statsResponse = await fetch('/api/v1/dashboard/stats');
+      const statsResponse = await fetch('/api/v1/dashboard/stats', { signal: controller.signal });
       if (!statsResponse.ok) {
         throw new Error('Failed to fetch dashboard stats');
       }
       const statsData = await statsResponse.json();
       setStats(statsData.stats);
+      console.log('[DashboardPage] Stats loaded');
 
       // Fetch recent summaries
-      const summariesResponse = await fetch('/api/v1/summaries');
+      const summariesResponse = await fetch('/api/v1/summaries', { signal: controller.signal });
       if (!summariesResponse.ok) {
         throw new Error('Failed to fetch recent summaries');
       }
       const summariesData = await summariesResponse.json();
       setRecentSummaries(summariesData.summaries || []);
+      console.log('[DashboardPage] Summaries loaded');
 
       // Fetch recommended books for carousel
-      const booksResponse = await fetch('/api/v1/books?limit=12');
+      const booksResponse = await fetch('/api/v1/books?limit=12', { signal: controller.signal });
       if (booksResponse.ok) {
         const booksData = await booksResponse.json();
         setRecommendedBooks(booksData.books || []);
+        console.log('[DashboardPage] Books loaded');
       }
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-      setError('Failed to load dashboard data');
+      
+      clearTimeout(timeoutId);
+    } catch (err: any) {
+      console.error('[DashboardPage] Error fetching dashboard data:', err);
+      if (err.name === 'AbortError') {
+        setError('Request timed out. Please check your connection and try again.');
+      } else {
+        setError('Failed to load dashboard data');
+      }
     } finally {
       setLoading(false);
+      console.log('[DashboardPage] Loading complete');
     }
   };
 

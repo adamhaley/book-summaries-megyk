@@ -24,11 +24,33 @@ export function MainNavigation() {
   }, []);
 
   const checkAuth = async () => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      setIsAuthenticated(true);
-      setUserEmail(session.user.email || null);
+    try {
+      console.log('[MainNavigation] Checking auth...');
+      const supabase = createClient();
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Auth timeout after 5s')), 5000)
+      );
+      
+      const authPromise = supabase.auth.getSession();
+      const result = await Promise.race([authPromise, timeoutPromise]);
+      
+      if (result.error) {
+        console.error('[MainNavigation] Auth error:', result.error);
+        return;
+      }
+      
+      if (result.data?.session?.user) {
+        console.log('[MainNavigation] User authenticated:', result.data.session.user.email);
+        setIsAuthenticated(true);
+        setUserEmail(result.data.session.user.email || null);
+      } else {
+        console.log('[MainNavigation] No session found');
+      }
+    } catch (err) {
+      console.error('[MainNavigation] Error checking auth:', err);
+      // Don't block rendering if auth fails
     }
   };
 

@@ -71,10 +71,32 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, []);
 
   const loadUserData = async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      setUserEmail(user.email || null);
+    try {
+      console.log('[DashboardLayout] Loading user data...');
+      const supabase = createClient();
+      
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error('Auth timeout after 5s')), 5000)
+      );
+      
+      const authPromise = supabase.auth.getUser();
+      const result = await Promise.race([authPromise, timeoutPromise]);
+      
+      if (result.error) {
+        console.error('[DashboardLayout] Auth error:', result.error);
+        return;
+      }
+      
+      if (result.data?.user) {
+        console.log('[DashboardLayout] User loaded:', result.data.user.email);
+        setUserEmail(result.data.user.email || null);
+      } else {
+        console.log('[DashboardLayout] No user found');
+      }
+    } catch (err) {
+      console.error('[DashboardLayout] Error loading user data:', err);
+      // Don't block rendering if auth fails
     }
   };
 
