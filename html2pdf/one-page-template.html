@@ -163,6 +163,22 @@
     .disclaimer {
       max-width: 75%;
     }
+
+    .workbook-answers {
+      page-break-before: always;
+    }
+
+    .workbook-answer-block {
+      margin-bottom: 24px;
+    }
+
+    .answer-line {
+      border-bottom: 1px solid #333;
+      height: 18px;
+      margin-bottom: 6px;
+    }
+
+
   </style>
 </head>
 
@@ -223,7 +239,21 @@
 
     <div class="quote">
       “{{TLDR_QUOTE_OR_SUMMARY_LINE}}”
+
     </div>
+
+<!-- Workbook Answer Page -->
+<div class="page workbook-answers">
+  <h2>Reflection & Notes</h2>
+
+  {{ANSWER_PROBLEM_SOLVED}}
+  {{ANSWER_WHY_IT_MATTERS}}
+  {{ANSWER_MAIN_THESIS}}
+  {{ANSWER_INSIGHTS}}
+  {{ANSWER_STEPS}}
+</div>
+
+
 
     <hr class="footer-rule" />
 
