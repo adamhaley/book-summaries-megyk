@@ -92,10 +92,10 @@
 	}
 
 	/* Two-column grid */
-	.columns {
-	display: flex;
-	gap: 34px;                 /* matches the airy center gutter in mockup */
+	body.medium .columns {
+	  display: block;
 	}
+
 
 	.col-left {
 	flex: 1.05;                /* slightly wider on left, like mockup */
@@ -164,6 +164,10 @@
 	max-width: 75%;
 	}
 
+	.workbook-answers {
+	page-break-before: always;
+	}
+
 	.workbook-answer-block {
 	margin-bottom: 24px;
 	}
@@ -189,24 +193,25 @@
 	}
 
 	body.medium .workbook-question {
-	  margin-bottom: 12px;
-	  line-height: 1;
+	  margin-bottom: 18px;
+	  line-height: 1.55;
 	}
 
 	body.medium .workbook-summary {
+		font-style: italic;
 	  margin-bottom: 4px;
 	}
 
-	        /* Number questions ONLY on the answers page */
-        .workbook-answers {
-          counter-reset: answer-q;
-        }
+	/* Number questions ONLY on the answers page */
+	.workbook-answers {
+	  counter-reset: answer-q;
+	}
 
-        .workbook-answers .workbook-question::before {
-          counter-increment: answer-q;
-          content: counter(answer-q) ". ";
-          font-weight: 700;
-        }
+	.workbook-answers .workbook-question::before {
+	  counter-increment: answer-q;
+	  content: counter(answer-q) ". ";
+	  font-weight: 700;
+	}
 
 @page {
   @bottom-left {
@@ -232,14 +237,10 @@
   text-align: center;
 }
 
-
-
   </style>
 </head>
 
 <body>
-  <div class="page">
-
     <div class="top">
       <div class="top-left">
         <h1>{{TITLE}}</h1>
@@ -297,12 +298,11 @@
 
     </div>
 
+
 <!-- Workbook Answer Page -->
 
 {{WORKBOOK_ANSWER_PAGE}}
 
-
-  </div>
 </body>
 </html>
 
