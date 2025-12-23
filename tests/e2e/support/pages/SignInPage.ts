@@ -10,7 +10,8 @@ export class SignInPage extends BasePage {
   private readonly passwordInput = 'input[type="password"]';
   private readonly submitButton = 'button[type="submit"]';
   private readonly signUpLink = 'a[href="/auth/signup"]';
-  private readonly errorAlert = '[class*="mantine-Alert"]';
+  private readonly errorAlert = '[role="alert"]';
+  private readonly errorMessage = '[role="alert"] [id$="-body"]';
   private readonly pageTitle = 'text=Sign In';
 
   constructor(page: Page) {
@@ -45,11 +46,13 @@ export class SignInPage extends BasePage {
   }
 
   async getErrorMessage() {
-    return await this.page.locator(this.errorAlert).textContent();
+    const message = await this.page.locator(this.errorMessage).first().textContent();
+    if (message) return message;
+    return await this.page.locator(this.errorAlert).first().textContent();
   }
 
   async isErrorVisible() {
-    return await this.page.locator(this.errorAlert).isVisible();
+    return await this.page.locator(this.errorAlert).first().isVisible();
   }
 
   async waitForRedirect() {

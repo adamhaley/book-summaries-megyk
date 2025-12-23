@@ -75,7 +75,7 @@ Feature: Summary Generation and Management
   Scenario: User views empty summaries page
     Given I am on the "My Summaries" page
     And I have not generated any summaries yet
-    Then I should see "No summaries yet" message
+    Then I should see "No summaries yet" summary message
     And I should see a suggestion to visit the library
 
   Scenario: User generates multiple summaries for the same book

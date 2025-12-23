@@ -8,7 +8,7 @@ export class HomePage extends BasePage {
   // Selectors
   private readonly getStartedButton = 'button:has-text("Get Started")';
   private readonly signInButton = 'button:has-text("Sign In")';
-  private readonly heroTitle = 'text=Book Summaries';
+  private readonly heroTitle = 'h1:has-text("Book Summaries")';
   private readonly heroDescription = 'text=Discover personalized AI-generated book summaries';
 
   constructor(page: Page) {

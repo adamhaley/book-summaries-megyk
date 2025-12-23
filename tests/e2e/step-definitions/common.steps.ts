@@ -5,11 +5,14 @@ import { HomePage } from '../support/pages/HomePage';
 import { SignInPage } from '../support/pages/SignInPage';
 import { LibraryPage } from '../support/pages/LibraryPage';
 
+const baseUrl = process.env.BASE_URL || 'http://localhost:3002';
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Background steps
 Given('the application is running', async function (this: CustomWorld) {
   // Just verify we can reach the base URL
   await this.page.goto('/');
-  await expect(this.page).toHaveURL(/.*localhost:3002.*/);
+  await expect(this.page).toHaveURL(new RegExp(`^${escapeRegExp(baseUrl)}/?`));
 });
 
 // Common navigation steps
@@ -65,7 +68,7 @@ When('I click the {string} link', async function (this: CustomWorld, linkText: s
 
 // Generic assertions
 Then('I should see {string} in the hero title', async function (this: CustomWorld, text: string) {
-  await expect(this.page.locator('text=' + text)).toBeVisible();
+  await expect(this.page.locator(`h1:has-text("${text}")`)).toBeVisible();
 });
 
 Then('I should see the {string} page title', async function (this: CustomWorld, title: string) {

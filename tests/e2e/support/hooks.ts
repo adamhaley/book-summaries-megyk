@@ -1,5 +1,5 @@
 import { Before, After, BeforeAll, AfterAll, setDefaultTimeout } from '@cucumber/cucumber';
-import { chromium, Browser, BrowserContext, Page } from '@playwright/test';
+import { chromium, firefox, webkit, Browser, BrowserContext, Page } from '@playwright/test';
 import { CustomWorld } from './world';
 
 // Set default timeout to 30 seconds
@@ -7,10 +7,13 @@ setDefaultTimeout(30000);
 
 // Global browser instance
 let browser: Browser;
+const browserName = process.env.E2E_BROWSER || 'chromium';
+const browserType =
+  browserName === 'firefox' ? firefox : browserName === 'webkit' ? webkit : chromium;
 
 BeforeAll(async function () {
   // Launch browser once for all tests
-  browser = await chromium.launch({
+  browser = await browserType.launch({
     headless: process.env.HEADLESS !== 'false',
   });
 });
