@@ -121,9 +121,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <>
       <AppShell
+        layout="alt"
         header={{ height: 60 }}
         navbar={{
-          width: 300,
+          width: 250,
           breakpoint: 'sm',
           collapsed: { mobile: true, desktop: false }, // Always collapsed on mobile
         }}
@@ -139,6 +140,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           navbar: {
             backgroundColor: '#ffffff',
             borderRight: '1px solid #e5e7eb',
+            paddingTop: 0,
           },
           main: {
             backgroundColor: '#ffffff',
@@ -149,22 +151,29 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       >
         <AppShell.Header>
           <Group h="100%" px="md" justify="space-between">
-            <a
-              href="/"
-              style={{ 
-                textDecoration: 'none', 
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-              className="hover:opacity-80"
-            >
-              <img 
-                src="/logo.png" 
-                alt="Megyk Books" 
-                style={{ height: '40px', width: 'auto' }}
-              />
-            </a>
+            {/* Mobile Logo - only visible on mobile */}
+            <Box hiddenFrom="sm">
+              <a
+                href="/"
+                style={{ 
+                  textDecoration: 'none', 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                className="hover:opacity-80"
+              >
+                <img 
+                  src="/megyk-logo-no-book.png" 
+                  alt="Megyk Books" 
+                  style={{ height: '40px', width: 'auto' }}
+                />
+              </a>
+            </Box>
+            
+            {/* Spacer for desktop to push content right */}
+            <Box visibleFrom="sm" />
+            
             <Group gap="md">
               {userEmail && (
                 <Text size="sm" c="dimmed" visibleFrom="sm">
@@ -188,8 +197,35 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </Group>
         </AppShell.Header>
 
-        <AppShell.Navbar p="md" visibleFrom="sm">
-          <AppShell.Section grow>
+        <AppShell.Navbar visibleFrom="sm">
+          {/* Logo Section */}
+          <AppShell.Section 
+            style={{ 
+              padding: '24px 16px',
+              borderBottom: '1px solid #e5e7eb',
+            }}
+          >
+            <a
+              href="/"
+              style={{ 
+                textDecoration: 'none', 
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              className="hover:opacity-80"
+            >
+              <img 
+                src="/megyk.svg" 
+                alt="Megyk Books" 
+                style={{ height: '120px', width: 'auto' }}
+              />
+            </a>
+          </AppShell.Section>
+          
+          {/* Navigation Section */}
+          <AppShell.Section grow p="md">
             {items}
           </AppShell.Section>
         </AppShell.Navbar>

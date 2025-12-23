@@ -86,9 +86,9 @@ export function MainNavigation() {
             className="hover:opacity-80"
           >
             <img 
-              src="/logo.png" 
+              src="/megyk.svg" 
               alt="Megyk Books" 
-              style={{ height: '40px', width: 'auto' }}
+              style={{ height: '120px', width: 'auto' }}
             />
           </a>
 
