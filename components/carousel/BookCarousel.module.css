@@ -208,7 +208,7 @@
 .control:hover {
   background: rgba(0, 210, 255, 0.2);
   border-color: rgba(0, 210, 255, 0.6);
-  color: #00D2FF;
+  color: #0014ff;
 }
 
 .control:hover:first-child {
