@@ -21,6 +21,9 @@ export class CustomWorld extends World {
   previousSummaries?: string[];
   generationStartTime?: number;
   intent?: string;
+  skipPagination?: boolean;
+  skipSummaryActions?: boolean;
+  skipEmptyState?: boolean;
 
   constructor(options: IWorldOptions) {
     super(options);
