@@ -114,7 +114,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       label={item.label}
       leftSection={<item.icon size={20} stroke={1.5} />}
       href={item.href}
-      color="cyan"
+      color="blue"
     />
   ));
 
@@ -129,7 +129,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         }}
         padding="md"
         styles={{
+          root: {
+            backgroundColor: '#ffffff',
+          },
+          header: {
+            backgroundColor: '#ffffff',
+            borderBottom: '1px solid #e5e7eb',
+          },
+          navbar: {
+            backgroundColor: '#ffffff',
+            borderRight: '1px solid #e5e7eb',
+          },
           main: {
+            backgroundColor: '#ffffff',
             paddingTop: 'calc(var(--app-shell-header-height, 0px) + var(--mantine-spacing-xl))',
             paddingBottom: 'calc(var(--mantine-spacing-md) + 70px)', // Space for mobile footer
           }
@@ -165,9 +177,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 onClick={handleLogout} 
                 title="Logout"
                 style={{
-                  backgroundColor: '#000000',
-                  border: '1px solid #2a2a2a',
-                  color: '#FFFFFF'
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  color: '#000000'
                 }}
               >
                 <IconLogout size={20} />
@@ -194,8 +206,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           left: 0,
           right: 0,
           height: '70px',
-          backgroundColor: '#000000',
-          borderTop: '1px solid #2a2a2a',
+          backgroundColor: '#ffffff',
+          borderTop: '1px solid #e5e7eb',
           transform: showMobileNav ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 0.3s ease-in-out',
           zIndex: 200,
@@ -214,7 +226,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '4px',
-                color: pathname === item.href ? '#00D2FF' : '#AAAAAA',
+                color: pathname === item.href ? '#2563EB' : '#374151',
                 transition: 'color 0.2s ease',
               }}
             >

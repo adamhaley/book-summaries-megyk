@@ -372,8 +372,8 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
               loading={generating}
               disabled={!book}
               style={{
-                backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                color: '#000000',
+                backgroundColor: '#2563EB',
+                color: '#ffffff',
               }}
             >
               Generate Summary

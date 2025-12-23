@@ -161,10 +161,10 @@ export default function SummariesPage() {
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
-          <Title order={1} mb="xs" c="#FFFFFF">
+          <Title order={1} mb="xs" c="#000000">
             My Collection
           </Title>
-          <Text size="lg" c="#AAAAAA">
+          <Text size="lg" c="#374151">
             Access all your personalized book summaries
           </Text>
         </div>
@@ -284,7 +284,7 @@ export default function SummariesPage() {
                 <Card key={idx} shadow="sm" padding="0" radius="md" withBorder>
                   <Stack gap="md">
                     {/* Book Header with Cover */}
-                    <div style={{ padding: '20px 20px 12px 20px', borderBottom: '1px solid #1a1a1a' }}>
+                    <div style={{ padding: '20px 20px 12px 20px', borderBottom: '1px solid #e5e7eb' }}>
                       <Group align="flex-start" gap="lg" wrap="nowrap">
                         <Image
                           src={getBookCoverPlaceholder(bookGroup.book)}

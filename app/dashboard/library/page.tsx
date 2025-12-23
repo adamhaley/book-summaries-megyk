@@ -184,10 +184,10 @@ export default function LibraryPage() {
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="lg">
         <div>
-          <Title order={1} mb="xs" c="#FFFFFF">
+          <Title order={1} mb="xs" c="#000000">
             Discover Books
           </Title>
-          <Text size="lg" c="#AAAAAA">
+          <Text size="lg" c="#374151">
             Explore our collection and get instant summaries
           </Text>
         </div>
@@ -262,7 +262,7 @@ export default function LibraryPage() {
                             <Button
                               size="sm"
                               variant="filled"
-                              color="cyan"
+                              color="blue"
                               leftSection={<IconSparkles size={16} />}
                               onClick={() => handleGetSummary(book)}
                               style={{ flexShrink: 0 }}
@@ -284,7 +284,7 @@ export default function LibraryPage() {
                           <Button
                             size="sm"
                             variant="light"
-                            color="cyan"
+                            color="blue"
                             leftSection={<IconSparkles size={16} />}
                             onClick={() => handleGetSummary(book)}
                             style={{ flexShrink: 0 }}
@@ -303,7 +303,7 @@ export default function LibraryPage() {
           {/* Desktop Table View */}
           <Card shadow="sm" padding="lg" radius="md" withBorder className={styles.desktopView}>
             <Table.ScrollContainer minWidth={900}>
-              <Table striped highlightOnHover>
+              <Table>
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th style={{ width: 100 }}>Cover</Table.Th>
@@ -405,7 +405,7 @@ export default function LibraryPage() {
                             <Button
                               size="xs"
                               variant="filled"
-                              color="cyan"
+                              color="blue"
                               leftSection={<IconSparkles size={12} />}
                               onClick={() => handleGetSummary(book)}
                             >
@@ -425,7 +425,7 @@ export default function LibraryPage() {
                           <Button
                             size="xs"
                             variant="light"
-                            color="cyan"
+                            color="blue"
                             leftSection={<IconSparkles size={14} />}
                             onClick={() => handleGetSummary(book)}
                           >

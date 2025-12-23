@@ -136,11 +136,11 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
   return (
     <Box 
       style={{
-        background: 'linear-gradient(135deg, #1a1a1a 0%, #2a1545 100%)',
+        background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
         borderRadius: '16px',
         position: 'relative',
         overflow: 'hidden',
-        border: '1px solid rgba(139, 92, 246, 0.2)',
+        border: '1px solid rgba(37, 99, 235, 0.2)',
       }}
       p={{ base: 'lg', sm: 'xl', md: '3rem 2rem' }}
     >
@@ -170,7 +170,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
                 boxShadow: 
                   '8px -6px 24px rgba(0, 0, 0, 0.6), ' +
                   '12px -10px 40px rgba(0, 0, 0, 0.4), ' +
-                  '4px -3px 12px rgba(139, 92, 246, 0.3)',
+                  '4px -3px 12px rgba(37, 99, 235, 0.4)',
               }}
             />
           </Box>
@@ -179,9 +179,9 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             size="md" 
             variant="filled"
             style={{ 
-              backgroundColor: 'rgba(139, 92, 246, 0.2)',
+              backgroundColor: '#2563EB',
               color: '#FFFFFF',
-              border: '1px solid rgba(139, 92, 246, 0.4)',
+              border: '1px solid #2563EB',
             }}
           >
             FEATURED
@@ -189,11 +189,11 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
         </Stack>
 
         <Stack gap="sm" align="center">
-          <Title order={1} size="1.75rem" c="#FFFFFF" style={{ lineHeight: 1.2, textAlign: 'left' }}>
+          <Title order={1} size="1.75rem" c="#000000" style={{ lineHeight: 1.2, textAlign: 'left' }}>
             {currentBook.title}
           </Title>
           
-          <Text size="lg" c="#AAAAAA" style={{ textAlign: 'left' }}>
+          <Text size="lg" c="#374151" style={{ textAlign: 'left' }}>
             by {currentBook.author}
           </Text>
 
@@ -212,8 +212,8 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             onClick={() => router.push('/dashboard/library')}
             style={{ 
               fontWeight: 600,
-              backgroundColor: 'rgba(0, 210, 255, 0.8)',
-              color: '#000000',
+              backgroundColor: '#2563EB',
+              color: '#FFFFFF',
             }}
             fullWidth
           >
@@ -251,7 +251,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               boxShadow: 
                 '12px -10px 35px rgba(0, 0, 0, 0.7), ' +
                 '18px -15px 60px rgba(0, 0, 0, 0.5), ' +
-                '6px -5px 18px rgba(139, 92, 246, 0.4)',
+                '6px -5px 18px rgba(37, 99, 235, 0.5)',
             }}
           />
         </Box>
@@ -262,20 +262,20 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             size="lg" 
             variant="filled"
             style={{ 
-              backgroundColor: 'rgba(139, 92, 246, 0.2)',
+              backgroundColor: '#2563EB',
               color: '#FFFFFF',
-              border: '1px solid rgba(139, 92, 246, 0.4)',
+              border: '1px solid #2563EB',
               width: 'fit-content'
             }}
           >
             FEATURED
           </Badge>
           
-          <Title order={1} size="2.5rem" c="#FFFFFF" style={{ lineHeight: 1.2, textAlign: 'left' }}>
+          <Title order={1} size="2.5rem" c="#000000" style={{ lineHeight: 1.2, textAlign: 'left' }}>
             {currentBook.title}
           </Title>
           
-          <Text size="xl" c="#AAAAAA" style={{ textAlign: 'left' }}>
+          <Text size="xl" c="#374151" style={{ textAlign: 'left' }}>
             by {currentBook.author}
           </Text>
 
@@ -311,7 +311,7 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           right: '-50px',
           width: '300px',
           height: '300px',
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%)',
           borderRadius: '50%',
           pointerEvents: 'none',
         }}
@@ -510,7 +510,7 @@ export default function DashboardPage() {
   return (
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="xl">
-        <Title order={1} c="#FFFFFF">For You</Title>
+        <Title order={1} c="#000000">For You</Title>
 
         {/* Hero Section - Continue Reading */}
         <HeroSection router={router} book={recommendedBooks[0]} />
@@ -519,8 +519,8 @@ export default function DashboardPage() {
       {recommendedBooks.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Title order={2} c="#FFFFFF">Recommended For You</Title>
-            <Text size="lg" c="#AAAAAA">
+            <Title order={2} c="#000000">Recommended For You</Title>
+            <Text size="lg" c="#374151">
               Handpicked books based on your interests
             </Text>
           </Stack>
@@ -535,7 +535,7 @@ export default function DashboardPage() {
       {recentSummaries.length > 0 && (
         <Box>
           <Stack gap="md" mb="md">
-            <Title order={2} c="#FFFFFF">Your Collection</Title>
+            <Title order={2} c="#000000">Your Collection</Title>
           </Stack>
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
             {recentSummaries.slice(0, 3).map((summary) => (
@@ -545,17 +545,17 @@ export default function DashboardPage() {
                 radius="md" 
                 withBorder
                 style={{
-                  backgroundColor: '#000000',
-                  borderColor: '#2a2a2a',
+                  backgroundColor: '#ffffff',
+                  borderColor: '#e5e7eb',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(0, 210, 255, 0.3)';
+                  e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.5)';
                   e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = '#2a2a2a';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }}
                 onClick={() => router.push('/dashboard/summaries')}
@@ -563,10 +563,10 @@ export default function DashboardPage() {
                 <Stack gap="sm">
                   <Group justify="space-between" wrap="nowrap" align="flex-start">
                     <Stack gap={4} style={{ flex: 1 }}>
-                      <Text size="lg" fw={600} lineClamp={2} c="#FFFFFF">
+                      <Text size="lg" fw={600} lineClamp={2} c="#000000">
                         {summary.book?.title || 'Unknown Book'}
                       </Text>
-                      <Text size="sm" c="#AAAAAA">
+                      <Text size="sm" c="#374151">
                         by {summary.book?.author || 'Unknown Author'}
                       </Text>
                     </Stack>

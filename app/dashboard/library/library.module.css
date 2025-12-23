@@ -29,11 +29,7 @@
 }
 
 .sortableHeader:hover {
-  background-color: var(--mantine-color-gray-0);
-}
-
-[data-mantine-color-scheme="dark"] .sortableHeader:hover {
-  background-color: var(--mantine-color-dark-6);
+  background-color: #f0f9ff;
 }
 
 

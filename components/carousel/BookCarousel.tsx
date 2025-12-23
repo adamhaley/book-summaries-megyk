@@ -176,11 +176,12 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                 <Badge 
                   variant="filled" 
                   color="dark"
-                  c="#FFFFFF"
+                  c="#000000"
                   size="sm"
                   style={{ 
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                    backgroundColor: '#f3f4f6',
+                    border: '1px solid #e5e7eb',
+                    color: '#000000'
                   }}
                 >
                   {book.genre}
@@ -195,8 +196,8 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     size="sm"
                     className={styles.generateButton}
                     style={{
-                      backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                      color: '#000000',
+                      backgroundColor: '#2563EB',
+                      color: '#ffffff',
                     }}
                   >
                     Get Summary

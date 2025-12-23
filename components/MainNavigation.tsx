@@ -70,9 +70,9 @@ export function MainNavigation() {
   return (
     <>
       <nav style={{ 
-        borderBottom: '1px solid #2a2a2a', 
+        borderBottom: '1px solid #e5e7eb', 
         height: '60px',
-        backgroundColor: '#000000'
+        backgroundColor: '#ffffff'
       }}>
         <Group h="100%" px="md" justify="space-between">
           <a
@@ -118,9 +118,9 @@ export function MainNavigation() {
                 onClick={handleLogout}
                 title="Logout"
                 style={{
-                  backgroundColor: '#000000',
-                  border: '1px solid #2a2a2a',
-                  color: '#FFFFFF'
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #e5e7eb',
+                  color: '#000000'
                 }}
               >
                 <IconLogout size={20} />

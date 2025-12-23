@@ -23,7 +23,7 @@ export default function Home() {
       height: 'calc(100vh - 60px)', 
       position: 'relative', 
       overflow: 'hidden',
-      backgroundColor: '#000000'
+      backgroundColor: '#ffffff'
     }}>
       <Container 
         size="md" 
@@ -38,11 +38,11 @@ export default function Home() {
         <Center style={{ width: '100%' }}>
           <Stack align="center" gap="xl" ta="center">
             <Stack gap="md" align="center">
-              <IconSparkles size={64} stroke={1.5} color="#00D2FF" />
-              <Title order={1} size="3rem" fw={800} c="#FFFFFF">
+              <IconSparkles size={64} stroke={1.5} color="#2563EB" />
+              <Title order={1} size="3rem" fw={800} c="#000000">
                 Book Summaries
               </Title>
-              <Text size="xl" c="#AAAAAA" maw={600}>
+              <Text size="xl" c="#374151" maw={600}>
                 Discover personalized AI-generated book summaries tailored just for you. 
                 Dive into thousands of books in minutes, not hours.
               </Text>
@@ -56,8 +56,8 @@ export default function Home() {
                 onClick={() => router.push('/auth/signin')}
                 style={{ 
                   fontWeight: 600,
-                  backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                  color: '#000000',
+                  backgroundColor: '#2563EB',
+                  color: '#FFFFFF',
                 }}
               >
                 Get Started
@@ -65,9 +65,10 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="outline"
-                c="#FFFFFF"
+                c="#000000"
                 style={{ 
-                  borderColor: '#FFFFFF',
+                  borderColor: '#374151',
+                  color: '#000000',
                   fontWeight: 600
                 }}
                 onClick={() => router.push('/auth/signin')}

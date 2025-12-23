@@ -22,21 +22,21 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript defaultColorScheme="dark" />
+        <ColorSchemeScript forceColorScheme="light" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <MantineProvider theme={theme} defaultColorScheme="dark">
+        <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
             <Notifications />
         <MainNavigation />
         <main>{children}</main>
         <footer style={{ 
-          borderTop: '1px solid #2a2a2a', 
+          borderTop: '1px solid #e5e7eb', 
           marginTop: '5rem',
-          backgroundColor: '#000000'
+          backgroundColor: '#ffffff'
         }}>
-          <div className="container mx-auto px-4 py-8 text-center" style={{ color: '#666666' }}>
+          <div className="container mx-auto px-4 py-8 text-center" style={{ color: '#374151' }}>
             <p style={{ margin: 0, fontSize: '0.875rem' }}>
               © {new Date().getFullYear()} Megyk Books.
             </p>

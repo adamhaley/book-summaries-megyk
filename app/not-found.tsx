@@ -5,13 +5,13 @@ export default function NotFound() {
   return (
     <Container size="sm" py="xl" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
       <Stack align="center" gap="lg" ta="center">
-        <Title order={1} size="4rem" fw={800} c="#FFFFFF">
+        <Title order={1} size="4rem" fw={800} c="#000000">
           404
         </Title>
-        <Title order={2} c="#AAAAAA">
+        <Title order={2} c="#374151">
           Page Not Found
         </Title>
-        <Text size="lg" c="#AAAAAA" maw={400}>
+        <Text size="lg" c="#374151" maw={400}>
           The page you're looking for doesn't exist or has been moved.
         </Text>
         <Stack gap="sm" mt="md">
@@ -21,8 +21,8 @@ export default function NotFound() {
             size="lg"
             style={{
               fontWeight: 600,
-              backgroundColor: 'rgba(0, 210, 255, 0.8)',
-              color: '#000000',
+              backgroundColor: '#2563EB',
+              color: '#FFFFFF',
             }}
           >
             Go Home
@@ -32,9 +32,10 @@ export default function NotFound() {
             href="/dashboard"
             size="lg"
             variant="outline"
-            c="#FFFFFF"
+            c="#000000"
             style={{
-              borderColor: '#FFFFFF',
+              borderColor: '#374151',
+              color: '#000000',
               fontWeight: 600
             }}
           >
