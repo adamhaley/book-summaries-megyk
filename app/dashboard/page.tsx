@@ -293,8 +293,8 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               onClick={() => router.push('/dashboard/library')}
               style={{ 
                 fontWeight: 600,
-                backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                color: '#000000',
+                backgroundColor: '#2563EB',
+                color: '#FFFFFF',
               }}
             >
               Discover More

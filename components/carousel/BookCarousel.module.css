@@ -206,9 +206,9 @@
 }
 
 .control:hover {
-  background: rgba(0, 210, 255, 0.2);
-  border-color: rgba(0, 210, 255, 0.6);
-  color: #0014ff;
+  background: rgba(37, 99, 235, 0.1);
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #2563EB;
 }
 
 .control:hover:first-child {
