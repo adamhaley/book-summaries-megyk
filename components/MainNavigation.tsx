@@ -71,7 +71,7 @@ export function MainNavigation() {
     <>
       <nav style={{ 
         borderBottom: '1px solid #e5e7eb', 
-        height: '60px',
+        height: '140px',
         backgroundColor: '#ffffff'
       }}>
         <Group h="100%" px="md" justify="space-between">
