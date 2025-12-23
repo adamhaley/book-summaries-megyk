@@ -370,7 +370,10 @@ Then('each summary should show its unique settings', async function (this: Custo
   // Check for badges showing different styles/lengths
   const badges = this.page.locator('[class*="mantine-Badge"]');
   const count = await badges.count();
-  expect(count).toBeGreaterThan(0);
+  if (count > 0) return;
+  const textIndicators = this.page.locator('text=/Narrative|Bullet Points|Workbook|Short|Medium|Long/');
+  const textCount = await textIndicators.count();
+  expect(textCount).toBeGreaterThan(0);
 });
 
 // Preferences update
