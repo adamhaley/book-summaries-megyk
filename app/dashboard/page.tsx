@@ -444,9 +444,10 @@ export default function DashboardPage() {
     try {
       console.log('[DashboardPage] Fetching dashboard data...');
       
-      // Add timeout to prevent infinite loading
+      // Add timeout to prevent infinite loading - longer for local dev
+      const isLocalDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), isLocalDev ? 60000 : 15000); // 60s local, 15s prod
       
       // Fetch stats (keeping for now, but not displaying prominently)
       const statsResponse = await fetch('/api/v1/dashboard/stats', { signal: controller.signal });
