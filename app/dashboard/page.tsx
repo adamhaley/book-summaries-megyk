@@ -168,9 +168,9 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
                 transform: 'rotateX(-22deg) rotateY(12deg)',
                 transformStyle: 'preserve-3d',
                 boxShadow: 
-                  '8px -6px 24px rgba(0, 0, 0, 0.6), ' +
-                  '12px -10px 40px rgba(0, 0, 0, 0.4), ' +
-                  '4px -3px 12px rgba(37, 99, 235, 0.4)',
+                  '8px -6px 24px rgba(0, 0, 0, 0.15), ' +
+                  '12px -10px 40px rgba(0, 0, 0, 0.1), ' +
+                  '4px -3px 12px rgba(37, 99, 235, 0.2)',
               }}
             />
           </Box>
@@ -249,9 +249,9 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
               transform: 'rotateX(-25deg) rotateY(15deg)',
               transformStyle: 'preserve-3d',
               boxShadow: 
-                '12px -10px 35px rgba(0, 0, 0, 0.7), ' +
-                '18px -15px 60px rgba(0, 0, 0, 0.5), ' +
-                '6px -5px 18px rgba(37, 99, 235, 0.5)',
+                '12px -10px 35px rgba(0, 0, 0, 0.12), ' +
+                '18px -15px 60px rgba(0, 0, 0, 0.08), ' +
+                '6px -5px 18px rgba(37, 99, 235, 0.15)',
             }}
           />
         </Box>
