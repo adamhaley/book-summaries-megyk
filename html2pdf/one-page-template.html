@@ -129,10 +129,12 @@
 
 	/* TL;DR quote block */
 	.quote {
-	margin-top: 18px;
-	font-weight: 700;
-	font-size: 14pt;
+        margin-top: 22px;
+        page-break-inside: avoid;
+        font-weight: 700;
+        font-size: 14pt;
 	}
+    /* TL;DR quote aligned to bottom of left column */
 
 	.quote span {
 	font-weight: 700;
@@ -294,6 +296,10 @@
           <h3>What is the author’s main thesis?</h3>
           <p>{{MAIN_THESIS}}</p>
         </div>
+        <!-- TL;DR Quote (balances ad on right) -->
+        <div class="quote">
+          “{{TLDR_QUOTE_OR_SUMMARY_LINE}}”
+        </div>
       </div>
 
       <div class="col-right">
@@ -321,12 +327,6 @@
 
       </div>
     </div>
-
-    <div class="quote">
-      “{{TLDR_QUOTE_OR_SUMMARY_LINE}}”
-
-    </div>
-
 <!-- Workbook Answer Page -->
 
 {{WORKBOOK_ANSWER_PAGE}}
