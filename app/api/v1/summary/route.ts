@@ -30,6 +30,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const sanitizeFilename = (str: string) => {
+      return str
+        .replace(/[^a-z0-9]/gi, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_|_$/g, '')
+        .toLowerCase()
+    }
+
+    const getBookFilename = async (bookId: string, length: string, style: string) => {
+      const { data: book } = await supabase
+        .from('books')
+        .select('title')
+        .eq('id', bookId)
+        .single()
+
+      const bookTitle = book?.title || 'book'
+      const sanitizedTitle = sanitizeFilename(bookTitle)
+      return `${sanitizedTitle}_${length}_${style}.pdf`
+    }
+
     // Trigger n8n webhook for summary generation
     const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL
 
@@ -76,17 +96,15 @@ export async function POST(request: NextRequest) {
         // Stream PDF binary directly to browser
         const pdfBuffer = await webhookResponse.arrayBuffer()
 
-        // Generate unique filename with user folder structure: user_id/summary_id.pdf
-        const timestamp = Date.now()
-        const summaryId = crypto.randomUUID()
-        const storagePath = `${user.id}/${summaryId}.pdf`
+        // Stable storage path per user/book/style/length for idempotency
+        const storagePath = `${user.id}/${book_id}/${preferences.length}_${preferences.style}.pdf`
 
         // Upload PDF to Supabase Storage
         const { error: uploadError } = await supabase.storage
           .from('summaries')
           .upload(storagePath, Buffer.from(pdfBuffer), {
             contentType: 'application/pdf',
-            upsert: false
+            upsert: true
           })
 
         if (uploadError) {
@@ -100,8 +118,7 @@ export async function POST(request: NextRequest) {
         // Create database record
         const { data: summaryData, error: summaryError } = await supabase
           .from('summaries')
-          .insert({
-            id: summaryId,
+          .upsert({
             user_id: user.id,
             book_id,
             style: preferences.style,
@@ -109,13 +126,15 @@ export async function POST(request: NextRequest) {
             file_path: storagePath,
             tokens_spent: tokensSpent ? parseInt(tokensSpent) : null,
             generation_time: generationTime ? parseFloat(generationTime) : null,
+          }, {
+            onConflict: 'user_id,book_id,style,length'
           })
           .select()
           .single()
 
         if (summaryError) {
           console.error('Error saving summary record:', summaryError)
-          // Clean up uploaded file if DB insert fails
+          // Clean up uploaded file if DB upsert fails
           await supabase.storage.from('summaries').remove([storagePath])
           return NextResponse.json(
             { error: 'Failed to save summary record' },
@@ -123,25 +142,7 @@ export async function POST(request: NextRequest) {
           )
         }
 
-        // Fetch book title for filename
-        const { data: book } = await supabase
-          .from('books')
-          .select('title')
-          .eq('id', book_id)
-          .single()
-
-        // Sanitize filename: replace spaces/special chars with underscores, lowercase
-        const sanitizeFilename = (str: string) => {
-          return str
-            .replace(/[^a-z0-9]/gi, '_')
-            .replace(/_+/g, '_')
-            .replace(/^_|_$/g, '')
-            .toLowerCase()
-        }
-
-        const bookTitle = book?.title || 'book'
-        const sanitizedTitle = sanitizeFilename(bookTitle)
-        const filename = `${sanitizedTitle}_${preferences.length}_${preferences.style}.pdf`
+        const filename = await getBookFilename(book_id, preferences.length, preferences.style)
 
         // Return PDF with appropriate headers for download
         return new NextResponse(pdfBuffer, {
