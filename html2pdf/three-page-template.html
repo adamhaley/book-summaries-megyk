@@ -237,6 +237,53 @@
   text-align: center;
 }
 
+
+/* -------------------------
+   Full-page advertisement (last page)
+-------------------------- */
+
+.fullpage-ad {
+  page-break-before: always;
+  position: relative;
+  width: 100%;
+  height: calc(11in - 1.3in); /* Letter height minus @page top+bottom margins */
+}
+
+.fullpage-ad img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* IMPORTANT: don't crop ad */
+  display: block;
+}
+
+/* CTA overlay */
+.ad-cta {
+  position: absolute;
+
+  /* 👇 These values are adjustable once we eyeball placement */
+  bottom: 1.25in;
+  left: 50%;
+  transform: translateX(-50%);
+
+  font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 18pt;
+  letter-spacing: 0.04em;
+
+  color: #ffffff;
+  text-decoration: none;
+  text-align: center;
+
+  /* Subtle legibility boost */
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+/* Make entire CTA area clickable but not intrusive */
+.ad-cta span {
+  padding: 10px 24px;
+  display: inline-block;
+}
+
   </style>
 </head>
 
@@ -302,6 +349,23 @@
 <!-- Workbook Answer Page -->
 
 {{WORKBOOK_ANSWER_PAGE}}
+
+<div class="fullpage-ad">
+  <img
+    src="https://app.megyk.com/medium-long-a.png"
+    alt="Sponsored full-page advertisement"
+  />
+
+  <a
+    href="{{AD_CLICK_URL}}"
+    class="ad-cta"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <span>TAKE THE SURVEY</span>
+  </a>
+</div>
+
 
 </body>
 </html>
