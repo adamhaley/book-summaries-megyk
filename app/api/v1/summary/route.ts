@@ -71,9 +71,16 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const webhookResponse = await fetch(n8nWebhookUrl, {
+      const cacheBustedUrl = `${n8nWebhookUrl}${n8nWebhookUrl.includes('?') ? '&' : '?'}ts=${Date.now()}`
+
+      const webhookResponse = await fetch(cacheBustedUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+        cache: 'no-store',
         body: JSON.stringify(webhookPayload)
       })
 
