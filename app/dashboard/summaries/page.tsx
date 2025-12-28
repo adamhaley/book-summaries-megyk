@@ -244,7 +244,7 @@ export default function SummariesPage() {
                               </Group>
 
                               <Text size="xs" c="dimmed">
-                                Generated {formatDate(summary.created_at)}
+                                Generated {formatDate(summary.updated_at)}
                               </Text>
 
                               <Group gap="xs">
@@ -333,7 +333,7 @@ export default function SummariesPage() {
                                 </Badge>
                               </Table.Td>
                               <Table.Td>
-                                <Text size="sm">{formatDate(summary.created_at)}</Text>
+                                <Text size="sm">{formatDate(summary.updated_at)}</Text>
                               </Table.Td>
                               <Table.Td style={{ textAlign: 'right' }}>
                                 <Group gap="xs" justify="flex-end">
