@@ -17,9 +17,10 @@ import {
   Box
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings } from '@tabler/icons-react';
+import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings, IconMessageCircle } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
+import { ChatWithBook } from '@/components/chat/ChatWithBook';
 import styles from './BookCarousel.module.css';
 
 interface BookCarouselProps {
@@ -49,6 +50,8 @@ const getFallbackPlaceholder = (book: Book) => {
 export function BookCarousel({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [chatOpened, setChatOpened] = useState(false);
+  const [chatBook, setChatBook] = useState<Book | null>(null);
   const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
@@ -136,6 +139,11 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     }
   };
 
+  const handleOpenChat = (book: Book) => {
+    setChatBook(book);
+    setChatOpened(true);
+  };
+
   const BookCard = ({ book }: { book: Book }) => (
     <Card 
       className={styles.bookCard}
@@ -214,21 +222,41 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                   >
                     Custom
                   </Button>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() => handleOpenChat(book)}
+                    aria-label="Chat with book"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#000000' }}
+                  >
+                    <IconMessageCircle size={18} />
+                  </ActionIcon>
                 </Group>
               ) : (
-                <Button
-                  variant="filled"
-                  leftSection={<IconSparkles size={16} />}
-                  onClick={() => handleGetSummary(book)}
-                  size="sm"
-                  className={styles.generateButton}
-                  style={{
-                    backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                    color: '#000000',
-                  }}
-                >
-                  Get Summary
-                </Button>
+                <Group gap={8}>
+                  <Button
+                    variant="filled"
+                    leftSection={<IconSparkles size={16} />}
+                    onClick={() => handleGetSummary(book)}
+                    size="sm"
+                    className={styles.generateButton}
+                    style={{
+                      backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                      color: '#000000',
+                    }}
+                  >
+                    Get Summary
+                  </Button>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() => handleOpenChat(book)}
+                    aria-label="Chat with book"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#000000' }}
+                  >
+                    <IconMessageCircle size={18} />
+                  </ActionIcon>
+                </Group>
               )}
             </Stack>
           </div>
@@ -303,6 +331,11 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
         book={selectedBook}
+      />
+      <ChatWithBook
+        opened={chatOpened}
+        onClose={() => setChatOpened(false)}
+        book={chatBook}
       />
     </Container>
   );

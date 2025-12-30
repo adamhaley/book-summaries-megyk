@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image } from '@mantine/core'
-import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings } from '@tabler/icons-react'
+import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image, ActionIcon } from '@mantine/core'
+import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings, IconMessageCircle } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
+import { ChatWithBook } from '@/components/chat/ChatWithBook'
 import styles from './library.module.css'
 
 // Helper functions for book covers (same as carousel)
@@ -74,6 +75,8 @@ export default function LibraryPage() {
   const [error, setError] = useState<string | null>(null)
   const [modalOpened, setModalOpened] = useState(false)
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+  const [chatOpened, setChatOpened] = useState(false)
+  const [chatBook, setChatBook] = useState<Book | null>(null)
   
   // Sorting state
   const [sortBy, setSortBy] = useState<keyof Book | null>(null)
@@ -157,6 +160,11 @@ export default function LibraryPage() {
       // Fallback to customization modal if no default summary exists
       handleGenerateSummary(book)
     }
+  }
+
+  const handleOpenChat = (book: Book) => {
+    setChatBook(book)
+    setChatOpened(true)
   }
 
   if (loading) {
@@ -279,18 +287,38 @@ export default function LibraryPage() {
                             >
                               Customize
                             </Button>
+                            <ActionIcon
+                              size="lg"
+                              variant="light"
+                              color="gray"
+                              onClick={() => handleOpenChat(book)}
+                              aria-label="Chat with book"
+                            >
+                              <IconMessageCircle size={18} />
+                            </ActionIcon>
                           </Group>
                         ) : (
-                          <Button
-                            size="sm"
-                            variant="light"
-                            color="blue"
-                            leftSection={<IconSparkles size={16} />}
-                            onClick={() => handleGetSummary(book)}
-                            style={{ flexShrink: 0 }}
-                          >
-                            Get Summary
-                          </Button>
+                          <Group gap="xs">
+                            <Button
+                              size="sm"
+                              variant="light"
+                              color="blue"
+                              leftSection={<IconSparkles size={16} />}
+                              onClick={() => handleGetSummary(book)}
+                              style={{ flexShrink: 0 }}
+                            >
+                              Get Summary
+                            </Button>
+                            <ActionIcon
+                              size="lg"
+                              variant="light"
+                              color="gray"
+                              onClick={() => handleOpenChat(book)}
+                              aria-label="Chat with book"
+                            >
+                              <IconMessageCircle size={18} />
+                            </ActionIcon>
+                          </Group>
                         )}
                       </Group>
                     </Stack>
@@ -420,17 +448,37 @@ export default function LibraryPage() {
                             >
                               Custom
                             </Button>
+                            <ActionIcon
+                              size="sm"
+                              variant="light"
+                              color="gray"
+                              onClick={() => handleOpenChat(book)}
+                              aria-label="Chat with book"
+                            >
+                              <IconMessageCircle size={14} />
+                            </ActionIcon>
                           </Group>
                         ) : (
-                          <Button
-                            size="xs"
-                            variant="light"
-                            color="blue"
-                            leftSection={<IconSparkles size={14} />}
-                            onClick={() => handleGetSummary(book)}
-                          >
-                            Get Summary
-                          </Button>
+                          <Group gap={4}>
+                            <Button
+                              size="xs"
+                              variant="light"
+                              color="blue"
+                              leftSection={<IconSparkles size={14} />}
+                              onClick={() => handleGetSummary(book)}
+                            >
+                              Get Summary
+                            </Button>
+                            <ActionIcon
+                              size="sm"
+                              variant="light"
+                              color="gray"
+                              onClick={() => handleOpenChat(book)}
+                              aria-label="Chat with book"
+                            >
+                              <IconMessageCircle size={14} />
+                            </ActionIcon>
+                          </Group>
                         )}
                       </Table.Td>
                     </Table.Tr>
@@ -465,6 +513,11 @@ export default function LibraryPage() {
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
         book={selectedBook}
+      />
+      <ChatWithBook
+        opened={chatOpened}
+        onClose={() => setChatOpened(false)}
+        book={chatBook}
       />
     </Container>
   )
