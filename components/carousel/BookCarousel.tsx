@@ -227,7 +227,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     size="lg"
                     onClick={() => handleOpenChat(book)}
                     aria-label="Chat with book"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#000000' }}
+                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
                   >
                     <IconMessageCircle size={18} />
                   </ActionIcon>
@@ -252,7 +252,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     size="lg"
                     onClick={() => handleOpenChat(book)}
                     aria-label="Chat with book"
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#000000' }}
+                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
                   >
                     <IconMessageCircle size={18} />
                   </ActionIcon>

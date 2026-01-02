@@ -5,6 +5,17 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient()
 
+    const url = new URL(request.url)
+    const limitParam = url.searchParams.get('limit')
+    const limit = limitParam ? Number.parseInt(limitParam, 10) : null
+
+    if (limit !== null && (!Number.isFinite(limit) || limit < 1 || limit > 100)) {
+      return NextResponse.json(
+        { error: 'Invalid limit parameter' },
+        { status: 400 }
+      )
+    }
+
     // Get authenticated user
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -17,12 +28,16 @@ export async function GET(request: NextRequest) {
 
     const userId = user.id
 
-    // Fetch summaries for the user
-    const { data: summaries, error: summariesError } = await supabase
+    // Fetch summaries for the user with book data in a single query
+    const summariesQuery = supabase
       .from('summaries')
-      .select('*')
+      .select('*, book:books(id, title, author, cover_image_url)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
+
+    const { data: summaries, error: summariesError } = limit
+      ? await summariesQuery.limit(limit)
+      : await summariesQuery
 
     if (summariesError) {
       console.error('Error fetching summaries:', summariesError)
@@ -32,23 +47,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Fetch book data separately for each summary
-    const summariesWithBooks = await Promise.all(
-      (summaries || []).map(async (summary) => {
-        const { data: book } = await supabase
-          .from('books')
-          .select('id, title, author, cover_image_url')
-          .eq('id', summary.book_id)
-          .single()
-
-        return {
-          ...summary,
-          book: book || undefined
-        }
-      })
-    )
-
-    return NextResponse.json({ summaries: summariesWithBooks })
+    return NextResponse.json({ summaries: summaries || [] })
   } catch (error) {
     console.error('Error in summaries endpoint:', error)
     return NextResponse.json(
