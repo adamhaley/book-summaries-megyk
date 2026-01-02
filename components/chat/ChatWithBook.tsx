@@ -29,6 +29,14 @@ type ChatMessage = {
   content: string;
 };
 
+const renderWithLineBreaks = (content: string) =>
+  content.split(/\n/).map((line, index, lines) => (
+    <span key={`${index}-${line}`}>
+      {line}
+      {index < lines.length - 1 && <br />}
+    </span>
+  ));
+
 const createId = () => {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
     return crypto.randomUUID();
@@ -148,10 +156,10 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         position: 'fixed',
         bottom: 24,
         right: 24,
-        width: 360,
+        width: 480,
         maxWidth: 'calc(100vw - 32px)',
-        height: 420,
-        maxHeight: '70vh',
+        height: 620,
+        maxHeight: '85vh',
         zIndex: 300,
         display: 'flex',
         flexDirection: 'column',
@@ -163,7 +171,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         <Group gap="xs" wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
           <IconMessageCircle size={18} />
           <Tooltip label={headerTitle} withArrow>
-            <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1, minWidth: 0 }}>
+            <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1, minWidth: 0, color: '#000000' }}>
               {headerTitle}
             </Text>
           </Tooltip>
@@ -200,7 +208,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                 color: message.role === 'user' ? '#ffffff' : '#111827',
               }}
             >
-              <Text size="sm">{message.content}</Text>
+              <Text size="md">{renderWithLineBreaks(message.content)}</Text>
             </Box>
           </Box>
         ))}
@@ -219,7 +227,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
               }}
             >
               <Loader size="xs" color="blue" />
-              <Text size="sm">Thinking...</Text>
+              <Text size="md">Thinking...</Text>
             </Box>
           </Box>
         )}
