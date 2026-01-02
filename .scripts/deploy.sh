@@ -5,6 +5,6 @@ echo "Deploying .."
 
 git pull origin master
 yarn install
-yarn build
+docker compose -f ../n8n-docker-caddy/docker-compose.yml up -d --build megyk-books
 
 echo "Deploy complete!"
