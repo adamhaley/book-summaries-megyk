@@ -290,7 +290,7 @@ export default function LibraryPage() {
                             <ActionIcon
                               size="lg"
                               variant="light"
-                              color="gray"
+                              color="blue"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
@@ -312,7 +312,7 @@ export default function LibraryPage() {
                             <ActionIcon
                               size="lg"
                               variant="light"
-                              color="gray"
+                              color="blue"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
@@ -429,7 +429,7 @@ export default function LibraryPage() {
                       </Table.Td>
                       <Table.Td>
                         {book.default_summary_pdf_url ? (
-                          <Group gap={4}>
+                          <Group gap={4} wrap="nowrap">
                             <Button
                               size="xs"
                               variant="filled"
@@ -451,7 +451,7 @@ export default function LibraryPage() {
                             <ActionIcon
                               size="sm"
                               variant="light"
-                              color="gray"
+                              color="blue"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
@@ -459,7 +459,7 @@ export default function LibraryPage() {
                             </ActionIcon>
                           </Group>
                         ) : (
-                          <Group gap={4}>
+                          <Group gap={4} wrap="nowrap">
                             <Button
                               size="xs"
                               variant="light"
@@ -472,7 +472,7 @@ export default function LibraryPage() {
                             <ActionIcon
                               size="sm"
                               variant="light"
-                              color="gray"
+                              color="blue"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
