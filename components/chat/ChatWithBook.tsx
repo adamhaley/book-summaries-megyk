@@ -9,6 +9,7 @@ import {
   Group,
   Loader,
   Paper,
+  Portal,
   ScrollArea,
   Text,
   TextInput,
@@ -148,119 +149,121 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   if (!opened) return null;
 
   return (
-    <Paper
-      shadow="lg"
-      radius="md"
-      withBorder
-      style={{
-        position: 'fixed',
-        bottom: 24,
-        right: 24,
-        width: 480,
-        maxWidth: 'calc(100vw - 32px)',
-        height: 620,
-        maxHeight: '85vh',
-        zIndex: 300,
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#ffffff',
-        borderColor: '#e5e7eb',
-      }}
-    >
-      <Group justify="space-between" px="md" py="sm" wrap="nowrap">
-        <Group gap="xs" wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
-          <IconMessageCircle size={18} />
-          <Tooltip label={headerTitle} withArrow>
-            <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1, minWidth: 0, color: '#000000' }}>
-              {headerTitle}
-            </Text>
-          </Tooltip>
+    <Portal>
+      <Paper
+        shadow="lg"
+        radius="md"
+        withBorder
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          width: 480,
+          maxWidth: 'calc(100vw - 32px)',
+          height: 620,
+          maxHeight: '85vh',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundColor: '#ffffff',
+          borderColor: '#e5e7eb',
+        }}
+      >
+        <Group justify="space-between" px="md" py="sm" wrap="nowrap">
+          <Group gap="xs" wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
+            <IconMessageCircle size={18} />
+            <Tooltip label={headerTitle} withArrow>
+              <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1, minWidth: 0, color: '#000000' }}>
+                {headerTitle}
+              </Text>
+            </Tooltip>
+          </Group>
+          <ActionIcon variant="subtle" size="sm" onClick={onClose} aria-label="Close chat">
+            <IconX size={16} />
+          </ActionIcon>
         </Group>
-        <ActionIcon variant="subtle" size="sm" onClick={onClose} aria-label="Close chat">
-          <IconX size={16} />
-        </ActionIcon>
-      </Group>
-      <Divider />
-      <ScrollArea style={{ flex: 1 }} px="md" py="sm">
-        {messages.length === 0 && !isSending && (
-          <Box py="md">
-            <Text size="sm" c="dimmed">
-              Ask a question about this book and I’ll respond here.
-            </Text>
-          </Box>
-        )}
-        {messages.map((message) => (
-          <Box
-            key={message.id}
-            mb="sm"
-            style={{
-              display: 'flex',
-              justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-            }}
-          >
-            <Box
-              px="sm"
-              py="xs"
-              style={{
-                maxWidth: '80%',
-                borderRadius: 12,
-                backgroundColor: message.role === 'user' ? '#2563eb' : '#f3f4f6',
-                color: message.role === 'user' ? '#ffffff' : '#111827',
-              }}
-            >
-              <Text size="md">{renderWithLineBreaks(message.content)}</Text>
+        <Divider />
+        <ScrollArea style={{ flex: 1 }} px="md" py="sm">
+          {messages.length === 0 && !isSending && (
+            <Box py="md">
+              <Text size="sm" c="dimmed">
+                Ask a question about this book and I’ll respond here.
+              </Text>
             </Box>
-          </Box>
-        ))}
-        {isSending && (
-          <Box mb="sm" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+          )}
+          {messages.map((message) => (
             <Box
-              px="sm"
-              py="xs"
+              key={message.id}
+              mb="sm"
               style={{
-                borderRadius: 12,
-                backgroundColor: '#f3f4f6',
-                color: '#111827',
                 display: 'flex',
-                alignItems: 'center',
-                gap: 8,
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
               }}
             >
-              <Loader size="xs" color="blue" />
-              <Text size="md">Thinking...</Text>
+              <Box
+                px="sm"
+                py="xs"
+                style={{
+                  maxWidth: '80%',
+                  borderRadius: 12,
+                  backgroundColor: message.role === 'user' ? '#2563eb' : '#f3f4f6',
+                  color: message.role === 'user' ? '#ffffff' : '#111827',
+                }}
+              >
+                <Text size="md">{renderWithLineBreaks(message.content)}</Text>
+              </Box>
             </Box>
-          </Box>
-        )}
-        {errorMessage && (
-          <Box mb="sm">
-            <Text size="xs" c="red">
-              {errorMessage}
-            </Text>
-          </Box>
-        )}
-        <div ref={bottomRef} />
-      </ScrollArea>
-      <Divider />
-      <Group px="md" py="sm" gap="xs">
-        <TextInput
-          value={input}
-          onChange={(event) => setInput(event.currentTarget.value)}
-          placeholder={book ? 'Type your message...' : 'Pick a book to chat'}
-          disabled={!book || isSending}
-          onKeyDown={handleKeyDown}
-          style={{ flex: 1 }}
-        />
-        <ActionIcon
-          variant="filled"
-          color="blue"
-          size="lg"
-          onClick={sendMessage}
-          disabled={!input.trim() || !book || isSending}
-          aria-label="Send message"
-        >
-          <IconSend size={18} />
-        </ActionIcon>
-      </Group>
-    </Paper>
+          ))}
+          {isSending && (
+            <Box mb="sm" style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Box
+                px="sm"
+                py="xs"
+                style={{
+                  borderRadius: 12,
+                  backgroundColor: '#f3f4f6',
+                  color: '#111827',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <Loader size="xs" color="blue" />
+                <Text size="md">Thinking...</Text>
+              </Box>
+            </Box>
+          )}
+          {errorMessage && (
+            <Box mb="sm">
+              <Text size="xs" c="red">
+                {errorMessage}
+              </Text>
+            </Box>
+          )}
+          <div ref={bottomRef} />
+        </ScrollArea>
+        <Divider />
+        <Group px="md" py="sm" gap="xs">
+          <TextInput
+            value={input}
+            onChange={(event) => setInput(event.currentTarget.value)}
+            placeholder={book ? 'Type your message...' : 'Pick a book to chat'}
+            disabled={!book || isSending}
+            onKeyDown={handleKeyDown}
+            style={{ flex: 1 }}
+          />
+          <ActionIcon
+            variant="filled"
+            color="blue"
+            size="lg"
+            onClick={sendMessage}
+            disabled={!input.trim() || !book || isSending}
+            aria-label="Send message"
+          >
+            <IconSend size={18} />
+          </ActionIcon>
+        </Group>
+      </Paper>
+    </Portal>
   );
 }
