@@ -49,7 +49,6 @@
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	margin-bottom: 14px;
 	}
 
 	.top-left h1 {
@@ -58,33 +57,48 @@
 	font-size: 34pt;
 	margin: 0 0 6px 0;
 	line-height: 1.0;
+
+	 display: inline-block;
+	  width: 500px;
+
+	  white-space: normal;
+	  word-break: normal;
+	  hyphens: none;
+	}
+	.top-left h2{
+
+		font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
+		line-height:.9;
+		font-weight: 300;
+		font-size: 18pt;
+		font-style:italic;
+
 	}
 
 	.top-left .subtitle {
 	font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
 	font-weight: 700;
 	font-size: 14pt;
-	margin: 0;
 	}
 
 	.logo {
 	width: 165px;
 	height: auto;
-	margin-top: 4px;
+	margin-top: 0px;
 	}
 
 	/* Core Idea box */
 	.core-box {
 	border: 1.5px solid #333;
 	padding: 10px 12px;
-	margin: 10px 0 16px 0;
+	margin: 0px 0 0px 0;
 	}
 
 	.core-box .label {
 	font-family: "Open Sans Condensed", "Arial Narrow", Arial, sans-serif;
 	font-weight: 700;
 	font-size: 12.5pt;
-	margin-bottom: 4px;
+	margin-bottom: 2px;
 	}
 
 	.core-box p {
@@ -266,7 +280,7 @@
     <div class="top">
       <div class="top-left">
         <h1>{{TITLE}}</h1>
-        <!--<h2>{{SUBTITLE}}</h2>-->
+	<h2>{{SUBTITLE}}</h2>
         <p class="subtitle">{{AUTHOR}}’s Megyk Book Summary</p>
       </div>
 
