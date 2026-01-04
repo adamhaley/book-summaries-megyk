@@ -37,7 +37,9 @@ export async function GET(request: NextRequest) {
       const { data: userData } = await supabase.auth.getUser()
 
       // Get UTM parameters from cookies
+      console.log('🔍 [CONFIRM ROUTE] Checking for UTM cookies...')
       const utmParams = await getUTMFromCookies()
+      console.log('🔍 [CONFIRM ROUTE] UTM params from cookies:', utmParams ? JSON.stringify(utmParams) : 'null/empty')
       
       // Call n8n webhook after successful email verification
       try {
