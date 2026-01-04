@@ -42,8 +42,14 @@ export async function GET(request: NextRequest) {
       // Call n8n webhook after successful email verification
       try {
         const webhookUrl = process.env.N8N_SIGNUP_WEBHOOK_URL
+        console.log('🔔 [CONFIRM ROUTE] Webhook URL:', webhookUrl ? 'configured' : 'NOT SET')
         if (webhookUrl) {
-          await fetch(webhookUrl, {
+          console.log('🔔 [CONFIRM ROUTE] Calling verification webhook...', {
+            event: 'user_verified',
+            email: userData.user?.email,
+            user_id: userData.user?.id,
+          })
+          const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -56,9 +62,12 @@ export async function GET(request: NextRequest) {
               utm: utmParams,
             }),
           })
+          console.log('✅ [CONFIRM ROUTE] Webhook called successfully, status:', response.status)
+        } else {
+          console.error('❌ [CONFIRM ROUTE] N8N_SIGNUP_WEBHOOK_URL not configured!')
         }
       } catch (webhookError) {
-        console.error('Verification webhook failed:', webhookError)
+        console.error('❌ [CONFIRM ROUTE] Verification webhook failed:', webhookError)
         // Don't fail the verification if webhook fails
       }
       
