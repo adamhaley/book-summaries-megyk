@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getUTMFromCookies } from '@/lib/utils/utm.server'
 
 export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] type:', type)
 
   // Use the correct public URL, not the internal origin
-  const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://megyk.com'
+  const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.megyk.com'
 
   if (token_hash && type) {
     console.log('🔵 [CONFIRM ROUTE] Token and type present, verifying with Supabase...')
@@ -31,6 +32,36 @@ export async function GET(request: NextRequest) {
 
     if (!error) {
       console.log('✅ [CONFIRM ROUTE] Verification SUCCESS - redirecting to dashboard')
+      
+      // Get user data after successful verification
+      const { data: userData } = await supabase.auth.getUser()
+      
+      // Get UTM parameters from cookies
+      const utmParams = getUTMFromCookies()
+      
+      // Call n8n webhook after successful email verification
+      try {
+        const webhookUrl = process.env.N8N_SIGNUP_WEBHOOK_URL
+        if (webhookUrl) {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-idempotency-key': userData.user?.id || '',
+            },
+            body: JSON.stringify({
+              event: 'user_verified',
+              email: userData.user?.email,
+              user_id: userData.user?.id,
+              utm: utmParams,
+            }),
+          })
+        }
+      } catch (webhookError) {
+        console.error('Verification webhook failed:', webhookError)
+        // Don't fail the verification if webhook fails
+      }
+      
       // Redirect to the specified URL or dashboard on success
       return NextResponse.redirect(new URL(next, publicUrl))
     }

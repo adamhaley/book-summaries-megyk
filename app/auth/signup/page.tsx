@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert } from '@mantine/core'
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
+import { useUTMTracking } from '@/hooks/useUTMTracking'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const { utmParams } = useUTMTracking()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -48,6 +50,23 @@ export default function SignUpPage() {
       if (error) {
         setError(error.message)
         return
+      }
+
+      // Call n8n webhook after successful signup
+      try {
+        await fetch('/api/webhook/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'user_signup',
+            email: data.user?.email,
+            user_id: data.user?.id,
+            utm: utmParams,
+          }),
+        })
+      } catch (webhookError) {
+        console.error('Signup webhook failed:', webhookError)
+        // Don't fail the signup if webhook fails
       }
 
       // Check if email confirmation is required
