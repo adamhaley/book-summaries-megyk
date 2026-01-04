@@ -1,13 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
-import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert } from '@mantine/core'
+import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert, Loader, Center } from '@mantine/core'
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
 import { useUTMTracking } from '@/hooks/useUTMTracking'
 
-export default function SignUpPage() {
+function SignUpForm() {
   const router = useRouter()
   const { utmParams } = useUTMTracking()
   const [email, setEmail] = useState('')
@@ -153,5 +153,19 @@ export default function SignUpPage() {
         </Stack>
       </Paper>
     </Container>
+  )
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={
+      <Container size="xs" py="xl" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+        <Center style={{ width: '100%' }}>
+          <Loader />
+        </Center>
+      </Container>
+    }>
+      <SignUpForm />
+    </Suspense>
   )
 }

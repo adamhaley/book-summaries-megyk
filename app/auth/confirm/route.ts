@@ -35,9 +35,9 @@ export async function GET(request: NextRequest) {
       
       // Get user data after successful verification
       const { data: userData } = await supabase.auth.getUser()
-      
+
       // Get UTM parameters from cookies
-      const utmParams = getUTMFromCookies()
+      const utmParams = await getUTMFromCookies()
       
       // Call n8n webhook after successful email verification
       try {
