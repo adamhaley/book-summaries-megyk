@@ -5,9 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert } from '@mantine/core'
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
+import { useUTMTracking } from '@/hooks/useUTMTracking'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const { utmParams } = useUTMTracking()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -59,6 +61,7 @@ export default function SignUpPage() {
             event: 'user_signup',
             email: data.user?.email,
             user_id: data.user?.id,
+            utm: utmParams,
           }),
         })
       } catch (webhookError) {

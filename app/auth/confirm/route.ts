@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getUTMFromCookies } from '@/lib/utils/utm'
 
 export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
@@ -35,6 +36,9 @@ export async function GET(request: NextRequest) {
       // Get user data after successful verification
       const { data: userData } = await supabase.auth.getUser()
       
+      // Get UTM parameters from cookies
+      const utmParams = getUTMFromCookies()
+      
       // Call n8n webhook after successful email verification
       try {
         const webhookUrl = process.env.N8N_SIGNUP_WEBHOOK_URL
@@ -49,6 +53,7 @@ export async function GET(request: NextRequest) {
               event: 'user_verified',
               email: userData.user?.email,
               user_id: userData.user?.id,
+              utm: utmParams,
             }),
           })
         }
