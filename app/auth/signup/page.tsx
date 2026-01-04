@@ -50,6 +50,22 @@ export default function SignUpPage() {
         return
       }
 
+      // Call n8n webhook after successful signup
+      try {
+        await fetch('/api/webhook/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            event: 'user_signup',
+            email: data.user?.email,
+            user_id: data.user?.id,
+          }),
+        })
+      } catch (webhookError) {
+        console.error('Signup webhook failed:', webhookError)
+        // Don't fail the signup if webhook fails
+      }
+
       // Check if email confirmation is required
       if (data.user && !data.user.confirmed_at) {
         setSuccess(true)

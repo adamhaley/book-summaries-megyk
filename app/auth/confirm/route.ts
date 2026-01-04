@@ -31,6 +31,32 @@ export async function GET(request: NextRequest) {
 
     if (!error) {
       console.log('✅ [CONFIRM ROUTE] Verification SUCCESS - redirecting to dashboard')
+      
+      // Get user data after successful verification
+      const { data: userData } = await supabase.auth.getUser()
+      
+      // Call n8n webhook after successful email verification
+      try {
+        const webhookUrl = process.env.N8N_SIGNUP_WEBHOOK_URL
+        if (webhookUrl) {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-idempotency-key': userData.user?.id || '',
+            },
+            body: JSON.stringify({
+              event: 'user_verified',
+              email: userData.user?.email,
+              user_id: userData.user?.id,
+            }),
+          })
+        }
+      } catch (webhookError) {
+        console.error('Verification webhook failed:', webhookError)
+        // Don't fail the verification if webhook fails
+      }
+      
       // Redirect to the specified URL or dashboard on success
       return NextResponse.redirect(new URL(next, publicUrl))
     }
