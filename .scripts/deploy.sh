@@ -27,11 +27,14 @@ echo "📝 Changed files:"
 echo "$CHANGED_FILES"
 echo ""
 
-if echo "$CHANGED_FILES" | grep -qE "Dockerfile|package.json|yarn.lock"; then
+if echo "$CHANGED_FILES" | grep -qE "\.(ts|tsx|js|jsx)$"; then
+  echo "🔨 Code changes detected - FULL REBUILD (~5 min)"
+  docker compose -f ../n8n-docker-caddy/docker-compose.yml up -d --build megyk-books
+elif echo "$CHANGED_FILES" | grep -qE "Dockerfile|package.json|yarn.lock"; then
   echo "🔨 Dependencies or Dockerfile changed - FULL REBUILD (~5 min)"
   docker compose -f ../n8n-docker-caddy/docker-compose.yml up -d --build megyk-books
 else
-  echo "⚡ Code-only changes - QUICK RESTART (~30 sec)"
+  echo "⚡ Non-code changes only (docs/scripts) - QUICK RESTART (~30 sec)"
   docker compose -f ../n8n-docker-caddy/docker-compose.yml up -d megyk-books
 fi
 
