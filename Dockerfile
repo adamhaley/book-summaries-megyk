@@ -1,4 +1,3 @@
-# Dockerfile
 FROM node:22-alpine
 
 WORKDIR /app
@@ -7,10 +6,10 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# Copy source
+# Copy source (includes .env.local)
 COPY . .
 
-# Build Next.js
+# Build Next.js (will read .env.local automatically)
 RUN yarn build
 
 ENV NODE_ENV=production
