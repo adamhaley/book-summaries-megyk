@@ -1,5 +1,3 @@
-import { cookies } from 'next/headers'
-
 export interface UTMParams {
   utm_source?: string
   utm_medium?: string
@@ -23,19 +21,6 @@ export function parseUTMFromSearchParams(searchParams: URLSearchParams): UTMPara
 
 export function hasUTMParams(utmParams: UTMParams): boolean {
   return Object.values(utmParams).some(value => value !== undefined)
-}
-
-export function getUTMFromCookies(): UTMParams | null {
-  try {
-    const cookieStore = cookies()
-    const utmCookie = cookieStore.get(UTM_COOKIE_NAME)
-    if (utmCookie?.value) {
-      return JSON.parse(utmCookie.value)
-    }
-  } catch (error) {
-    console.error('Error parsing UTM from cookies:', error)
-  }
-  return null
 }
 
 export function setUTMCookie(utmParams: UTMParams): string {

@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { getUTMFromCookies } from '@/lib/utils/utm'
+import { getUTMFromCookies } from '@/lib/utils/utm.server'
 
 export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] type:', type)
 
   // Use the correct public URL, not the internal origin
-  const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://megyk.com'
+  const publicUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://app.megyk.com'
 
   if (token_hash && type) {
     console.log('🔵 [CONFIRM ROUTE] Token and type present, verifying with Supabase...')
