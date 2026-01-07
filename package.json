@@ -37,6 +37,7 @@
     "@mantine/next": "^6.0.22",
     "@mantine/notifications": "^8.3.5",
     "@mantine/tiptap": "^8.3.5",
+    "@next/third-parties": "^16.1.1",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.75.0",
     "@tabler/icons-react": "^3.35.0",
