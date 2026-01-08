@@ -447,7 +447,7 @@ export default function DashboardPage() {
       {recommendedBooks.length > 0 && (
         <Box id="tour-recommended-carousel">
           <Stack gap="md" mb="md">
-            <Title order={2} c="#000000">Recommended For You</Title>
+            <Title id="tour-recommended-title" order={2} c="#000000">Recommended For You</Title>
             <Text size="lg" c="#374151">
               Handpicked books based on your interests
             </Text>

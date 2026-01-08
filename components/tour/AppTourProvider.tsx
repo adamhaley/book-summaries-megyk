@@ -6,8 +6,12 @@ import { NextStepProvider, NextStep, useNextStep, type Tour } from 'nextstepjs';
 
 const TOUR_SEEN_KEY = 'megyk_tour_seen_v1';
 
-// Step index where we open the chat (0-indexed)
-const CHAT_OPEN_STEP = 1; // The "Chatbox" step (after "Chat with the book" CTA)
+// Step indices (0-indexed)
+const CHAT_OPEN_STEP = 1;  // The "Chatbox" step - chat opens here
+const CHAT_CLOSE_STEP = 3; // The "Discover More" step - chat closes here
+const BOOK_CARD_STEP = 4;  // The "Recommended Books" step
+const BOOK_BUTTONS_START = 5; // Start of button steps (Get Summary, Chat)
+const BOOK_BUTTONS_END = 6;   // End of button steps
 
 const tours: Tour[] = [
   {
@@ -44,10 +48,58 @@ const tours: Tour[] = [
         showSkip: true,
         // No viewportID - chatbox is in a Portal with fixed positioning
       },
+      {
+        icon: null,
+        title: 'Discover More',
+        content: 'Discover more books to chat with here.',
+        selector: '#tour-discover-cta-desktop',
+        side: 'top',
+        showControls: true,
+        showSkip: true,
+        viewportID: 'nextstep-viewport',
+      },
+      {
+        icon: null,
+        title: 'Or here...',
+        content: 'Find other books based on your interests. Hover over any book to get a summary or have a chat.',
+        selector: '#tour-recommended-book',
+        side: 'left',
+        showControls: true,
+        showSkip: true,
+        // No viewportID - we'll scroll into view manually
+      },
+      {
+        icon: null,
+        title: 'Get Summary',
+        content: 'Download a personalized PDF summary of this book.',
+        selector: '#tour-book-get-summary',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        // No viewportID - element is in scrolled view
+      },
+      {
+        icon: null,
+        title: 'Chat with Book',
+        content: 'Or chat with it directly!',
+        selector: '#tour-book-chat',
+        side: 'bottom',
+        showControls: true,
+        showSkip: true,
+        // No viewportID - element is in scrolled view
+      },
     ],
   },
   // Mobile tour disabled - positioning issues with AppShell layout
 ];
+
+// Helper to activate/deactivate the book card overlay for tour visibility
+const setBookCardTourActive = (active: boolean) => {
+  const bookCard = document.getElementById('tour-recommended-book');
+  if (bookCard) {
+    bookCard.setAttribute('data-tour-active', active ? 'true' : 'false');
+  }
+};
 
 // Handler for step changes - opens/closes chat when reaching chatbox steps (desktop only)
 const handleStepChange = (stepIndex: number, tourName: string | null) => {
@@ -62,9 +114,38 @@ const handleStepChange = (stepIndex: number, tourName: string | null) => {
     }, 100);
   }
   
-  // Close chat when going back before chatbox step
-  if (stepIndex < CHAT_OPEN_STEP) {
+  // Close chat when reaching Discover step or going back before chatbox step
+  if (stepIndex === CHAT_CLOSE_STEP || stepIndex < CHAT_OPEN_STEP) {
     window.dispatchEvent(new CustomEvent('tour:close-chat'));
+    
+    // Scroll to Discover button when reaching that step
+    if (stepIndex === CHAT_CLOSE_STEP) {
+      const discoverBtn = document.getElementById('tour-discover-cta-desktop');
+      if (discoverBtn) {
+        discoverBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 300);
+      }
+    }
+  }
+  
+  // Activate book card overlay when on book card or button steps
+  if (stepIndex >= BOOK_CARD_STEP && stepIndex <= BOOK_BUTTONS_END) {
+    setBookCardTourActive(true);
+    
+    // Scroll the book card into view
+    const bookCard = document.getElementById('tour-recommended-book');
+    if (bookCard) {
+      bookCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    
+    // Force re-render after scroll completes
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300);
+  } else {
+    setBookCardTourActive(false);
   }
 };
 
@@ -134,10 +215,17 @@ function AutoStartTour() {
     if (!startedRef.current) return;
     if (isNextStepVisible) return;
 
+    // Tour has ended - clean up
     try {
       window.localStorage.setItem(TOUR_SEEN_KEY, 'true');
     } catch {
       // ignore
+    }
+    
+    // Clean up book card overlay state
+    const bookCard = document.getElementById('tour-recommended-book');
+    if (bookCard) {
+      bookCard.removeAttribute('data-tour-active');
     }
   }, [isNextStepVisible]);
 

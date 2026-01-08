@@ -137,7 +137,8 @@
   transition: opacity 0.3s ease;
 }
 
-.bookCard:hover .overlay {
+.bookCard:hover .overlay,
+.bookCard[data-tour-active="true"] .overlay {
   opacity: 1;
 }
 
