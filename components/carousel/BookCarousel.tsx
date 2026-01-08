@@ -324,7 +324,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
       >
         {books.map((book, index) => (
           <Carousel.Slide key={book.id}>
-            <BookCard book={book} isFirstCard={index === 0} />
+            <BookCard book={book} isFirstCard={index === 1} />
           </Carousel.Slide>
         ))}
 
