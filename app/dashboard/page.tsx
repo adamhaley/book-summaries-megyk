@@ -62,6 +62,10 @@ function HeroSection({
     genre: "Business"
   };
 
+  const handleChat = () => {
+    if (book) onOpenChat(book);
+  };
+
   return (
     <Box 
       style={{
@@ -137,44 +141,45 @@ function HeroSection({
           <Button
             size="md"
             variant="filled"
+            leftSection={
+              <img
+                src="/chat-with-book/chat-with-book.png"
+                alt=""
+                aria-hidden="true"
+                style={{ display: 'block', height: 44, width: 'auto' }}
+              />
+            }
+            onClick={handleChat}
+            disabled={!book}
+            style={
+              {
+                fontWeight: 600,
+                '--button-bg': '#ffffff',
+                '--button-hover': '#f3f4f6',
+                '--button-color': '#2563EB',
+                '--button-bd': '1px solid rgba(37, 99, 235, 0.25)',
+              } as any
+            }
+            fullWidth
+          >
+            Chat With Book
+          </Button>
+
+          <Button
+            size="md"
+            variant="filled"
             leftSection={<IconSparkles size={18} />}
             onClick={() => router.push('/dashboard/library')}
             style={{ 
               fontWeight: 600,
               backgroundColor: '#2563EB',
               color: '#FFFFFF',
+              border: '1px solid transparent',
             }}
             fullWidth
           >
             Discover More
           </Button>
-
-          {book && (
-            <a
-              href="#chat-with-book"
-              onClick={(e) => {
-                e.preventDefault();
-                onOpenChat(book);
-              }}
-              className="chat-with-book-cta"
-              aria-label={`Chat with ${book.title}`}
-              style={{
-                display: 'block',
-                width: '100%',
-                cursor: 'pointer',
-                borderRadius: 12,
-                overflow: 'hidden',
-                border: 'none',
-                textDecoration: 'none',
-              }}
-            >
-              <img
-                src="/chat-with-book/chat-with-book.png"
-                alt={`Chat with ${book.title}`}
-                style={{ display: 'block', width: '100%', height: 'auto' }}
-              />
-            </a>
-          )}
         </Stack>
       </Stack>
 
@@ -245,42 +250,43 @@ function HeroSection({
             <Button
               size="lg"
               variant="filled"
+              leftSection={
+                <img
+                  src="/chat-with-book/chat-with-book.png"
+                  alt=""
+                  aria-hidden="true"
+                  style={{ display: 'block', height: 44, width: 'auto' }}
+                />
+              }
+              onClick={handleChat}
+              disabled={!book}
+              style={
+                {
+                  fontWeight: 600,
+                  '--button-bg': '#ffffff',
+                  '--button-hover': '#f3f4f6',
+                  '--button-color': '#2563EB',
+                  '--button-bd': '1px solid rgba(37, 99, 235, 0.25)',
+                } as any
+              }
+            >
+              Chat With Book
+            </Button>
+
+            <Button
+              size="lg"
+              variant="filled"
               leftSection={<IconSparkles size={20} />}
               onClick={() => router.push('/dashboard/library')}
               style={{ 
                 fontWeight: 600,
                 backgroundColor: '#2563EB',
                 color: '#FFFFFF',
+                border: '1px solid transparent',
               }}
             >
               Discover More
             </Button>
-
-            {book && (
-              <a
-                href="#chat-with-book"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onOpenChat(book);
-                }}
-                className="chat-with-book-cta"
-                aria-label={`Chat with ${book.title}`}
-                style={{
-                  display: 'block',
-                  cursor: 'pointer',
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  border: 'none',
-                  textDecoration: 'none',
-                }}
-              >
-                <img
-                  src="/chat-with-book/chat-with-book.png"
-                  alt={`Chat with ${book.title}`}
-                  style={{ display: 'block', height: 56, width: 'auto' }}
-                />
-              </a>
-            )}
           </Group>
         </Stack>
       </Group>

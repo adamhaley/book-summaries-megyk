@@ -166,7 +166,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: '#ffffff',
-          borderColor: '#e5e7eb',
+          borderColor: 'rgba(37, 99, 235, 0.55)',
         }}
       >
         <Group justify="space-between" px="md" py="sm" wrap="nowrap">
