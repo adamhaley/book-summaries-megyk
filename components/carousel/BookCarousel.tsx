@@ -144,13 +144,14 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     setChatOpened(true);
   };
 
-  const BookCard = ({ book }: { book: Book }) => (
+  const BookCard = ({ book, isFirstCard = false }: { book: Book; isFirstCard?: boolean }) => (
     <Card 
       className={styles.bookCard}
       shadow="lg" 
       radius="md" 
       withBorder={false}
       p="sm"
+      id={isFirstCard ? 'tour-recommended-book' : undefined}
     >
       <div className={styles.cardContent}>
         <div className={styles.imageContainer}>
@@ -207,6 +208,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                       backgroundColor: '#2563EB',
                       color: '#ffffff',
                     }}
+                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
                   >
                     Get Summary
                   </Button>
@@ -228,6 +230,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     onClick={() => handleOpenChat(book)}
                     aria-label="Chat with book"
                     style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
+                    id={isFirstCard ? 'tour-book-chat' : undefined}
                   >
                     <IconMessageCircle size={18} />
                   </ActionIcon>
@@ -244,6 +247,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                       backgroundColor: 'rgba(0, 210, 255, 0.8)',
                       color: '#000000',
                     }}
+                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
                   >
                     Get Summary
                   </Button>
@@ -253,6 +257,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     onClick={() => handleOpenChat(book)}
                     aria-label="Chat with book"
                     style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
+                    id={isFirstCard ? 'tour-book-chat' : undefined}
                   >
                     <IconMessageCircle size={18} />
                   </ActionIcon>
@@ -317,9 +322,9 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
         controlsOffset={0}
         controlSize={50}
       >
-        {books.map((book) => (
+        {books.map((book, index) => (
           <Carousel.Slide key={book.id}>
-            <BookCard book={book} />
+            <BookCard book={book} isFirstCard={index === 0} />
           </Carousel.Slide>
         ))}
 
