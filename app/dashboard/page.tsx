@@ -154,6 +154,7 @@ function HeroSection({
             style={
               {
                 fontWeight: 600,
+                height: 56,
                 '--button-bg': '#ffffff',
                 '--button-hover': '#f3f4f6',
                 '--button-color': '#2563EB',
@@ -172,6 +173,7 @@ function HeroSection({
             onClick={() => router.push('/dashboard/library')}
             style={{ 
               fontWeight: 600,
+              height: 56,
               backgroundColor: '#2563EB',
               color: '#FFFFFF',
               border: '1px solid transparent',
@@ -263,6 +265,7 @@ function HeroSection({
               style={
                 {
                   fontWeight: 600,
+                  height: 60,
                   '--button-bg': '#ffffff',
                   '--button-hover': '#f3f4f6',
                   '--button-color': '#2563EB',
@@ -280,6 +283,7 @@ function HeroSection({
               onClick={() => router.push('/dashboard/library')}
               style={{ 
                 fontWeight: 600,
+                height: 60,
                 backgroundColor: '#2563EB',
                 color: '#FFFFFF',
                 border: '1px solid transparent',
