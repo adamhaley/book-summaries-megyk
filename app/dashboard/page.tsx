@@ -81,6 +81,7 @@ function HeroSection({
       <Stack 
         gap="lg"
         style={{ position: 'relative', zIndex: 2 }}
+        id="tour-hero-mobile"
         hiddenFrom="md"
       >
         {/* Mobile Layout - Centered */}
@@ -139,6 +140,7 @@ function HeroSection({
 
         <Stack gap="sm" mt="xs">
           <Button
+            id="tour-chat-cta-mobile"
             size="md"
             variant="filled"
             leftSection={
@@ -167,6 +169,7 @@ function HeroSection({
           </Button>
 
           <Button
+            id="tour-discover-cta-mobile"
             size="md"
             variant="filled"
             leftSection={<IconSparkles size={18} />}
@@ -191,6 +194,7 @@ function HeroSection({
         gap="xl" 
         wrap="nowrap" 
         style={{ position: 'relative', zIndex: 2 }}
+        id="tour-hero-desktop"
         visibleFrom="md"
       >
         {/* Book Cover */}
@@ -250,6 +254,7 @@ function HeroSection({
 
           <Group gap="md" mt="md">
             <Button
+              id="tour-chat-cta-desktop"
               size="lg"
               variant="filled"
               leftSection={
@@ -277,6 +282,7 @@ function HeroSection({
             </Button>
 
             <Button
+              id="tour-discover-cta-desktop"
               size="lg"
               variant="filled"
               leftSection={<IconSparkles size={20} />}
@@ -405,14 +411,14 @@ export default function DashboardPage() {
   return (
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="xl">
-        <Title order={1} c="#000000">For You</Title>
+        <Title id="tour-dashboard-title" order={1} c="#000000">For You</Title>
 
         {/* Hero Section - Continue Reading */}
         <HeroSection router={router} book={featuredBook} onOpenChat={handleOpenChat} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
-        <Box>
+        <Box id="tour-recommended-carousel">
           <Stack gap="md" mb="md">
             <Title order={2} c="#000000">Recommended For You</Title>
             <Text size="lg" c="#374151">
