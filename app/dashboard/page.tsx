@@ -24,6 +24,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences';
 import { BookCarousel } from '@/components/carousel/BookCarousel';
+import { ChatWithBook } from '@/components/chat/ChatWithBook';
 import { Book } from '@/lib/types/books';
 
 interface RecentSummary {
@@ -39,7 +40,15 @@ interface RecentSummary {
 }
 
 // Hero section - consumer-friendly book showcase
-function HeroSection({ router, book }: { router: any; book?: Book }) {
+function HeroSection({
+  router,
+  book,
+  onOpenChat,
+}: {
+  router: any;
+  book?: Book;
+  onOpenChat: (book: Book) => void;
+}) {
   // Default placeholder if no book provided
   const currentBook = book ? {
     title: book.title,
@@ -139,6 +148,33 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           >
             Discover More
           </Button>
+
+          {book && (
+            <a
+              href="#chat-with-book"
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenChat(book);
+              }}
+              className="chat-with-book-cta"
+              aria-label={`Chat with ${book.title}`}
+              style={{
+                display: 'block',
+                width: '100%',
+                cursor: 'pointer',
+                borderRadius: 12,
+                overflow: 'hidden',
+                border: 'none',
+                textDecoration: 'none',
+              }}
+            >
+              <img
+                src="/chat-with-book/chat-with-book.png"
+                alt={`Chat with ${book.title}`}
+                style={{ display: 'block', width: '100%', height: 'auto' }}
+              />
+            </a>
+          )}
         </Stack>
       </Stack>
 
@@ -219,6 +255,32 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             >
               Discover More
             </Button>
+
+            {book && (
+              <a
+                href="#chat-with-book"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onOpenChat(book);
+                }}
+                className="chat-with-book-cta"
+                aria-label={`Chat with ${book.title}`}
+                style={{
+                  display: 'block',
+                  cursor: 'pointer',
+                  borderRadius: 12,
+                  overflow: 'hidden',
+                  border: 'none',
+                  textDecoration: 'none',
+                }}
+              >
+                <img
+                  src="/chat-with-book/chat-with-book.png"
+                  alt={`Chat with ${book.title}`}
+                  style={{ display: 'block', height: 56, width: 'auto' }}
+                />
+              </a>
+            )}
           </Group>
         </Stack>
       </Group>
@@ -246,6 +308,8 @@ export default function DashboardPage() {
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chatOpened, setChatOpened] = useState(false);
+  const [chatBook, setChatBook] = useState<Book | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -317,13 +381,24 @@ export default function DashboardPage() {
     );
   }
 
+  const featuredBook =
+    recommendedBooks.find((candidate) => {
+      const title = (candidate.title || '').trim().toLowerCase();
+      return title === '$100m offers' || title === '100m offers' || title.includes('100m offers');
+    }) || recommendedBooks[0];
+
+  const handleOpenChat = (book: Book) => {
+    setChatBook(book);
+    setChatOpened(true);
+  };
+
   return (
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="xl">
         <Title order={1} c="#000000">For You</Title>
 
         {/* Hero Section - Continue Reading */}
-        <HeroSection router={router} book={recommendedBooks[0]} />
+        <HeroSection router={router} book={featuredBook} onOpenChat={handleOpenChat} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
@@ -396,6 +471,12 @@ export default function DashboardPage() {
         </Box>
       )}
       </Stack>
+
+      <ChatWithBook
+        opened={chatOpened}
+        onClose={() => setChatOpened(false)}
+        book={chatBook}
+      />
     </Container>
   );
 }

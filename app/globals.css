@@ -9,6 +9,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Chat-with-book CTA: force-disable any hover/transition effects from global styles */
+.chat-with-book-cta,
+.chat-with-book-cta:hover,
+.chat-with-book-cta:active {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+.chat-with-book-cta img,
+.chat-with-book-cta:hover img,
+.chat-with-book-cta:active img {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+.chat-with-book-cta *,
+.chat-with-book-cta:hover *,
+.chat-with-book-cta:active * {
+  transition: none !important;
+}
+
 /* Basic layout fixes */
 html, body {
   height: 100%;
