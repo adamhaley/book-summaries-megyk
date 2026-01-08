@@ -15,7 +15,7 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core';
-import { IconMessageCircle, IconSend, IconX } from '@tabler/icons-react';
+import { IconSend, IconX } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 
 interface ChatWithBookProps {
@@ -166,12 +166,17 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: '#ffffff',
-          borderColor: '#e5e7eb',
+          borderColor: 'rgba(37, 99, 235, 0.55)',
         }}
       >
         <Group justify="space-between" px="md" py="sm" wrap="nowrap">
           <Group gap="xs" wrap="nowrap" style={{ minWidth: 0, flex: 1 }}>
-            <IconMessageCircle size={18} />
+            <img
+              src="/chat-with-book/chat-with-book.png"
+              alt=""
+              aria-hidden="true"
+              style={{ display: 'block', height: 34, width: 'auto' }}
+            />
             <Tooltip label={headerTitle} withArrow>
               <Text fw={600} size="sm" lineClamp={1} style={{ flex: 1, minWidth: 0, color: '#000000' }}>
                 {headerTitle}

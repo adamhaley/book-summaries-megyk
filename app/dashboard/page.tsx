@@ -24,6 +24,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences';
 import { BookCarousel } from '@/components/carousel/BookCarousel';
+import { ChatWithBook } from '@/components/chat/ChatWithBook';
 import { Book } from '@/lib/types/books';
 
 interface RecentSummary {
@@ -39,7 +40,15 @@ interface RecentSummary {
 }
 
 // Hero section - consumer-friendly book showcase
-function HeroSection({ router, book }: { router: any; book?: Book }) {
+function HeroSection({
+  router,
+  book,
+  onOpenChat,
+}: {
+  router: any;
+  book?: Book;
+  onOpenChat: (book: Book) => void;
+}) {
   // Default placeholder if no book provided
   const currentBook = book ? {
     title: book.title,
@@ -51,6 +60,10 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
     author: "Alex Hormozi",
     cover: "https://placehold.co/300x450/7C3AED/FBBF24?text=$100M+OFFERS&font=roboto",
     genre: "Business"
+  };
+
+  const handleChat = () => {
+    if (book) onOpenChat(book);
   };
 
   return (
@@ -128,12 +141,42 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
           <Button
             size="md"
             variant="filled"
+            leftSection={
+              <img
+                src="/chat-with-book/chat-with-book.png"
+                alt=""
+                aria-hidden="true"
+                style={{ display: 'block', height: 44, width: 'auto' }}
+              />
+            }
+            onClick={handleChat}
+            disabled={!book}
+            style={
+              {
+                fontWeight: 600,
+                height: 56,
+                '--button-bg': '#ffffff',
+                '--button-hover': '#f3f4f6',
+                '--button-color': '#2563EB',
+                '--button-bd': '1px solid rgba(37, 99, 235, 0.25)',
+              } as any
+            }
+            fullWidth
+          >
+            Chat With Book
+          </Button>
+
+          <Button
+            size="md"
+            variant="filled"
             leftSection={<IconSparkles size={18} />}
             onClick={() => router.push('/dashboard/library')}
             style={{ 
               fontWeight: 600,
+              height: 56,
               backgroundColor: '#2563EB',
               color: '#FFFFFF',
+              border: '1px solid transparent',
             }}
             fullWidth
           >
@@ -209,12 +252,41 @@ function HeroSection({ router, book }: { router: any; book?: Book }) {
             <Button
               size="lg"
               variant="filled"
+              leftSection={
+                <img
+                  src="/chat-with-book/chat-with-book.png"
+                  alt=""
+                  aria-hidden="true"
+                  style={{ display: 'block', height: 44, width: 'auto' }}
+                />
+              }
+              onClick={handleChat}
+              disabled={!book}
+              style={
+                {
+                  fontWeight: 600,
+                  height: 60,
+                  '--button-bg': '#ffffff',
+                  '--button-hover': '#f3f4f6',
+                  '--button-color': '#2563EB',
+                  '--button-bd': '1px solid rgba(37, 99, 235, 0.25)',
+                } as any
+              }
+            >
+              Chat With Book
+            </Button>
+
+            <Button
+              size="lg"
+              variant="filled"
               leftSection={<IconSparkles size={20} />}
               onClick={() => router.push('/dashboard/library')}
               style={{ 
                 fontWeight: 600,
+                height: 60,
                 backgroundColor: '#2563EB',
                 color: '#FFFFFF',
+                border: '1px solid transparent',
               }}
             >
               Discover More
@@ -246,6 +318,8 @@ export default function DashboardPage() {
   const [recommendedBooks, setRecommendedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chatOpened, setChatOpened] = useState(false);
+  const [chatBook, setChatBook] = useState<Book | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -317,13 +391,24 @@ export default function DashboardPage() {
     );
   }
 
+  const featuredBook =
+    recommendedBooks.find((candidate) => {
+      const title = (candidate.title || '').trim().toLowerCase();
+      return title === '$100m offers' || title === '100m offers' || title.includes('100m offers');
+    }) || recommendedBooks[0];
+
+  const handleOpenChat = (book: Book) => {
+    setChatBook(book);
+    setChatOpened(true);
+  };
+
   return (
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="xl">
         <Title order={1} c="#000000">For You</Title>
 
         {/* Hero Section - Continue Reading */}
-        <HeroSection router={router} book={recommendedBooks[0]} />
+        <HeroSection router={router} book={featuredBook} onOpenChat={handleOpenChat} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
@@ -396,6 +481,12 @@ export default function DashboardPage() {
         </Box>
       )}
       </Stack>
+
+      <ChatWithBook
+        opened={chatOpened}
+        onClose={() => setChatOpened(false)}
+        book={chatBook}
+      />
     </Container>
   );
 }
