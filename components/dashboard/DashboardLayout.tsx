@@ -20,6 +20,7 @@ import {
   IconAdjustments,
 } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
+import { TourHelpButton } from '@/components/tour/TourHelpButton';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -227,10 +228,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Navigation Section */}
           <AppShell.Section grow p="md">
             {items}
+            <TourHelpButton />
           </AppShell.Section>
         </AppShell.Navbar>
 
-        <AppShell.Main>{children}</AppShell.Main>
+        <AppShell.Main id="nextstep-viewport">{children}</AppShell.Main>
       </AppShell>
 
       {/* Mobile Bottom Navigation - Facebook Style */}

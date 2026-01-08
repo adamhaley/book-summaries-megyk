@@ -15,6 +15,7 @@ import {
   TextInput,
   Tooltip,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconSend, IconX } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 
@@ -70,6 +71,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const bookId = book?.id;
+  const isMobile = useMediaQuery('(max-width: 576px)', true, { getInitialValueInEffect: false });
 
   const headerTitle = useMemo(() => {
     if (!book) return 'Chat with book';
@@ -151,15 +153,17 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   return (
     <Portal>
       <Paper
+        id="tour-chatbox"
         shadow="lg"
         radius="md"
         withBorder
         style={{
           position: 'fixed',
-          bottom: 24,
-          right: 24,
-          width: 480,
-          maxWidth: 'calc(100vw - 32px)',
+          bottom: isMobile ? 0 : 24,
+          left: isMobile ? 0 : undefined,
+          right: isMobile ? 0 : 24,
+          width: isMobile ? '100vw' : 480,
+          maxWidth: isMobile ? '100vw' : 'calc(100vw - 32px)',
           height: 620,
           maxHeight: '85vh',
           zIndex: 1000,
@@ -250,6 +254,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         <Divider />
         <Group px="md" py="sm" gap="xs">
           <TextInput
+            id="tour-chat-input"
             value={input}
             onChange={(event) => setInput(event.currentTarget.value)}
             placeholder={book ? 'Type your message...' : 'Pick a book to chat'}

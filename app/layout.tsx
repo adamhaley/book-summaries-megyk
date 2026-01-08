@@ -6,6 +6,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { theme } from '@/lib/theme';
 import { MainNavigation } from '@/components/MainNavigation';
+import { AppTourProvider } from '@/components/tour/AppTourProvider';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,7 +33,9 @@ export default function RootLayout({
           <ModalsProvider>
             <Notifications />
         <MainNavigation />
-        <main>{children}</main>
+        <main>
+          <AppTourProvider>{children}</AppTourProvider>
+        </main>
         <footer style={{ 
           borderTop: '1px solid #e5e7eb', 
           marginTop: '5rem',
