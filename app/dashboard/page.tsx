@@ -331,6 +331,33 @@ export default function DashboardPage() {
     fetchDashboardData();
   }, []);
 
+  // Listen for tour events to open/close chat
+  useEffect(() => {
+    const handleTourOpenChat = () => {
+      // Use the featured book for the tour demo
+      const bookToChat = recommendedBooks.find((candidate) => {
+        const title = (candidate.title || '').trim().toLowerCase();
+        return title === '$100m offers' || title === '100m offers' || title.includes('100m offers');
+      }) || recommendedBooks[0];
+      
+      if (bookToChat) {
+        setChatBook(bookToChat);
+        setChatOpened(true);
+      }
+    };
+
+    const handleTourCloseChat = () => {
+      setChatOpened(false);
+    };
+
+    window.addEventListener('tour:open-chat', handleTourOpenChat);
+    window.addEventListener('tour:close-chat', handleTourCloseChat);
+    return () => {
+      window.removeEventListener('tour:open-chat', handleTourOpenChat);
+      window.removeEventListener('tour:close-chat', handleTourCloseChat);
+    };
+  }, [recommendedBooks]);
+
   const fetchDashboardData = async () => {
     setLoading(true);
     setError(null);

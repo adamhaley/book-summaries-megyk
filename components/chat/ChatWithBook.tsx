@@ -153,6 +153,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   return (
     <Portal>
       <Paper
+        id="tour-chatbox"
         shadow="lg"
         radius="md"
         withBorder
@@ -253,6 +254,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         <Divider />
         <Group px="md" py="sm" gap="xs">
           <TextInput
+            id="tour-chat-input"
             value={input}
             onChange={(event) => setInput(event.currentTarget.value)}
             placeholder={book ? 'Type your message...' : 'Pick a book to chat'}
