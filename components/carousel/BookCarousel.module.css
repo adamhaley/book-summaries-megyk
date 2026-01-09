@@ -77,6 +77,11 @@
     0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
+.bookCard[data-tour-active="true"] {
+  transition: none;
+  transform: none;
+}
+
 .bookCard:hover {
   transform: scale(1.05);
   border-color: #2563EB;
@@ -103,6 +108,11 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
+}
+
+.bookCard[data-tour-active="true"] .coverImage {
+  transition: none;
+  transform: none;
 }
 
 .coverFallback {
@@ -140,6 +150,10 @@
 .bookCard:hover .overlay,
 .bookCard[data-tour-active="true"] .overlay {
   opacity: 1;
+}
+
+.bookCard[data-tour-active="true"] .overlay {
+  transition: none;
 }
 
 .bookCard:hover .coverImage {
