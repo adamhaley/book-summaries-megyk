@@ -194,6 +194,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
       }
       size="lg"
       centered
+      zIndex={1400}
       styles={{
         body: {
           overflowY: 'auto',
