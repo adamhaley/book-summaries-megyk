@@ -17,8 +17,9 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSend, IconX } from '@tabler/icons-react';
+import { IconSend, IconSparkles, IconX } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
+import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
 
 interface ChatWithBookProps {
   opened: boolean;
@@ -72,6 +73,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [summaryModalOpened, setSummaryModalOpened] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const suggestionsAbortRef = useRef<AbortController | null>(null);
@@ -157,6 +159,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
       setInput('');
       setIsSending(false);
       setErrorMessage(null);
+      setSummaryModalOpened(false);
     }
   }, [opened]);
 
@@ -220,10 +223,20 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
     sendMessageWithText(suggestion);
   };
 
+  const handleGetSummary = () => {
+    if (!book) return;
+    if (book.default_summary_pdf_url) {
+      window.open(book.default_summary_pdf_url, '_blank');
+      return;
+    }
+    setSummaryModalOpened(true);
+  };
+
   if (!opened) return null;
 
   return (
     <Portal>
+      <>
       <Paper
         id="tour-chatbox"
         shadow="lg"
@@ -306,7 +319,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
               </Text>
             </Box>
           )}
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <Box
               key={message.id}
               mb="sm"
@@ -326,6 +339,20 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                 }}
               >
                 <Text size="md">{renderWithLineBreaks(message.content)}</Text>
+                {message.role === 'assistant' && index === messages.length - 1 && !!book && (
+                  <Group mt="xs" justify="flex-start">
+                    <Button
+                      size="xs"
+                      variant="filled"
+                      color="blue"
+                      leftSection={<IconSparkles size={14} />}
+                      onClick={handleGetSummary}
+                      style={{ fontWeight: 600 }}
+                    >
+                      Get Summary
+                    </Button>
+                  </Group>
+                )}
               </Box>
             </Box>
           ))}
@@ -381,6 +408,12 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           </ActionIcon>
         </Group>
       </Paper>
+      <GenerateSummaryModal
+        opened={summaryModalOpened}
+        onClose={() => setSummaryModalOpened(false)}
+        book={book}
+      />
+      </>
     </Portal>
   );
 }
