@@ -277,24 +277,21 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                   <Button
                     key={suggestion}
                     size="xs"
-                    variant="light"
-                    color="gray"
+                    variant="filled"
                     radius="xl"
                     onClick={() => handleSuggestionClick(suggestion)}
                     disabled={isSending}
-                    styles={{
-                      root: {
-                        backgroundColor: '#f3f4f6',
-                        color: '#4b5563',
-                        border: '1px solid #e5e7eb',
+                    style={
+                      {
                         fontWeight: 500,
                         paddingLeft: 10,
                         paddingRight: 10,
-                      },
-                      rootHover: {
-                        backgroundColor: '#e5e7eb',
-                      },
-                    }}
+                        '--button-bg': '#f3f4f6',
+                        '--button-hover': '#e5e7eb',
+                        '--button-color': '#4b5563',
+                        '--button-bd': '1px solid #e5e7eb',
+                      } as any
+                    }
                   >
                     {suggestion}
                   </Button>
