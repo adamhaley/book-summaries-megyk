@@ -270,7 +270,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
               <Group gap={8} wrap="wrap">
                 {isLoadingSuggestions && (
                   <Text size="xs" c="dimmed">
-                    Suggestions…
+                    Loading Suggestions…
                   </Text>
                 )}
                 {suggestions.map((suggestion) => (
