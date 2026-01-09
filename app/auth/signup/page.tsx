@@ -39,11 +39,16 @@ function SignUpForm() {
 
     try {
       const supabase = createClient()
+      const emailRedirectUrl = new URL('/auth/confirm', window.location.origin)
+      emailRedirectUrl.searchParams.set('utm_source', 'email')
+      emailRedirectUrl.searchParams.set('utm_medium', 'onboarding')
+      emailRedirectUrl.searchParams.set('utm_campaign', 'confirmation')
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirm`,
+          emailRedirectTo: emailRedirectUrl.toString(),
         },
       })
 

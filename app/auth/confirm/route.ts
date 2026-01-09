@@ -2,11 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getUTMFromCookies } from '@/lib/utils/utm.server'
+import { hasUTMParams, parseUTMFromSearchParams, UTM_COOKIE_EXPIRY, UTM_COOKIE_NAME } from '@/lib/utils/utm'
 
 export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
 
   const requestUrl = new URL(request.url)
+  const utmFromQuery = parseUTMFromSearchParams(requestUrl.searchParams)
   // Support both 'token_hash' (new) and 'token' (legacy) parameter names
   const token_hash = requestUrl.searchParams.get('token_hash') || requestUrl.searchParams.get('token')
   const type = requestUrl.searchParams.get('type')
@@ -36,10 +38,12 @@ export async function GET(request: NextRequest) {
       // Get user data after successful verification
       const { data: userData } = await supabase.auth.getUser()
 
-      // Get UTM parameters from cookies
-      console.log('🔍 [CONFIRM ROUTE] Checking for UTM cookies...')
-      const utmParams = await getUTMFromCookies()
-      console.log('🔍 [CONFIRM ROUTE] UTM params from cookies:', utmParams ? JSON.stringify(utmParams) : 'null/empty')
+      // Prefer UTM parameters from the confirmation redirect URL (works across devices),
+      // otherwise fall back to cookies (works within the same browser).
+      console.log('🔍 [CONFIRM ROUTE] Checking for UTM params...')
+      const utmFromCookie = await getUTMFromCookies()
+      const utmParams = hasUTMParams(utmFromQuery) ? utmFromQuery : utmFromCookie
+      console.log('🔍 [CONFIRM ROUTE] UTM params (query preferred):', utmParams ? JSON.stringify(utmParams) : 'null/empty')
       
       // Call n8n webhook after successful email verification
       try {
@@ -74,7 +78,18 @@ export async function GET(request: NextRequest) {
       }
       
       // Redirect to the specified URL or dashboard on success
-      return NextResponse.redirect(new URL(next, publicUrl))
+      const redirectResponse = NextResponse.redirect(new URL(next, publicUrl))
+
+      // Persist UTM params from the email confirmation redirect (so they survive the redirect to /dashboard)
+      if (hasUTMParams(utmFromQuery)) {
+        redirectResponse.cookies.set(UTM_COOKIE_NAME, JSON.stringify(utmFromQuery), {
+          path: '/',
+          maxAge: Math.floor(UTM_COOKIE_EXPIRY / 1000),
+          sameSite: 'lax',
+        })
+      }
+
+      return redirectResponse
     }
 
     console.error('❌ [CONFIRM ROUTE] Verification FAILED:', error)
