@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react';
 import {
   ActionIcon,
   Box,
+  Button,
   Divider,
   Group,
   Loader,
@@ -69,7 +70,11 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const suggestionsAbortRef = useRef<AbortController | null>(null);
   const bookId = book?.id;
   const isMobile = useMediaQuery('(max-width: 576px)', true, { getInitialValueInEffect: false });
 
@@ -81,10 +86,67 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   useEffect(() => {
     if (!bookId) {
       setMessages([]);
+      setSuggestions([]);
+      suggestionsAbortRef.current?.abort();
+      suggestionsAbortRef.current = null;
       return;
     }
     setMessages([]);
   }, [bookId]);
+
+  useEffect(() => {
+    if (!opened || !bookId) return;
+
+    suggestionsAbortRef.current?.abort();
+    const controller = new AbortController();
+    suggestionsAbortRef.current = controller;
+
+    setIsLoadingSuggestions(true);
+    setSuggestions([]);
+
+    if (process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.debug('[ChatWithBook] fetching suggestions', { bookId });
+    }
+
+    fetch('/api/v1/chat-suggestions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ book_id: bookId }),
+      signal: controller.signal,
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const details = await res.text().catch(() => '');
+          throw new Error(`Failed to load suggestions (${res.status}). ${details}`.trim());
+        }
+        const payload = (await res.json().catch(() => ({}))) as { questions?: unknown };
+        const questions = Array.isArray(payload?.questions)
+          ? payload.questions.filter((q) => typeof q === 'string').slice(0, 3)
+          : [];
+        setSuggestions(questions as string[]);
+      })
+      .catch((err) => {
+        if (process.env.NODE_ENV !== 'production') {
+          // eslint-disable-next-line no-console
+          console.warn('[ChatWithBook] suggestions failed', err);
+        }
+        // suggestions are non-critical; fail silently in UI
+        setSuggestions([]);
+      })
+      .finally(() => {
+        if (suggestionsAbortRef.current === controller) {
+          setIsLoadingSuggestions(false);
+        }
+      });
+
+    return () => {
+      controller.abort();
+      if (suggestionsAbortRef.current === controller) {
+        suggestionsAbortRef.current = null;
+      }
+    };
+  }, [opened, bookId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,10 +160,10 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
     }
   }, [opened]);
 
-  const sendMessage = async () => {
-    if (!book || !input.trim() || isSending) return;
+  const sendMessageWithText = async (text: string) => {
+    if (!book || !text.trim() || isSending) return;
 
-    const messageText = input.trim();
+    const messageText = text.trim();
     setInput('');
     setErrorMessage(null);
     setMessages((prev) => [...prev, { id: createId(), role: 'user', content: messageText }]);
@@ -138,7 +200,12 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
       setErrorMessage(message);
     } finally {
       setIsSending(false);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
+  };
+
+  const sendMessage = async () => {
+    return sendMessageWithText(input);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -146,6 +213,11 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
       event.preventDefault();
       sendMessage();
     }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    // Auto-send on click
+    sendMessageWithText(suggestion);
   };
 
   if (!opened) return null;
@@ -193,6 +265,43 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         </Group>
         <Divider />
         <ScrollArea style={{ flex: 1 }} px="md" py="sm">
+          {(isLoadingSuggestions || suggestions.length > 0) && (
+            <Box mb="sm">
+              <Group gap={8} wrap="wrap">
+                {isLoadingSuggestions && (
+                  <Text size="xs" c="dimmed">
+                    Suggestions…
+                  </Text>
+                )}
+                {suggestions.map((suggestion) => (
+                  <Button
+                    key={suggestion}
+                    size="xs"
+                    variant="light"
+                    color="gray"
+                    radius="xl"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    disabled={isSending}
+                    styles={{
+                      root: {
+                        backgroundColor: '#f3f4f6',
+                        color: '#4b5563',
+                        border: '1px solid #e5e7eb',
+                        fontWeight: 500,
+                        paddingLeft: 10,
+                        paddingRight: 10,
+                      },
+                      rootHover: {
+                        backgroundColor: '#e5e7eb',
+                      },
+                    }}
+                  >
+                    {suggestion}
+                  </Button>
+                ))}
+              </Group>
+            </Box>
+          )}
           {messages.length === 0 && !isSending && (
             <Box py="md">
               <Text size="sm" c="dimmed">
@@ -255,6 +364,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         <Group px="md" py="sm" gap="xs">
           <TextInput
             id="tour-chat-input"
+            ref={inputRef}
             value={input}
             onChange={(event) => setInput(event.currentTarget.value)}
             placeholder={book ? 'Type your message...' : 'Pick a book to chat'}
