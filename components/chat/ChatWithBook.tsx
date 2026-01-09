@@ -349,7 +349,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                       onClick={handleGetSummary}
                       style={{ fontWeight: 600 }}
                     >
-                      Get Summary
+                      Download Summary
                     </Button>
                   </Group>
                 )}
