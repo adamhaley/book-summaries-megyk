@@ -66,7 +66,7 @@ const tours: Tour[] = [
         side: 'left',
         showControls: true,
         showSkip: true,
-        // No viewportID - we'll scroll into view manually
+        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
       },
       {
         icon: null,
@@ -76,7 +76,7 @@ const tours: Tour[] = [
         side: 'bottom',
         showControls: true,
         showSkip: true,
-        // No viewportID - element is in scrolled view
+        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
       },
       {
         icon: null,
@@ -86,7 +86,7 @@ const tours: Tour[] = [
         side: 'bottom',
         showControls: true,
         showSkip: true,
-        // No viewportID - element is in scrolled view
+        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
       },
     ],
   },
@@ -104,14 +104,42 @@ const setBookCardTourActive = (active: boolean) => {
 // Handler for step changes - opens/closes chat when reaching chatbox steps (desktop only)
 const handleStepChange = (stepIndex: number, tourName: string | null) => {
   if (tourName !== 'dashboard_desktop') return;
+
+  const forceRecalc = (delay = 0) => {
+    window.setTimeout(() => {
+      // Give layout a couple frames to settle (scroll + transforms).
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.dispatchEvent(new Event('scroll'));
+          window.dispatchEvent(new Event('resize'));
+        });
+      });
+    }, delay);
+  };
+
+  const scrollIntoViewportCenter = (elementId: string, behavior: ScrollBehavior = 'auto') => {
+    const viewport = document.getElementById('nextstep-viewport');
+    const element = document.getElementById(elementId);
+    if (!viewport || !element) return false;
+
+    const vpRect = viewport.getBoundingClientRect();
+    const elRect = element.getBoundingClientRect();
+    const current = viewport.scrollTop;
+
+    // element top relative to viewport's scroll content
+    const elTopInViewportScroll = current + (elRect.top - vpRect.top);
+    const target =
+      elTopInViewportScroll - (viewport.clientHeight / 2 - elRect.height / 2);
+
+    viewport.scrollTo({ top: Math.max(0, target), behavior });
+    return true;
+  };
   
   // Open chat when reaching the chatbox step
   if (stepIndex === CHAT_OPEN_STEP) {
     window.dispatchEvent(new CustomEvent('tour:open-chat'));
     // Force NextStep to re-query the element after chatbox renders
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 100);
+    forceRecalc(200);
   }
   
   // Close chat when reaching Discover step or going back before chatbox step
@@ -120,13 +148,9 @@ const handleStepChange = (stepIndex: number, tourName: string | null) => {
     
     // Scroll to Discover button when reaching that step
     if (stepIndex === CHAT_CLOSE_STEP) {
-      const discoverBtn = document.getElementById('tour-discover-cta-desktop');
-      if (discoverBtn) {
-        discoverBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'));
-        }, 300);
-      }
+      scrollIntoViewportCenter('tour-discover-cta-desktop', 'auto');
+      forceRecalc(0);
+      forceRecalc(150);
     }
   }
   
@@ -135,15 +159,12 @@ const handleStepChange = (stepIndex: number, tourName: string | null) => {
     setBookCardTourActive(true);
     
     // Scroll the book card into view
-    const bookCard = document.getElementById('tour-recommended-book');
-    if (bookCard) {
-      bookCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    scrollIntoViewportCenter('tour-recommended-book', 'auto');
     
     // Force re-render after scroll completes
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 300);
+    forceRecalc(0);
+    forceRecalc(120);
+    forceRecalc(300);
   } else {
     setBookCardTourActive(false);
   }
