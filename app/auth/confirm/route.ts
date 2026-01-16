@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   const token_hash = requestUrl.searchParams.get('token_hash') || requestUrl.searchParams.get('token')
   const type = requestUrl.searchParams.get('type')
   const next = requestUrl.searchParams.get('next') || '/dashboard'
+  const redirectTo = requestUrl.searchParams.get('redirect_to')
 
   console.log('🔵 [CONFIRM ROUTE] Full URL:', request.url)
   console.log('🔵 [CONFIRM ROUTE] token_hash param:', requestUrl.searchParams.get('token_hash') ? 'present' : 'missing')
@@ -41,9 +42,30 @@ export async function GET(request: NextRequest) {
       // Prefer UTM parameters from the confirmation redirect URL (works across devices),
       // otherwise fall back to cookies (works within the same browser).
       console.log('🔍 [CONFIRM ROUTE] Checking for UTM params...')
+
+      const parseUTMFromUrlValue = (value: string | null) => {
+        if (!value) return null
+        try {
+          const url = new URL(value, publicUrl)
+          return parseUTMFromSearchParams(url.searchParams)
+        } catch {
+          return null
+        }
+      }
+
+      const utmFromRedirectParam = parseUTMFromUrlValue(redirectTo)
+      const utmFromNextParam = parseUTMFromUrlValue(next)
       const utmFromCookie = await getUTMFromCookies()
-      const utmParams = hasUTMParams(utmFromQuery) ? utmFromQuery : utmFromCookie
-      console.log('🔍 [CONFIRM ROUTE] UTM params (query preferred):', utmParams ? JSON.stringify(utmParams) : 'null/empty')
+      const utmParams =
+        (hasUTMParams(utmFromQuery) && utmFromQuery) ||
+        (utmFromRedirectParam && hasUTMParams(utmFromRedirectParam) && utmFromRedirectParam) ||
+        (utmFromNextParam && hasUTMParams(utmFromNextParam) && utmFromNextParam) ||
+        utmFromCookie
+
+      console.log(
+        '🔍 [CONFIRM ROUTE] UTM params (query/redirect preferred):',
+        utmParams ? JSON.stringify(utmParams) : 'null/empty'
+      )
       
       // Call n8n webhook after successful email verification
       try {
