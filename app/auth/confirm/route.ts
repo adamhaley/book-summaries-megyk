@@ -102,9 +102,9 @@ export async function GET(request: NextRequest) {
       // Redirect to the specified URL or dashboard on success
       const redirectResponse = NextResponse.redirect(new URL(next, publicUrl))
 
-      // Persist UTM params from the email confirmation redirect (so they survive the redirect to /dashboard)
-      if (hasUTMParams(utmFromQuery)) {
-        redirectResponse.cookies.set(UTM_COOKIE_NAME, JSON.stringify(utmFromQuery), {
+      // Persist UTM params from the confirmation flow (so they survive the redirect to /dashboard)
+      if (utmParams && hasUTMParams(utmParams)) {
+        redirectResponse.cookies.set(UTM_COOKIE_NAME, JSON.stringify(utmParams), {
           path: '/',
           maxAge: Math.floor(UTM_COOKIE_EXPIRY / 1000),
           sameSite: 'lax',
