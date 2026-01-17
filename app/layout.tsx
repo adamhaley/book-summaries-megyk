@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { GoogleTagManager } from '@next/third-parties/google';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
@@ -33,7 +34,9 @@ export default function RootLayout({
         <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
             <Notifications />
-        <UTMTracker />
+        <Suspense fallback={null}>
+          <UTMTracker />
+        </Suspense>
         <MainNavigation />
         <main>
           <AppTourProvider>{children}</AppTourProvider>
