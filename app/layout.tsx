@@ -7,6 +7,7 @@ import { Notifications } from '@mantine/notifications';
 import { theme } from '@/lib/theme';
 import { MainNavigation } from '@/components/MainNavigation';
 import { AppTourProvider } from '@/components/tour/AppTourProvider';
+import { UTMTracker } from '@/components/utm/UTMTracker';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,6 +33,7 @@ export default function RootLayout({
         <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
             <Notifications />
+        <UTMTracker />
         <MainNavigation />
         <main>
           <AppTourProvider>{children}</AppTourProvider>

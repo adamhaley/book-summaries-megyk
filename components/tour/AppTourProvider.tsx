@@ -19,7 +19,7 @@ const tours: Tour[] = [
     steps: [
       {
         icon: null,
-        title: 'Chat with the book',
+        title: 'Welcome to Megyk!',
         content: 'Tap here to open the chatbox and ask questions directly to the book.',
         selector: '#tour-chat-cta-desktop',
         side: 'top',
@@ -51,7 +51,7 @@ const tours: Tour[] = [
       {
         icon: null,
         title: 'Discover More',
-        content: 'Discover more books to chat with here.',
+        content: 'Discover more books here.',
         selector: '#tour-discover-cta-desktop',
         side: 'top',
         showControls: true,
@@ -61,7 +61,7 @@ const tours: Tour[] = [
       {
         icon: null,
         title: 'Or here...',
-        content: 'Find other books based on your interests. Hover over any book to get a summary or have a chat.',
+        content: 'Find other books based on your interests. Hover over any book to get a summary or start a conversation.',
         selector: '#tour-recommended-book',
         side: 'left',
         showControls: true,
@@ -81,7 +81,7 @@ const tours: Tour[] = [
       {
         icon: null,
         title: 'Chat with Book',
-        content: 'Or chat with it directly!',
+        content: 'Or talk to it directly!',
         selector: '#tour-book-chat',
         side: 'bottom',
         showControls: true,
