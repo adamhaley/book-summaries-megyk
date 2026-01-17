@@ -40,6 +40,7 @@ function SignUpForm() {
     try {
       const supabase = createClient()
       const emailRedirectUrl = new URL('/auth/confirm', window.location.origin)
+      console.log('[UTM] signup utmParams:', utmParams)
       if (utmParams) {
         Object.entries(utmParams).forEach(([key, value]) => {
           if (value) {
@@ -47,6 +48,7 @@ function SignUpForm() {
           }
         })
       }
+      console.log('[UTM] emailRedirectTo:', emailRedirectUrl.toString())
 
       const { data, error } = await supabase.auth.signUp({
         email,
