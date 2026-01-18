@@ -19,6 +19,7 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings, IconMessageCircle } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
+import { getDisplayTitle } from '@/lib/utils/bookTitle';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
 import { ChatWithBook } from '@/components/chat/ChatWithBook';
 import styles from './BookCarousel.module.css';
@@ -37,9 +38,10 @@ const getBookCoverPlaceholder = (book: Book) => {
   
   // Generate a consistent color based on book title
   const colors = ['3B82F6', '10B981', 'F59E0B', 'EF4444', '8B5CF6', '06B6D4'];
-  const colorIndex = book.title.length % colors.length;
+  const displayTitle = getDisplayTitle(book.title) || book.title;
+  const colorIndex = displayTitle.length % colors.length;
   
-  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(book.title.slice(0, 20))}`;
+  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(displayTitle.slice(0, 20))}`;
 };
 
 // Fallback placeholder for failed images
@@ -158,7 +160,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
           <Image
             src={getBookCoverPlaceholder(book)}
             fallbackSrc={getFallbackPlaceholder(book)}
-            alt={`Cover of ${book.title}`}
+            alt={`Cover of ${getDisplayTitle(book.title) || book.title}`}
             className={styles.coverImage}
             fit="cover"
             radius="md"

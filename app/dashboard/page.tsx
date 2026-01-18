@@ -26,6 +26,7 @@ import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/prefe
 import { BookCarousel } from '@/components/carousel/BookCarousel';
 import { ChatWithBook } from '@/components/chat/ChatWithBook';
 import { Book } from '@/lib/types/books';
+import { getDisplayTitle } from '@/lib/utils/bookTitle';
 
 interface RecentSummary {
   id: string;
@@ -50,10 +51,11 @@ function HeroSection({
   onOpenChat: (book: Book) => void;
 }) {
   // Default placeholder if no book provided
+  const displayTitle = getDisplayTitle(book?.title) || book?.title;
   const currentBook = book ? {
-    title: book.title,
+    title: displayTitle || book.title,
     author: book.author,
-    cover: book.cover_image_url || "https://placehold.co/300x450/7C3AED/FBBF24?text=" + encodeURIComponent(book.title),
+    cover: book.cover_image_url || "https://placehold.co/300x450/7C3AED/FBBF24?text=" + encodeURIComponent(displayTitle || book.title),
     genre: book.genre || "General"
   } : {
     title: "$100M Offers",
@@ -492,7 +494,7 @@ export default function DashboardPage() {
                   <Group justify="space-between" wrap="nowrap" align="flex-start">
                     <Stack gap={4} style={{ flex: 1 }}>
                       <Text size="lg" fw={600} lineClamp={2} c="#000000">
-                        {summary.book?.title || 'Unknown Book'}
+                        {getDisplayTitle(summary.book?.title) || summary.book?.title || 'Unknown Book'}
                       </Text>
                       <Text size="sm" c="#374151">
                         by {summary.book?.author || 'Unknown Author'}

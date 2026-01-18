@@ -19,6 +19,7 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSend, IconSparkles, IconX } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
+import { getDisplayTitle } from '@/lib/utils/bookTitle';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
 
 interface ChatWithBookProps {
@@ -82,7 +83,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
 
   const headerTitle = useMemo(() => {
     if (!book) return 'Chat with book';
-    return `Chat with "${book.title}"`;
+    return `Chat with "${getDisplayTitle(book.title) || book.title}"`;
   }, [book]);
 
   useEffect(() => {

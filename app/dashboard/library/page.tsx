@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image, ActionIcon } from '@mantine/core'
 import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings, IconMessageCircle } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
+import { getDisplayTitle } from '@/lib/utils/bookTitle'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
 import { ChatWithBook } from '@/components/chat/ChatWithBook'
 import styles from './library.module.css'
@@ -16,9 +17,10 @@ const getBookCoverPlaceholder = (book: Book) => {
   
   // Generate a consistent color based on book title
   const colors = ['3B82F6', '10B981', 'F59E0B', 'EF4444', '8B5CF6', '06B6D4'];
-  const colorIndex = book.title.length % colors.length;
+  const displayTitle = getDisplayTitle(book.title) || book.title;
+  const colorIndex = displayTitle.length % colors.length;
   
-  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(book.title.slice(0, 20))}`;
+  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(displayTitle.slice(0, 20))}`;
 };
 
 const getFallbackPlaceholder = (book: Book) => {
@@ -224,7 +226,7 @@ export default function LibraryPage() {
                       <Image
                         src={getBookCoverPlaceholder(book)}
                         fallbackSrc={getFallbackPlaceholder(book)}
-                        alt={`Cover of ${book.title}`}
+                        alt={`Cover of ${getDisplayTitle(book.title) || book.title}`}
                         fit="cover"
                         radius="md"
                         h={120}
@@ -235,7 +237,7 @@ export default function LibraryPage() {
                     {/* Book Details */}
                     <Stack gap="sm" style={{ flex: 1, minWidth: 0 }}>
                       <div>
-                        <Text fw={600} size="lg" lineClamp={2}>{book.title}</Text>
+                        <Text fw={600} size="lg" lineClamp={2}>{getDisplayTitle(book.title) || book.title}</Text>
                         <Text c="dimmed" size="sm">by {book.author}</Text>
                         {book.description && (
                           <Text size="sm" c="dimmed" mt="xs" lineClamp={2}>
@@ -394,7 +396,7 @@ export default function LibraryPage() {
                           <Image
                             src={getBookCoverPlaceholder(book)}
                             fallbackSrc={getFallbackPlaceholder(book)}
-                            alt={`Cover of ${book.title}`}
+                            alt={`Cover of ${getDisplayTitle(book.title) || book.title}`}
                             fit="cover"
                             radius="sm"
                             h={80}
@@ -404,7 +406,7 @@ export default function LibraryPage() {
                         </Box>
                       </Table.Td>
                       <Table.Td>
-                        <Text fw={600}>{book.title}</Text>
+                        <Text fw={600}>{getDisplayTitle(book.title) || book.title}</Text>
                         {book.description && (
                           <Text size="xs" c="dimmed" lineClamp={1}>
                             {book.description}

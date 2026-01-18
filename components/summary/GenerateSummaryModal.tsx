@@ -13,6 +13,7 @@ import {
   SummaryLength
 } from '@/lib/types/preferences'
 import { Book } from '@/lib/types/books'
+import { getDisplayTitle } from '@/lib/utils/bookTitle'
 
 interface GenerateSummaryModalProps {
   opened: boolean
@@ -155,7 +156,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
 
           notifications.show({
             title: 'Summary Generated!',
-            message: `Your personalized summary for "${book.title}" has been downloaded.`,
+            message: `Your personalized summary for "${getDisplayTitle(book.title) || book.title}" has been downloaded.`,
             color: 'green',
             icon: <IconCheck size={18} />,
             autoClose: 5000,
@@ -220,7 +221,7 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
             }}
           >
             <Text fw={600} size="lg" mb="xs">
-              {book.title}
+              {getDisplayTitle(book.title) || book.title}
             </Text>
             <Text size="sm" c="dimmed">
               by {book.author}

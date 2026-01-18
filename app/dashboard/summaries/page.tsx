@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Container, Title, Text, Stack, Card, Center, Button, Group, Badge, Loader, Table, SimpleGrid, Box, Image } from '@mantine/core'
 import { IconBookmark, IconDownload, IconTrash } from '@tabler/icons-react'
 import { SummaryWithBook } from '@/lib/types/summaries'
+import { getDisplayTitle } from '@/lib/utils/bookTitle'
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences'
 import styles from './summaries.module.css'
 
@@ -15,9 +16,10 @@ const getBookCoverPlaceholder = (book: any) => {
   
   // Generate a consistent color based on book title
   const colors = ['3B82F6', '10B981', 'F59E0B', 'EF4444', '8B5CF6', '06B6D4'];
-  const colorIndex = (book?.title?.length || 0) % colors.length;
+  const displayTitle = getDisplayTitle(book?.title) || book?.title || 'Book';
+  const colorIndex = displayTitle.length % colors.length;
   
-  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent((book?.title || 'Book').slice(0, 20))}`;
+  return `https://placehold.co/300x450/${colors[colorIndex]}/ffffff?text=${encodeURIComponent(displayTitle.slice(0, 20))}`;
 };
 
 const getFallbackPlaceholder = (book: any) => {
@@ -213,7 +215,7 @@ export default function SummariesPage() {
                           <Image
                             src={getBookCoverPlaceholder(bookGroup.book)}
                             fallbackSrc={getFallbackPlaceholder(bookGroup.book)}
-                            alt={`Cover of ${bookGroup.book?.title || 'Book'}`}
+                            alt={`Cover of ${getDisplayTitle(bookGroup.book?.title) || bookGroup.book?.title || 'Book'}`}
                             fit="cover"
                             radius="md"
                             h={100}
@@ -221,7 +223,9 @@ export default function SummariesPage() {
                           />
                         </Box>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <Text fw={700} size="xl" lineClamp={2}>{bookGroup.book?.title || 'Unknown Book'}</Text>
+                          <Text fw={700} size="xl" lineClamp={2}>
+                            {getDisplayTitle(bookGroup.book?.title) || bookGroup.book?.title || 'Unknown Book'}
+                          </Text>
                           <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
                           <Text c="dimmed" size="xs" mt={4}>
                             {bookGroup.summaries.length} {bookGroup.summaries.length === 1 ? 'summary' : 'summaries'}
@@ -289,7 +293,7 @@ export default function SummariesPage() {
                         <Image
                           src={getBookCoverPlaceholder(bookGroup.book)}
                           fallbackSrc={getFallbackPlaceholder(bookGroup.book)}
-                          alt={`Cover of ${bookGroup.book?.title || 'Book'}`}
+                          alt={`Cover of ${getDisplayTitle(bookGroup.book?.title) || bookGroup.book?.title || 'Book'}`}
                           fit="cover"
                           radius="md"
                           h={120}
@@ -297,7 +301,9 @@ export default function SummariesPage() {
                           className={styles.bookCover}
                         />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <Text fw={700} size="xl">{bookGroup.book?.title || 'Unknown Book'}</Text>
+                          <Text fw={700} size="xl">
+                            {getDisplayTitle(bookGroup.book?.title) || bookGroup.book?.title || 'Unknown Book'}
+                          </Text>
                           <Group gap="md" mt={4}>
                             <Text c="dimmed" size="sm">by {bookGroup.book?.author || 'Unknown Author'}</Text>
                             <Text c="dimmed" size="xs">
