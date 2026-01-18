@@ -17,7 +17,7 @@ import {
   Box
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings, IconMessageCircle } from '@tabler/icons-react';
+import { IconSparkles, IconChevronLeft, IconChevronRight, IconSettings } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { getDisplayTitle } from '@/lib/utils/bookTitle';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
@@ -234,7 +234,12 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
                     id={isFirstCard ? 'tour-book-chat' : undefined}
                   >
-                    <IconMessageCircle size={18} />
+                    <img
+                      src="/chat-with-book/chat-with-book.png"
+                      alt=""
+                      aria-hidden="true"
+                      style={{ display: 'block', height: 22, width: 'auto' }}
+                    />
                   </ActionIcon>
                 </Group>
               ) : (
@@ -261,7 +266,12 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                     style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
                     id={isFirstCard ? 'tour-book-chat' : undefined}
                   >
-                    <IconMessageCircle size={18} />
+                    <img
+                      src="/chat-with-book/chat-with-book.png"
+                      alt=""
+                      aria-hidden="true"
+                      style={{ display: 'block', height: 22, width: 'auto' }}
+                    />
                   </ActionIcon>
                 </Group>
               )}
