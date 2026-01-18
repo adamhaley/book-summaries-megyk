@@ -6,6 +6,7 @@ export interface Book {
   publication_year?: number
   genre?: string
   description?: string
+  summary?: string
   cover_image_url?: string
   page_count?: number
   default_summary_pdf_url?: string

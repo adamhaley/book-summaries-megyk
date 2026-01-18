@@ -54,14 +54,12 @@ function HeroSection({
   const displayTitle = getDisplayTitle(book?.title) || book?.title;
   const currentBook = book ? {
     title: displayTitle || book.title,
-    author: book.author,
+    summary: book.summary || book.description || '',
     cover: book.cover_image_url || "https://placehold.co/300x450/7C3AED/FBBF24?text=" + encodeURIComponent(displayTitle || book.title),
-    genre: book.genre || "General"
   } : {
     title: "$100M Offers",
-    author: "Alex Hormozi",
     cover: "https://placehold.co/300x450/7C3AED/FBBF24?text=$100M+OFFERS&font=roboto",
-    genre: "Business"
+    summary: "Alex Hormozi shares strategies for creating irresistible business offers that compel customers to act."
   };
 
   const handleChat = () => {
@@ -129,15 +127,9 @@ function HeroSection({
             {currentBook.title}
           </Title>
           
-          <Text size="lg" c="#374151" style={{ textAlign: 'left' }}>
-            by {currentBook.author}
+          <Text size="sm" c="#374151" style={{ textAlign: 'left' }} lineClamp={3}>
+            {currentBook.summary}
           </Text>
-
-          <Group gap="xs" justify="center">
-            <Badge variant="light" color="violet">
-              {currentBook.genre}
-            </Badge>
-          </Group>
         </Stack>
 
         <Stack gap="sm" mt="xs">
@@ -244,15 +236,9 @@ function HeroSection({
             {currentBook.title}
           </Title>
           
-          <Text size="xl" c="#374151" style={{ textAlign: 'left' }}>
-            by {currentBook.author}
+          <Text size="md" c="#374151" style={{ textAlign: 'left' }} lineClamp={4}>
+            {currentBook.summary}
           </Text>
-
-          <Group gap="xs">
-            <Badge variant="light" color="violet">
-              {currentBook.genre}
-            </Badge>
-          </Group>
 
           <Group gap="md" mt="md">
             <Button
