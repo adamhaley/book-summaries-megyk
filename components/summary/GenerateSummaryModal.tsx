@@ -223,9 +223,11 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
             <Text fw={600} size="lg" mb="xs">
               {getDisplayTitle(book.title) || book.title}
             </Text>
-            <Text size="sm" c="dimmed">
-              by {book.author}
-            </Text>
+            {(book.summary || book.description) && (
+              <Text size="sm" c="dimmed" mt="xs">
+                {book.summary || book.description}
+              </Text>
+            )}
           </Box>
         )}
 
