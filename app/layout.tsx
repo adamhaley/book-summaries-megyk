@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { GoogleTagManager } from '@next/third-parties/google';
@@ -16,6 +16,20 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Megyk Books - Personalized AI-Generated Summaries",
   description: "Get personalized book summaries tailored to your reading preferences",
+  applicationName: "Megyk Books",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Megyk Books",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: "#2563EB",
 };
 
 export default function RootLayout({
@@ -27,7 +41,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <ColorSchemeScript forceColorScheme="light" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
       </head>
       <body className={`${inter.className} antialiased`}>
         <GoogleTagManager gtmId="GTM-WNR6MV8H" />
@@ -41,8 +56,8 @@ export default function RootLayout({
         <main>
           <AppTourProvider>{children}</AppTourProvider>
         </main>
-        <footer style={{ 
-          borderTop: '1px solid #e5e7eb', 
+        <footer style={{
+          borderTop: '1px solid #e5e7eb',
           marginTop: '5rem',
           backgroundColor: '#ffffff'
         }}>
