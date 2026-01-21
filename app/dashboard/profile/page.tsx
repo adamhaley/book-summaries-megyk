@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Container, Title, Text, Stack, Card, TextInput, PasswordInput, Button, Alert } from '@mantine/core'
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
+import { InstallAppSection } from '@/components/pwa'
 
 export default function ProfilePage() {
   const [email, setEmail] = useState('')
@@ -209,6 +210,9 @@ export default function ProfilePage() {
             </form>
           </Stack>
         </Card>
+
+        {/* Install App Section */}
+        <InstallAppSection />
       </Stack>
     </Container>
   )
