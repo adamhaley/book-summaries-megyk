@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# Enable Docker BuildKit for faster builds with caching
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+
 echo "=========================================="
 echo "Deploying megyk-books..."
 echo "=========================================="
