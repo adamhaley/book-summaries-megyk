@@ -9,6 +9,7 @@ import { theme } from '@/lib/theme';
 import { MainNavigation } from '@/components/MainNavigation';
 import { AppTourProvider } from '@/components/tour/AppTourProvider';
 import { UTMTracker } from '@/components/utm/UTMTracker';
+import { InstallBanner } from '@/components/pwa';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -67,6 +68,7 @@ export default function RootLayout({
             </p>
           </div>
         </footer>
+            <InstallBanner />
           </ModalsProvider>
         </MantineProvider>
       </body>
