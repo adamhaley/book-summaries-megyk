@@ -18,7 +18,11 @@
     "test:playwright": "playwright test",
     "test:playwright:ui": "playwright test --ui",
     "test:playwright:headed": "playwright test --headed",
-    "test:playwright:debug": "playwright test --debug"
+    "test:playwright:debug": "playwright test --debug",
+    "test:production": "playwright test --config=playwright.config.production.ts",
+    "test:production:headed": "playwright test --config=playwright.config.production.ts --headed",
+    "health:check": "node scripts/health-check-monitor.js",
+    "health:check:watch": "watch -n 300 node scripts/health-check-monitor.js"
   },
   "repository": "git@github.com:adamhaley/book-summaries-megyk.git",
   "author": "adamhaley <adamhaley@gmail.com>",
