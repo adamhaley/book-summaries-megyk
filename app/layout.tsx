@@ -45,7 +45,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <GoogleTagManager gtmId="GTM-WNR6MV8H" />
+        <GoogleTagManager gtmId="GTM-PVC2PRSN" />
         <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
             <Notifications />
