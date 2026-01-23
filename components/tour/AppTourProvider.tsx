@@ -13,84 +13,159 @@ const BOOK_CARD_STEP = 4;  // The "Recommended Books" step
 const BOOK_BUTTONS_START = 5; // Start of button steps (Get Summary, Chat)
 const BOOK_BUTTONS_END = 6;   // End of button steps
 
+// Desktop browser tour - original positioning
+const desktopSteps = [
+  {
+    icon: null,
+    title: 'Welcome to Megyk!',
+    content: 'Tap here to open the chatbox and ask questions directly to the book.',
+    selector: '#tour-chat-cta-desktop',
+    side: 'top' as const,
+    showControls: true,
+    showSkip: true,
+    viewportID: 'nextstep-viewport',
+  },
+  // Chatbox steps - these appear after the chat is opened
+  {
+    icon: null,
+    title: 'The Chatbox',
+    content: 'This is your AI-powered chat interface. Ask any question about the book!',
+    selector: '#tour-chatbox',
+    side: 'left' as const,
+    showControls: true,
+    showSkip: true,
+    // No viewportID - chatbox is in a Portal with fixed positioning
+  },
+  {
+    icon: null,
+    title: 'Type your question',
+    content: 'Type your question here and press Enter or click Send.',
+    selector: '#tour-chat-input',
+    side: 'top' as const,
+    showControls: true,
+    showSkip: true,
+    // No viewportID - chatbox is in a Portal with fixed positioning
+  },
+  {
+    icon: null,
+    title: 'Discover More',
+    content: 'Discover more books here.',
+    selector: '#tour-discover-cta-desktop',
+    side: 'top' as const,
+    showControls: true,
+    showSkip: true,
+    viewportID: 'nextstep-viewport',
+  },
+  {
+    icon: null,
+    title: 'Or here...',
+    content: 'Find other books based on your interests. Hover over any book to get a summary or start a conversation.',
+    selector: '#tour-recommended-book',
+    side: 'left' as const,
+    showControls: true,
+    showSkip: true,
+    // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
+  },
+  {
+    icon: null,
+    title: 'Get Summary',
+    content: 'Download a personalized PDF summary of this book.',
+    selector: '#tour-book-get-summary',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+    // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
+  },
+  {
+    icon: null,
+    title: 'Chat with Book',
+    content: 'Or talk to it directly!',
+    selector: '#tour-book-chat',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+    // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
+  },
+];
+
+// PWA standalone tour - adjusted positioning to avoid overflow on narrower viewport
+const pwaSteps = [
+  {
+    icon: null,
+    title: 'Welcome to Megyk!',
+    content: 'Tap here to open the chatbox and ask questions directly to the book.',
+    selector: '#tour-chat-cta-desktop',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+    viewportID: 'nextstep-viewport',
+  },
+  {
+    icon: null,
+    title: 'The Chatbox',
+    content: 'This is your AI-powered chat interface. Ask any question about the book!',
+    selector: '#tour-chatbox',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+  },
+  {
+    icon: null,
+    title: 'Type your question',
+    content: 'Type your question here and press Enter or click Send.',
+    selector: '#tour-chat-input',
+    side: 'top' as const,
+    showControls: true,
+    showSkip: true,
+  },
+  {
+    icon: null,
+    title: 'Discover More',
+    content: 'Discover more books here.',
+    selector: '#tour-discover-cta-desktop',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+    viewportID: 'nextstep-viewport',
+  },
+  {
+    icon: null,
+    title: 'Or here...',
+    content: 'Find other books based on your interests. Hover over any book to get a summary or start a conversation.',
+    selector: '#tour-recommended-book',
+    side: 'right' as const,
+    showControls: true,
+    showSkip: true,
+  },
+  {
+    icon: null,
+    title: 'Get Summary',
+    content: 'Download a personalized PDF summary of this book.',
+    selector: '#tour-book-get-summary',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+  },
+  {
+    icon: null,
+    title: 'Chat with Book',
+    content: 'Or talk to it directly!',
+    selector: '#tour-book-chat',
+    side: 'bottom' as const,
+    showControls: true,
+    showSkip: true,
+  },
+];
+
 const tours: Tour[] = [
   {
     tour: 'dashboard_desktop',
-    steps: [
-      {
-        icon: null,
-        title: 'Welcome to Megyk!',
-        content: 'Tap here to open the chatbox and ask questions directly to the book.',
-        selector: '#tour-chat-cta-desktop',
-        side: 'top',
-        showControls: true,
-        showSkip: true,
-        viewportID: 'nextstep-viewport',
-      },
-            // Chatbox steps - these appear after the chat is opened
-      {
-        icon: null,
-        title: 'The Chatbox',
-        content: 'This is your AI-powered chat interface. Ask any question about the book!',
-        selector: '#tour-chatbox',
-        side: 'left',
-        showControls: true,
-        showSkip: true,
-        // No viewportID - chatbox is in a Portal with fixed positioning
-      },
-      {
-        icon: null,
-        title: 'Type your question',
-        content: 'Type your question here and press Enter or click Send.',
-        selector: '#tour-chat-input',
-        side: 'top',
-        showControls: true,
-        showSkip: true,
-        // No viewportID - chatbox is in a Portal with fixed positioning
-      },
-      {
-        icon: null,
-        title: 'Discover More',
-        content: 'Discover more books here.',
-        selector: '#tour-discover-cta-desktop',
-        side: 'top',
-        showControls: true,
-        showSkip: true,
-        viewportID: 'nextstep-viewport',
-      },
-      {
-        icon: null,
-        title: 'Or here...',
-        content: 'Find other books based on your interests. Hover over any book to get a summary or start a conversation.',
-        selector: '#tour-recommended-book',
-        side: 'left',
-        showControls: true,
-        showSkip: true,
-        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
-      },
-      {
-        icon: null,
-        title: 'Get Summary',
-        content: 'Download a personalized PDF summary of this book.',
-        selector: '#tour-book-get-summary',
-        side: 'bottom',
-        showControls: true,
-        showSkip: true,
-        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
-      },
-      {
-        icon: null,
-        title: 'Chat with Book',
-        content: 'Or talk to it directly!',
-        selector: '#tour-book-chat',
-        side: 'bottom',
-        showControls: true,
-        showSkip: true,
-        // Avoid viewportID here; carousel/transforms + AppShell scroll can mis-measure.
-      },
-    ],
+    steps: desktopSteps,
   },
-  // Mobile tour disabled - positioning issues with AppShell layout
+  {
+    tour: 'dashboard_pwa',
+    steps: pwaSteps,
+  },
 ];
 
 // Helper to activate/deactivate the book card overlay for tour visibility
@@ -101,9 +176,9 @@ const setBookCardTourActive = (active: boolean) => {
   }
 };
 
-// Handler for step changes - opens/closes chat when reaching chatbox steps (desktop only)
+// Handler for step changes - opens/closes chat when reaching chatbox steps
 const handleStepChange = (stepIndex: number, tourName: string | null) => {
-  if (tourName !== 'dashboard_desktop') return;
+  if (tourName !== 'dashboard_desktop' && tourName !== 'dashboard_pwa') return;
 
   const forceRecalc = (delay = 0) => {
     window.setTimeout(() => {
@@ -192,15 +267,21 @@ function AutoStartTour() {
 
       // Check media query directly on client
       const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      
+
       // Skip tour on mobile - it doesn't work well with the mobile layout
       if (isMobile) {
         console.log('[Tour] Skipping tour on mobile');
         return;
       }
-      
-      const tourName = 'dashboard_desktop';
+
+      // Detect PWA standalone mode
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+        ('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone);
+
+      const tourName = isStandalone ? 'dashboard_pwa' : 'dashboard_desktop';
       const selectorToWaitFor = '#tour-chat-cta-desktop';
+
+      console.log('[Tour] Mode detected:', isStandalone ? 'PWA standalone' : 'browser');
       
       console.log('[Tour] Attempting to start tour:', tourName);
       
