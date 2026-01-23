@@ -48,8 +48,8 @@ const desktopSteps = [
   },
   {
     icon: null,
-    title: 'Discover More',
-    content: 'Discover more books here.',
+    title: 'Get Summary',
+    content: 'Click here to get a summary of the featured book.',
     selector: '#tour-discover-cta-desktop',
     side: 'top' as const,
     showControls: true,
@@ -120,8 +120,8 @@ const pwaSteps = [
   },
   {
     icon: null,
-    title: 'Discover More',
-    content: 'Discover more books here.',
+    title: 'Get Summary',
+    content: 'Click here to get a summary of the featured book.',
     selector: '#tour-discover-cta-desktop',
     side: 'bottom' as const,
     showControls: true,

@@ -25,6 +25,7 @@ import { useRouter } from 'next/navigation';
 import { SUMMARY_STYLE_OPTIONS, SUMMARY_LENGTH_OPTIONS } from '@/lib/types/preferences';
 import { BookCarousel } from '@/components/carousel/BookCarousel';
 import { ChatWithBook } from '@/components/chat/ChatWithBook';
+import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
 import { Book } from '@/lib/types/books';
 import { getDisplayTitle } from '@/lib/utils/bookTitle';
 
@@ -42,13 +43,13 @@ interface RecentSummary {
 
 // Hero section - consumer-friendly book showcase
 function HeroSection({
-  router,
   book,
   onOpenChat,
+  onGetSummary,
 }: {
-  router: any;
   book?: Book;
   onOpenChat: (book: Book) => void;
+  onGetSummary: (book: Book) => void;
 }) {
   // Default placeholder if no book provided
   const displayTitle = getDisplayTitle(book?.title) || book?.title;
@@ -167,8 +168,9 @@ function HeroSection({
             size="md"
             variant="filled"
             leftSection={<IconSparkles size={18} />}
-            onClick={() => router.push('/dashboard/library')}
-            style={{ 
+            onClick={() => book && onGetSummary(book)}
+            disabled={!book}
+            style={{
               fontWeight: 600,
               height: 56,
               backgroundColor: '#2563EB',
@@ -177,7 +179,7 @@ function HeroSection({
             }}
             fullWidth
           >
-            Discover More
+            Get Summary
           </Button>
         </Stack>
       </Stack>
@@ -274,8 +276,9 @@ function HeroSection({
               size="lg"
               variant="filled"
               leftSection={<IconSparkles size={20} />}
-              onClick={() => router.push('/dashboard/library')}
-              style={{ 
+              onClick={() => book && onGetSummary(book)}
+              disabled={!book}
+              style={{
                 fontWeight: 600,
                 height: 60,
                 backgroundColor: '#2563EB',
@@ -283,7 +286,7 @@ function HeroSection({
                 border: '1px solid transparent',
               }}
             >
-              Discover More
+              Get Summary
             </Button>
           </Group>
         </Stack>
@@ -314,6 +317,8 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [chatOpened, setChatOpened] = useState(false);
   const [chatBook, setChatBook] = useState<Book | null>(null);
+  const [summaryModalOpened, setSummaryModalOpened] = useState(false);
+  const [summaryBook, setSummaryBook] = useState<Book | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -423,13 +428,24 @@ export default function DashboardPage() {
     setChatOpened(true);
   };
 
+  const handleGetSummary = (book: Book) => {
+    if (book.default_summary_pdf_url) {
+      // Download pre-generated summary
+      window.open(book.default_summary_pdf_url, '_blank');
+    } else {
+      // Open customization modal if no default summary exists
+      setSummaryBook(book);
+      setSummaryModalOpened(true);
+    }
+  };
+
   return (
     <Container size="xl" pt="0" pb="xl">
       <Stack gap="xl">
         <Title id="tour-dashboard-title" order={1} c="#000000">For You</Title>
 
         {/* Hero Section - Continue Reading */}
-        <HeroSection router={router} book={featuredBook} onOpenChat={handleOpenChat} />
+        <HeroSection book={featuredBook} onOpenChat={handleOpenChat} onGetSummary={handleGetSummary} />
 
       {/* Recommended Books Carousel */}
       {recommendedBooks.length > 0 && (
@@ -507,6 +523,12 @@ export default function DashboardPage() {
         opened={chatOpened}
         onClose={() => setChatOpened(false)}
         book={chatBook}
+      />
+
+      <GenerateSummaryModal
+        opened={summaryModalOpened}
+        onClose={() => setSummaryModalOpened(false)}
+        book={summaryBook}
       />
     </Container>
   );
