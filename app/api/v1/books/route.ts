@@ -11,6 +11,19 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     console.log(`[Books API] Supabase client created in ${Date.now() - startTime}ms`)
 
+    // Fetch genre mapping from database
+    const { data: genres } = await supabase
+      .from('book_genres')
+      .select('id, name')
+
+    const genreMap: Record<number, string> = {}
+    if (genres) {
+      for (const g of genres) {
+        genreMap[g.id] = g.name
+      }
+    }
+    console.log(`[Books API] Loaded ${Object.keys(genreMap).length} genres from database`)
+
     // Parse parameters
     const url = new URL(request.url)
     const all = url.searchParams.get('all') === 'true'
@@ -47,15 +60,6 @@ export async function GET(request: NextRequest) {
 
       console.log(`[Books API] Success. Fetched ${books?.length || 0} featured books. Total time: ${Date.now() - startTime}ms`)
 
-      // Simple genre mapping (TODO: fetch from database)
-      const genreMap: Record<number, string> = {
-        1: 'Productivity',
-        2: 'Psychology', 
-        3: 'Business',
-        4: 'Leadership',
-        5: 'Management'
-      }
-      
       // Transform the data to map genre_id to genre name
       const transformedBooks = books?.map(book => ({
         ...book,
@@ -88,15 +92,6 @@ export async function GET(request: NextRequest) {
 
       console.log(`[Books API] Success. Fetched all ${books?.length || 0} books. Total time: ${Date.now() - startTime}ms`)
 
-      // Simple genre mapping (TODO: fetch from database)
-      const genreMap: Record<number, string> = {
-        1: 'Productivity',
-        2: 'Psychology', 
-        3: 'Business',
-        4: 'Leadership',
-        5: 'Management'
-      }
-      
       // Transform the data to map genre_id to genre name
       const transformedBooks = books?.map(book => ({
         ...book,
@@ -154,15 +149,6 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Books API] Success. Fetched ${books?.length || 0} books (page ${page}/${totalPages}, sorted by ${validSortColumn} ${validSortOrder}). Total time: ${Date.now() - startTime}ms`)
 
-    // Simple hardcoded genre mapping for now
-    const genreMap: Record<number, string> = {
-      1: 'Productivity',
-      2: 'Psychology', 
-      3: 'Business',
-      4: 'Leadership',
-      5: 'Management'
-    };
-    
     // Transform the data to map genre_id to genre name
     const transformedBooks = books?.map(book => ({
       ...book,
