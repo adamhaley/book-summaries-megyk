@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Container, Title, Text, Stack, Card, Table, Button, Badge, Loader, Alert, SimpleGrid, Group, Box, Pagination, Center, UnstyledButton, Image, ActionIcon } from '@mantine/core'
-import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings, IconMessageCircle } from '@tabler/icons-react'
+import { IconBook, IconAlertCircle, IconSparkles, IconChevronUp, IconChevronDown, IconSelector, IconSettings } from '@tabler/icons-react'
 import { Book } from '@/lib/types/books'
 import { getDisplayTitle } from '@/lib/utils/bookTitle'
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal'
@@ -291,12 +291,16 @@ export default function LibraryPage() {
                             </Button>
                             <ActionIcon
                               size="lg"
-                              variant="light"
-                              color="blue"
+                              variant="transparent"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
-                              <IconMessageCircle size={18} />
+                              <img
+                                src="/chat-with-book/chat-with-book.png"
+                                alt=""
+                                aria-hidden="true"
+                                style={{ display: 'block', height: 24, width: 'auto' }}
+                              />
                             </ActionIcon>
                           </Group>
                         ) : (
@@ -313,12 +317,16 @@ export default function LibraryPage() {
                             </Button>
                             <ActionIcon
                               size="lg"
-                              variant="light"
-                              color="blue"
+                              variant="transparent"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
-                              <IconMessageCircle size={18} />
+                              <img
+                                src="/chat-with-book/chat-with-book.png"
+                                alt=""
+                                aria-hidden="true"
+                                style={{ display: 'block', height: 24, width: 'auto' }}
+                              />
                             </ActionIcon>
                           </Group>
                         )}
@@ -452,12 +460,16 @@ export default function LibraryPage() {
                             </Button>
                             <ActionIcon
                               size="sm"
-                              variant="light"
-                              color="blue"
+                              variant="transparent"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
-                              <IconMessageCircle size={14} />
+                              <img
+                                src="/chat-with-book/chat-with-book.png"
+                                alt=""
+                                aria-hidden="true"
+                                style={{ display: 'block', height: 20, width: 'auto' }}
+                              />
                             </ActionIcon>
                           </Group>
                         ) : (
@@ -473,12 +485,16 @@ export default function LibraryPage() {
                             </Button>
                             <ActionIcon
                               size="sm"
-                              variant="light"
-                              color="blue"
+                              variant="transparent"
                               onClick={() => handleOpenChat(book)}
                               aria-label="Chat with book"
                             >
-                              <IconMessageCircle size={14} />
+                              <img
+                                src="/chat-with-book/chat-with-book.png"
+                                alt=""
+                                aria-hidden="true"
+                                style={{ display: 'block', height: 20, width: 'auto' }}
+                              />
                             </ActionIcon>
                           </Group>
                         )}
