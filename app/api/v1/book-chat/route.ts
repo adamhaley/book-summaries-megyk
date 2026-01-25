@@ -56,19 +56,22 @@ export async function POST(request: Request) {
       );
     }
 
-    const contentType = webhookResponse.headers.get('content-type') || '';
-    let data: unknown = null;
-    let textFallback = '';
-
-    if (contentType.includes('application/json')) {
-      data = await webhookResponse.json().catch(() => null);
-    } else {
-      textFallback = await webhookResponse.text();
+    // Stream the response from n8n to enable real-time updates
+    // n8n sends NDJSON (newline-delimited JSON) for streaming responses
+    if (webhookResponse.body) {
+      return new Response(webhookResponse.body, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
     }
 
+    // Fallback for responses without a body
     return NextResponse.json({
-      reply: data ?? textFallback,
-      data,
+      reply: '',
+      data: null,
     });
   } catch (error) {
     console.error('Error in book chat webhook:', error);
