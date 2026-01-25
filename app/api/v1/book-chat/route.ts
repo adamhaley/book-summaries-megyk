@@ -56,11 +56,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const contentType = webhookResponse.headers.get('content-type') || '';
-
-    // Handle SSE streaming response from n8n
-    if (contentType.includes('text/event-stream')) {
-      // Pass through the SSE stream to the client
+    // Stream the response from n8n to enable real-time updates
+    // n8n sends NDJSON (newline-delimited JSON) for streaming responses
+    if (webhookResponse.body) {
       return new Response(webhookResponse.body, {
         headers: {
           'Content-Type': 'text/event-stream',
@@ -70,19 +68,10 @@ export async function POST(request: Request) {
       });
     }
 
-    // Handle non-streaming JSON response (backwards compatibility)
-    let data: unknown = null;
-    let textFallback = '';
-
-    if (contentType.includes('application/json')) {
-      data = await webhookResponse.json().catch(() => null);
-    } else {
-      textFallback = await webhookResponse.text();
-    }
-
+    // Fallback for responses without a body
     return NextResponse.json({
-      reply: data ?? textFallback,
-      data,
+      reply: '',
+      data: null,
     });
   } catch (error) {
     console.error('Error in book chat webhook:', error);

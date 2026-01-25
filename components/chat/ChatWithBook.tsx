@@ -218,26 +218,34 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           buffer = lines.pop() || ''; // Keep incomplete line in buffer
 
           for (const line of lines) {
-            if (line.startsWith('data:')) {
-              const jsonStr = line.slice(5).trim();
-              if (!jsonStr) continue;
+            const trimmedLine = line.trim();
+            if (!trimmedLine) continue;
 
-              try {
-                const data = JSON.parse(jsonStr);
-                // Extract delta from n8n progress events
-                const delta = data?.progress?.delta;
-                if (typeof delta === 'string') {
-                  setMessages((prev) =>
-                    prev.map((msg) =>
-                      msg.id === assistantMessageId
-                        ? { ...msg, content: msg.content + delta }
-                        : msg
-                    )
-                  );
-                }
-              } catch {
-                // Ignore JSON parse errors for malformed events
+            try {
+              const data = JSON.parse(trimmedLine);
+
+              // Handle n8n NDJSON format: {"type":"item","content":"text",...}
+              if (data?.type === 'item' && typeof data?.content === 'string') {
+                setMessages((prev) =>
+                  prev.map((msg) =>
+                    msg.id === assistantMessageId
+                      ? { ...msg, content: msg.content + data.content }
+                      : msg
+                  )
+                );
               }
+              // Handle SSE format: {"progress":{"delta":"text"}}
+              else if (typeof data?.progress?.delta === 'string') {
+                setMessages((prev) =>
+                  prev.map((msg) =>
+                    msg.id === assistantMessageId
+                      ? { ...msg, content: msg.content + data.progress.delta }
+                      : msg
+                  )
+                );
+              }
+            } catch {
+              // Ignore JSON parse errors for malformed lines
             }
           }
         }
