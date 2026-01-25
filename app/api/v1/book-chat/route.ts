@@ -57,6 +57,20 @@ export async function POST(request: Request) {
     }
 
     const contentType = webhookResponse.headers.get('content-type') || '';
+
+    // Handle SSE streaming response from n8n
+    if (contentType.includes('text/event-stream')) {
+      // Pass through the SSE stream to the client
+      return new Response(webhookResponse.body, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    }
+
+    // Handle non-streaming JSON response (backwards compatibility)
     let data: unknown = null;
     let textFallback = '';
 

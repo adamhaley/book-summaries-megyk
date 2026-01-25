@@ -188,17 +188,82 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         throw new Error(errorPayload.error || 'Failed to send chat message.');
       }
 
-      const payload = await response.json().catch(() => ({}));
-      const replyText = getChatReply(payload?.reply ?? payload?.data ?? payload);
+      const contentType = response.headers.get('content-type') || '';
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: createId(),
-          role: 'assistant',
-          content: replyText || 'No response returned yet. Please try again.',
-        },
-      ]);
+      // Handle SSE streaming response
+      if (contentType.includes('text/event-stream')) {
+        const assistantMessageId = createId();
+        // Add empty assistant message that we'll update as chunks arrive
+        setMessages((prev) => [
+          ...prev,
+          { id: assistantMessageId, role: 'assistant', content: '' },
+        ]);
+
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Failed to read streaming response.');
+        }
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Process complete SSE events from the buffer
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+          for (const line of lines) {
+            if (line.startsWith('data:')) {
+              const jsonStr = line.slice(5).trim();
+              if (!jsonStr) continue;
+
+              try {
+                const data = JSON.parse(jsonStr);
+                // Extract delta from n8n progress events
+                const delta = data?.progress?.delta;
+                if (typeof delta === 'string') {
+                  setMessages((prev) =>
+                    prev.map((msg) =>
+                      msg.id === assistantMessageId
+                        ? { ...msg, content: msg.content + delta }
+                        : msg
+                    )
+                  );
+                }
+              } catch {
+                // Ignore JSON parse errors for malformed events
+              }
+            }
+          }
+        }
+
+        // Ensure we have some content, or show fallback
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessageId && !msg.content.trim()
+              ? { ...msg, content: 'No response returned yet. Please try again.' }
+              : msg
+          )
+        );
+      } else {
+        // Handle non-streaming JSON response (backwards compatibility)
+        const payload = await response.json().catch(() => ({}));
+        const replyText = getChatReply(payload?.reply ?? payload?.data ?? payload);
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: createId(),
+            role: 'assistant',
+            content: replyText || 'No response returned yet. Please try again.',
+          },
+        ]);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Chat request failed.';
       setErrorMessage(message);
@@ -320,44 +385,59 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
               </Text>
             </Box>
           )}
-          {messages.map((message, index) => (
-            <Box
-              key={message.id}
-              mb="sm"
-              style={{
-                display: 'flex',
-                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
-              }}
-            >
+          {messages.map((message, index) => {
+            const isStreamingEmpty =
+              isSending &&
+              message.role === 'assistant' &&
+              index === messages.length - 1 &&
+              !message.content;
+
+            return (
               <Box
-                px="sm"
-                py="xs"
+                key={message.id}
+                mb="sm"
                 style={{
-                  maxWidth: '80%',
-                  borderRadius: 12,
-                  backgroundColor: message.role === 'user' ? '#2563eb' : '#f3f4f6',
-                  color: message.role === 'user' ? '#ffffff' : '#111827',
+                  display: 'flex',
+                  justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start',
                 }}
               >
-                <Text size="md">{renderWithLineBreaks(message.content)}</Text>
-                {message.role === 'assistant' && index === messages.length - 1 && !!book && (
-                  <Group mt="xs" justify="flex-start">
-                    <Button
-                      size="xs"
-                      variant="filled"
-                      color="blue"
-                      leftSection={<IconSparkles size={14} />}
-                      onClick={handleGetSummary}
-                      style={{ fontWeight: 600 }}
-                    >
-                      Download Summary
-                    </Button>
-                  </Group>
-                )}
+                <Box
+                  px="sm"
+                  py="xs"
+                  style={{
+                    maxWidth: '80%',
+                    borderRadius: 12,
+                    backgroundColor: message.role === 'user' ? '#2563eb' : '#f3f4f6',
+                    color: message.role === 'user' ? '#ffffff' : '#111827',
+                  }}
+                >
+                  {isStreamingEmpty ? (
+                    <Group gap={8} align="center">
+                      <Loader size="xs" color="blue" />
+                      <Text size="md" c="dimmed">Thinking...</Text>
+                    </Group>
+                  ) : (
+                    <Text size="md">{renderWithLineBreaks(message.content)}</Text>
+                  )}
+                  {message.role === 'assistant' && index === messages.length - 1 && !!book && !isSending && (
+                    <Group mt="xs" justify="flex-start">
+                      <Button
+                        size="xs"
+                        variant="filled"
+                        color="blue"
+                        leftSection={<IconSparkles size={14} />}
+                        onClick={handleGetSummary}
+                        style={{ fontWeight: 600 }}
+                      >
+                        Download Summary
+                      </Button>
+                    </Group>
+                  )}
+                </Box>
               </Box>
-            </Box>
-          ))}
-          {isSending && (
+            );
+          })}
+          {isSending && messages[messages.length - 1]?.role !== 'assistant' && (
             <Box mb="sm" style={{ display: 'flex', justifyContent: 'flex-start' }}>
               <Box
                 px="sm"
