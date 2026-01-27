@@ -98,3 +98,6 @@ Desktop.ini
 /playwright-report/
 /test-results.xml
 /.auth/
+
+# clerk configuration (can include secrets)
+/.clerk/

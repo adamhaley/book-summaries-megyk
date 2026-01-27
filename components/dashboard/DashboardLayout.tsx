@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useUser, useClerk } from '@clerk/nextjs';
 import {
   AppShell,
   Group,
@@ -19,7 +20,6 @@ import {
   IconBookmark,
   IconAdjustments,
 } from '@tabler/icons-react';
-import { createClient } from '@/lib/supabase/client';
 import { TourHelpButton } from '@/components/tour/TourHelpButton';
 
 interface DashboardLayoutProps {
@@ -35,16 +35,13 @@ const navigation = [
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const { user } = useUser();
+  const { signOut } = useClerk();
+  const userEmail = user?.primaryEmailAddress?.emailAddress || null;
   const [showMobileNav, setShowMobileNav] = useState(true);
   const lastScrollY = useRef(0);
   const pathname = usePathname();
   const router = useRouter();
-
-  // Load user data
-  useEffect(() => {
-    loadUserData();
-  }, []);
 
   // Auto-hide mobile nav on scroll down
   useEffect(() => {
@@ -71,41 +68,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, []);
 
-  const loadUserData = async () => {
-    try {
-      console.log('[DashboardLayout] Loading user data...');
-      const supabase = createClient();
-      
-      // Add timeout to prevent hanging
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Auth timeout after 5s')), 5000)
-      );
-      
-      const authPromise = supabase.auth.getUser();
-      const result = await Promise.race([authPromise, timeoutPromise]);
-      
-      if (result.error) {
-        console.error('[DashboardLayout] Auth error:', result.error);
-        return;
-      }
-      
-      if (result.data?.user) {
-        console.log('[DashboardLayout] User loaded:', result.data.user.email);
-        setUserEmail(result.data.user.email || null);
-      } else {
-        console.log('[DashboardLayout] No user found');
-      }
-    } catch (err) {
-      console.error('[DashboardLayout] Error loading user data:', err);
-      // Don't block rendering if auth fails
-    }
-  };
-
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOut();
     router.push('/auth/signin');
-    router.refresh();
   };
 
   const items = navigation.map((item) => (

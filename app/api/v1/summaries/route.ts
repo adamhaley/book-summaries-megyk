@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUserId } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
-
     const url = new URL(request.url)
     const limitParam = url.searchParams.get('limit')
     const limit = limitParam ? Number.parseInt(limitParam, 10) : null
@@ -16,17 +15,15 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get authenticated user
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
+    const userId = await getAuthUserId()
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
-    const userId = user.id
+    const supabase = createClient()
 
     // Fetch summaries for the user with book data in a single query
     const summariesQuery = supabase

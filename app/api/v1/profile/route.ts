@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUserId } from '@/lib/auth'
 import { UserProfile, DEFAULT_PREFERENCES } from '@/lib/types/preferences'
 
 export const dynamic = 'force-dynamic'
@@ -8,26 +9,26 @@ export async function GET(request: NextRequest) {
   const startTime = Date.now()
 
   try {
-    const supabase = await createClient()
-    console.log(`[Profile API] Supabase client created in ${Date.now() - startTime}ms`)
-
     const authStart = Date.now()
-    const { data: { user } } = await supabase.auth.getUser()
+    const userId = await getAuthUserId()
     console.log(`[Profile API] Auth check completed in ${Date.now() - authStart}ms`)
 
-    if (!user) {
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
+    const supabase = createClient()
+    console.log(`[Profile API] Supabase client created in ${Date.now() - startTime}ms`)
+
     // Fetch user profile with preferences (only select what we need)
     const queryStart = Date.now()
     const { data: profile, error } = await supabase
       .from('user_profiles')
       .select('user_id, preferences')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
     console.log(`[Profile API] Database query completed in ${Date.now() - queryStart}ms`)
 
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       if (error.code === 'PGRST116') {
         console.log(`[Profile API] No profile found, returning defaults. Total time: ${Date.now() - startTime}ms`)
         return NextResponse.json({
-          user_id: user.id,
+          user_id: userId,
           preferences: DEFAULT_PREFERENCES
         })
       }
@@ -62,16 +63,15 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
+    const userId = await getAuthUserId()
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
 
+    const supabase = createClient()
     const body = await request.json()
 
     // Validate preferences structure
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest) {
     const { data: updateData, error: updateError } = await supabase
       .from('user_profiles')
       .update({ preferences: body.preferences })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .select()
       .single()
 
@@ -116,7 +116,7 @@ export async function PUT(request: NextRequest) {
         const { data: insertData, error: insertError } = await supabase
           .from('user_profiles')
           .insert({
-            user_id: user.id,
+            user_id: userId,
             preferences: body.preferences
           })
           .select()

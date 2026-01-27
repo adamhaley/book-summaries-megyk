@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { GoogleTagManager } from '@next/third-parties/google';
+import { ClerkProvider } from '@clerk/nextjs';
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
@@ -47,6 +48,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased`}>
         <GoogleTagManager gtmId="GTM-PVC2PRSN" />
+        <ClerkProvider>
         <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
             <Notifications />
@@ -71,6 +73,7 @@ export default function RootLayout({
             <InstallBanner />
           </ModalsProvider>
         </MantineProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

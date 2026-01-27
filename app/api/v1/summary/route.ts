@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { getAuthUserId } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
+    const userId = await getAuthUserId()
+    if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       )
     }
+
+    const supabase = createClient()
 
     const body = await request.json()
     const { book_id, preferences } = body
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
         style: preferences.style,
         length: preferences.length
       },
-      user_id: user.id,
+      user_id: userId,
       timestamp: new Date().toISOString()
     }
 
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
         const pdfBuffer = await webhookResponse.arrayBuffer()
 
         // Stable storage path per user/book/style/length for idempotency
-        const storagePath = `${user.id}/${book_id}/${preferences.length}_${preferences.style}.pdf`
+        const storagePath = `${userId}/${book_id}/${preferences.length}_${preferences.style}.pdf`
 
         // Upload PDF to Supabase Storage
         const { error: uploadError } = await supabase.storage
@@ -126,7 +127,7 @@ export async function POST(request: NextRequest) {
         const { data: summaryData, error: summaryError } = await supabase
           .from('summaries')
           .upsert({
-            user_id: user.id,
+            user_id: userId,
             book_id,
             style: preferences.style,
             length: preferences.length,

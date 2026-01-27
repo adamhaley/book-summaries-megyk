@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser, useClerk } from '@clerk/nextjs';
 import {
   Group,
   Text,
@@ -10,57 +10,18 @@ import {
 import {
   IconLogout,
 } from '@tabler/icons-react';
-import { createClient } from '@/lib/supabase/client';
 
 export function MainNavigation() {
-  const [mounted, setMounted] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      console.log('[MainNavigation] Checking auth...');
-      const supabase = createClient();
-      
-      // Add timeout to prevent hanging
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('Auth timeout after 5s')), 5000)
-      );
-      
-      const authPromise = supabase.auth.getSession();
-      const result = await Promise.race([authPromise, timeoutPromise]);
-      
-      if (result.error) {
-        console.error('[MainNavigation] Auth error:', result.error);
-        return;
-      }
-      
-      if (result.data?.session?.user) {
-        console.log('[MainNavigation] User authenticated:', result.data.session.user.email);
-        setIsAuthenticated(true);
-        setUserEmail(result.data.session.user.email || null);
-      } else {
-        console.log('[MainNavigation] No session found');
-      }
-    } catch (err) {
-      console.error('[MainNavigation] Error checking auth:', err);
-      // Don't block rendering if auth fails
-    }
-  };
+  const isAuthenticated = !!isSignedIn;
+  const userEmail = user?.primaryEmailAddress?.emailAddress || null;
 
   const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    setIsAuthenticated(false);
-    setUserEmail(null);
+    await signOut();
     router.push('/auth/signin');
-    router.refresh();
   };
 
   const navLinks = [
