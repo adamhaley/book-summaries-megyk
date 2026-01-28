@@ -269,6 +269,12 @@
   }
 }
 
+@media (max-width: 768px) and (display-mode: standalone) {
+  .pwaButtonRow {
+    padding: 0 0.5rem;
+  }
+}
+
 @media (max-width: 480px) {
   .carouselContainer {
     padding: 2rem 0.25rem; /* Even tighter on small phones */

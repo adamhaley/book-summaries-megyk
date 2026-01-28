@@ -199,7 +199,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                 </Badge>
               )}
               {book.default_summary_pdf_url ? (
-                <Group gap={8} wrap="nowrap">
+                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
                   <Button
                     variant="filled"
                     leftSection={<IconSparkles size={14} />}
@@ -243,7 +243,7 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
                   </ActionIcon>
                 </Group>
               ) : (
-                <Group gap={8} wrap="nowrap">
+                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
                   <Button
                     variant="filled"
                     leftSection={<IconSparkles size={16} />}
