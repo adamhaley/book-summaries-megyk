@@ -270,11 +270,21 @@
 }
 
 @media (max-width: 768px) {
-  html[data-standalone="true"] .pwaButtonRow {
-    padding: 0 0.75rem;
+  .pwaButtonRow {
+    padding: 0 0.5rem;
     width: 100%;
     box-sizing: border-box;
     justify-content: center;
+  }
+
+  .pwaButtonRow button {
+    font-size: 0.75rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  html[data-standalone="true"] .pwaButtonRow {
+    padding: 0 0.75rem;
   }
 }
 
