@@ -30,8 +30,8 @@ const navigation = [
   { label: 'Home', icon: IconHome, href: '/dashboard' },
   { label: 'Library', icon: IconBook, href: '/dashboard/library' },
   { label: 'My Collection', icon: IconBookmark, href: '/dashboard/summaries' },
-  { label: 'Preferences', icon: IconAdjustments, href: '/dashboard/preferences' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
+  { label: 'Preferences', icon: IconAdjustments, href: '/dashboard/preferences' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
