@@ -269,9 +269,12 @@
   }
 }
 
-@media (max-width: 768px) and (display-mode: standalone) {
-  .pwaButtonRow {
-    padding: 0 0.5rem;
+@media (max-width: 768px) {
+  html[data-standalone="true"] .pwaButtonRow {
+    padding: 0 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
   }
 }
 

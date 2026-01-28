@@ -34,6 +34,23 @@
   transition: none !important;
 }
 
+.pwa-standalone-indicator {
+  display: none;
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+}
+
+html[data-standalone="true"] .pwa-standalone-indicator {
+  display: block;
+}
+
 /* Basic layout fixes */
 html, body {
   height: 100%;
@@ -92,4 +109,3 @@ body:has(.mantine-AppShell-root) > div > footer {
     background-color: rgba(0, 0, 0, 0.2);
   }
 }
-

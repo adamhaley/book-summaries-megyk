@@ -9,7 +9,7 @@ import { theme } from '@/lib/theme';
 import { MainNavigation } from '@/components/MainNavigation';
 import { AppTourProvider } from '@/components/tour/AppTourProvider';
 import { UTMTracker } from '@/components/utm/UTMTracker';
-import { InstallBanner } from '@/components/pwa';
+import { InstallBanner, PwaModeClass } from '@/components/pwa';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -46,6 +46,8 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
       </head>
       <body className={`${inter.className} antialiased`}>
+        <PwaModeClass />
+        <div className="pwa-standalone-indicator" aria-hidden="true" />
         <GoogleTagManager gtmId="GTM-PVC2PRSN" />
         <MantineProvider theme={theme} forceColorScheme="light">
           <ModalsProvider>
