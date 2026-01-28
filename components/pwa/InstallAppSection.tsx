@@ -37,12 +37,12 @@ export function InstallAppSection() {
           </Stack>
         </Group>
 
-        {!isInstalled && (
+        {!isInstalled && !isIOS && (
           <Button
             variant="light"
             leftSection={<IconDownload size={16} />}
             onClick={handleInstall}
-            disabled={!isInstallable && !isIOS}
+            disabled={!isInstallable}
           >
             Install
           </Button>
