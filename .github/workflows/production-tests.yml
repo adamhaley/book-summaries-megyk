@@ -7,17 +7,13 @@ on:
     types:
       - completed
 
-  # Run every 15 minutes
-  schedule:
-    - cron: '*/15 * * * *'
-
   # Allow manual trigger
   workflow_dispatch:
 
 jobs:
   smoke-tests:
     runs-on: ubuntu-latest
-    # Only run if deployment succeeded or if manually triggered/scheduled
+    # Only run if deployment succeeded or if manually triggered
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
