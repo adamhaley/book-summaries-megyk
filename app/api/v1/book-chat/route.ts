@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createCreditService } from '@/lib/services/credits';
+import { getChatMessageCreditCost } from '@/lib/types/credits';
 
 const getWebhookUrl = () => {
   const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
@@ -31,6 +33,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check credit balance before processing chat message
+    const creditService = createCreditService(supabase);
+    const chatCost = getChatMessageCreditCost();
+    const creditCheck = await creditService.checkChatAffordability(user.id);
+
+    if (!creditCheck.has_sufficient_credits) {
+      return NextResponse.json(
+        {
+          error: 'Insufficient credits',
+          required_credits: creditCheck.required_credits,
+          current_balance: creditCheck.current_balance,
+          remaining_messages: 0,
+        },
+        { status: 402 }
+      );
+    }
+
+    // Get or create chat session for tracking
+    const chatSession = await creditService.getOrCreateChatSession(user.id, bookId);
+
     const webhookUrl = getWebhookUrl();
     if (!webhookUrl) {
       return NextResponse.json(
@@ -54,6 +76,20 @@ export async function POST(request: Request) {
         { error: 'Failed to fetch chat response' },
         { status: 502 }
       );
+    }
+
+    // Deduct credits after successful webhook call
+    // We deduct here because the stream has started successfully
+    const creditTransaction = await creditService.deductForChat(
+      user.id,
+      bookId,
+      chatSession?.id
+    );
+
+    if (!creditTransaction) {
+      console.error('Failed to deduct credits for chat message, but message was processed');
+      // Note: We don't fail the request here since the chat has already started
+      // This should be monitored and resolved manually if it occurs
     }
 
     // Stream the response from n8n to enable real-time updates

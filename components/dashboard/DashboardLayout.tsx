@@ -21,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/client';
 import { TourHelpButton } from '@/components/tour/TourHelpButton';
+import { CreditBalance } from '@/components/credits';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -176,15 +177,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Box visibleFrom="sm" />
             
             <Group gap="md">
+              <CreditBalance compact />
               {userEmail && (
                 <Text size="sm" c="dimmed" visibleFrom="sm">
                   {userEmail}
                 </Text>
               )}
-              <ActionIcon 
-                variant="default" 
-                size="lg" 
-                onClick={handleLogout} 
+              <ActionIcon
+                variant="default"
+                size="lg"
+                onClick={handleLogout}
                 title="Logout"
                 style={{
                   backgroundColor: '#ffffff',

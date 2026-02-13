@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import type { KeyboardEvent } from 'react';
 import {
   ActionIcon,
+  Badge,
   Box,
   Button,
   Divider,
@@ -17,10 +18,17 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSend, IconSparkles, IconX } from '@tabler/icons-react';
+import { IconSend, IconSparkles, IconX, IconCoins } from '@tabler/icons-react';
 import { Book } from '@/lib/types/books';
 import { getDisplayTitle } from '@/lib/utils/bookTitle';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
+import {
+  getChatMessageCreditCost,
+  formatCredits,
+  calculateRemainingChatMessages,
+  CreditBalance,
+} from '@/lib/types/credits';
+import { InsufficientCreditsModal, refreshCreditBalance } from '@/components/credits';
 
 interface ChatWithBookProps {
   opened: boolean;
@@ -75,11 +83,17 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [summaryModalOpened, setSummaryModalOpened] = useState(false);
+  const [creditBalance, setCreditBalance] = useState<CreditBalance | null>(null);
+  const [showInsufficientModal, setShowInsufficientModal] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const suggestionsAbortRef = useRef<AbortController | null>(null);
   const bookId = book?.id;
   const isMobile = useMediaQuery('(max-width: 576px)', true, { getInitialValueInEffect: false });
+
+  const chatCost = getChatMessageCreditCost();
+  const remainingMessages = creditBalance ? calculateRemainingChatMessages(creditBalance.current_balance) : 0;
+  const canAffordChat = creditBalance ? creditBalance.current_balance >= chatCost : false;
 
   const headerTitle = useMemo(() => {
     if (!book) return 'Chat with book';
@@ -96,6 +110,26 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
     }
     setMessages([]);
   }, [bookId]);
+
+  const fetchCreditBalance = useCallback(async () => {
+    try {
+      const response = await fetch('/api/v1/credits');
+      if (response.ok) {
+        const data = await response.json();
+        setCreditBalance(data.balance);
+      }
+    } catch (error) {
+      console.error('Error fetching credit balance:', error);
+    }
+  }, []);
+
+  // Fetch credit balance and reset modal state when chat opens
+  useEffect(() => {
+    if (opened) {
+      fetchCreditBalance();
+      setShowInsufficientModal(false);
+    }
+  }, [opened, fetchCreditBalance]);
 
   useEffect(() => {
     if (!opened || !bookId) return;
@@ -161,6 +195,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
       setIsSending(false);
       setErrorMessage(null);
       setSummaryModalOpened(false);
+      setShowInsufficientModal(false);
     }
   }, [opened]);
 
@@ -185,6 +220,16 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
 
       if (!response.ok) {
         const errorPayload = await response.json().catch(() => ({}));
+
+        // Handle insufficient credits
+        if (response.status === 402) {
+          // Remove the user message we just added since it wasn't sent
+          setMessages((prev) => prev.slice(0, -1));
+          setShowInsufficientModal(true);
+          setIsSending(false);
+          return;
+        }
+
         throw new Error(errorPayload.error || 'Failed to send chat message.');
       }
 
@@ -272,6 +317,11 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           },
         ]);
       }
+      // Refresh credit balance after message completes (small delay for DB sync)
+      setTimeout(() => {
+        fetchCreditBalance();
+        refreshCreditBalance();
+      }, 500);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Chat request failed.';
       setErrorMessage(message);
@@ -474,14 +524,40 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
           <div ref={bottomRef} />
         </ScrollArea>
         <Divider />
+        {/* Credit balance indicator */}
+        {creditBalance && (
+          <Box px="md" pt="xs" pb={0}>
+            <Group justify="space-between" gap="xs">
+              <Group gap={4}>
+                <IconCoins size={12} style={{ color: canAffordChat ? '#2563EB' : '#dc2626' }} />
+                <Text size="xs" c={canAffordChat ? 'dimmed' : 'red'}>
+                  {formatCredits(chatCost)}/message
+                </Text>
+              </Group>
+              <Badge
+                size="xs"
+                variant="light"
+                color={remainingMessages > 5 ? 'blue' : remainingMessages > 0 ? 'yellow' : 'red'}
+              >
+                {remainingMessages} messages left
+              </Badge>
+            </Group>
+          </Box>
+        )}
         <Group px="md" py="sm" gap="xs">
           <TextInput
             id="tour-chat-input"
             ref={inputRef}
             value={input}
             onChange={(event) => setInput(event.currentTarget.value)}
-            placeholder={book ? 'Type your message...' : 'Pick a book to chat'}
-            disabled={!book || isSending}
+            placeholder={
+              !book
+                ? 'Pick a book to chat'
+                : !canAffordChat
+                ? 'Insufficient credits'
+                : 'Type your message...'
+            }
+            disabled={!book || isSending || !canAffordChat}
             onKeyDown={handleKeyDown}
             style={{ flex: 1 }}
           />
@@ -490,7 +566,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
             color="blue"
             size="lg"
             onClick={sendMessage}
-            disabled={!input.trim() || !book || isSending}
+            disabled={!input.trim() || !book || isSending || !canAffordChat}
             aria-label="Send message"
           >
             <IconSend size={18} />
@@ -501,6 +577,13 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
         opened={summaryModalOpened}
         onClose={() => setSummaryModalOpened(false)}
         book={book}
+      />
+      <InsufficientCreditsModal
+        opened={showInsufficientModal}
+        onClose={() => setShowInsufficientModal(false)}
+        requiredCredits={chatCost}
+        currentBalance={creditBalance?.current_balance || 0}
+        actionName="chat message"
       />
       </>
     </Portal>

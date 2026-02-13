@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert } from '@mantine/core'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert, Group, Badge } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { IconAlertCircle, IconSparkles, IconCheck } from '@tabler/icons-react'
+import { IconAlertCircle, IconSparkles, IconCheck, IconCoins } from '@tabler/icons-react'
 import {
   UserPreferences,
   SUMMARY_STYLE_OPTIONS,
@@ -14,6 +14,8 @@ import {
 } from '@/lib/types/preferences'
 import { Book } from '@/lib/types/books'
 import { getDisplayTitle } from '@/lib/utils/bookTitle'
+import { getSummaryCreditCost, formatCredits, CreditBalance } from '@/lib/types/credits'
+import { InsufficientCreditsModal, refreshCreditBalance } from '@/components/credits'
 
 interface GenerateSummaryModalProps {
   opened: boolean
@@ -31,15 +33,41 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [creditBalance, setCreditBalance] = useState<CreditBalance | null>(null)
+  const [showInsufficientModal, setShowInsufficientModal] = useState(false)
+  const [insufficientCreditsData, setInsufficientCreditsData] = useState<{
+    required: number
+    current: number
+  } | null>(null)
 
   const style = SUMMARY_STYLE_OPTIONS[styleIndex].value as SummaryStyle
   const length = SUMMARY_LENGTH_OPTIONS[lengthIndex].value as SummaryLength
 
+  // Calculate credit cost based on current selection
+  const creditCost = useMemo(() => {
+    return getSummaryCreditCost(style, length)
+  }, [style, length])
+
+  const canAfford = creditBalance ? creditBalance.current_balance >= creditCost : false
+
+  const fetchCreditBalance = useCallback(async () => {
+    try {
+      const response = await fetch('/api/v1/credits')
+      if (response.ok) {
+        const data = await response.json()
+        setCreditBalance(data.balance)
+      }
+    } catch (error) {
+      console.error('Error fetching credit balance:', error)
+    }
+  }, [])
+
   useEffect(() => {
     if (opened) {
       fetchPreferences()
+      fetchCreditBalance()
     }
-  }, [opened])
+  }, [opened, fetchCreditBalance])
 
   const fetchPreferences = async () => {
     setLoading(true)
@@ -162,6 +190,9 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
             autoClose: 5000,
           })
 
+          // Refresh credit balance in header
+          refreshCreditBalance()
+
           onClose() // Close modal on success
         } else {
           // Non-PDF response - something went wrong
@@ -171,6 +202,14 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
 
           setErrorMessage('Expected PDF response but received a different format. Please try again.')
         }
+      } else if (response.status === 402) {
+        // Insufficient credits
+        const errorData = await response.json().catch(() => ({}))
+        setInsufficientCreditsData({
+          required: errorData.required_credits || creditCost,
+          current: errorData.current_balance || 0,
+        })
+        setShowInsufficientModal(true)
       } else {
         console.error('Response not OK:', response.status, response.statusText)
         const error = await response.json().catch(() => ({ error: 'Unknown error' }))
@@ -368,23 +407,67 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
               </Box>
             </Stack>
 
+            {/* Credit Cost Display */}
+            <Box
+              p="md"
+              style={{
+                backgroundColor: canAfford ? 'var(--mantine-color-blue-0)' : 'var(--mantine-color-red-0)',
+                borderRadius: 'var(--mantine-radius-md)',
+                border: `1px solid ${canAfford ? 'var(--mantine-color-blue-2)' : 'var(--mantine-color-red-2)'}`,
+              }}
+            >
+              <Group justify="space-between" align="center">
+                <Group gap="xs">
+                  <IconCoins size={18} style={{ color: canAfford ? '#2563EB' : '#dc2626' }} />
+                  <Text size="sm" fw={600}>
+                    Cost: {formatCredits(creditCost)}
+                  </Text>
+                </Group>
+                {creditBalance && (
+                  <Badge
+                    variant="light"
+                    color={canAfford ? 'blue' : 'red'}
+                    size="lg"
+                  >
+                    Balance: {formatCredits(creditBalance.current_balance)}
+                  </Badge>
+                )}
+              </Group>
+              {!canAfford && creditBalance && (
+                <Text size="xs" c="red" mt="xs">
+                  You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
+                </Text>
+              )}
+            </Box>
+
             <Button
               fullWidth
               size="md"
               leftSection={<IconSparkles size={18} />}
               onClick={handleGenerate}
               loading={generating}
-              disabled={!book}
+              disabled={!book || !canAfford}
               style={{
-                backgroundColor: '#2563EB',
-                color: '#ffffff',
+                backgroundColor: canAfford ? '#2563EB' : undefined,
+                color: canAfford ? '#ffffff' : undefined,
               }}
             >
-              Generate Summary
+              {canAfford ? 'Generate Summary' : 'Insufficient Credits'}
             </Button>
           </>
         )}
       </Stack>
+
+      {/* Insufficient Credits Modal */}
+      {insufficientCreditsData && (
+        <InsufficientCreditsModal
+          opened={showInsufficientModal}
+          onClose={() => setShowInsufficientModal(false)}
+          requiredCredits={insufficientCreditsData.required}
+          currentBalance={insufficientCreditsData.current}
+          actionName="summary generation"
+        />
+      )}
     </Modal>
   )
 }
