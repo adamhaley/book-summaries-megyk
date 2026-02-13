@@ -1,9 +1,9 @@
 -- Create credit triggers
--- Migration 014: Auto-create balance on signup with 300 MC starter credits
+-- Migration 014: Auto-create balance on signup with 500 MC starter credits
 
 -- =============================================
 -- Function: Create credit balance on user signup
--- Gives new users 300 MC starter credits
+-- Gives new users 500 MC starter credits
 -- =============================================
 CREATE OR REPLACE FUNCTION handle_new_user_credits()
 RETURNS TRIGGER AS $$
