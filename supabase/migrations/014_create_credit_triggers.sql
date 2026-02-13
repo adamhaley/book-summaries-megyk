@@ -8,7 +8,7 @@
 CREATE OR REPLACE FUNCTION handle_new_user_credits()
 RETURNS TRIGGER AS $$
 DECLARE
-  starter_credits INTEGER := 300;
+  starter_credits INTEGER := 500;
 BEGIN
   -- Insert credit balance for new user
   INSERT INTO public.credit_balances (
@@ -123,7 +123,7 @@ CREATE TRIGGER sync_balance_after_transaction
 DO $$
 DECLARE
   user_record RECORD;
-  starter_credits INTEGER := 300;
+  starter_credits INTEGER := 500;
 BEGIN
   -- Find users without credit balances
   FOR user_record IN
