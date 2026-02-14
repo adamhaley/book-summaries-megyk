@@ -226,6 +226,149 @@ https://megyk.com?utm_source=facebook&utm_medium=social&utm_campaign=summer-prom
 - ✅ `app/auth/signup/page.tsx` (UPDATED - UTM integration)
 - ✅ `app/auth/confirm/route.ts` (UPDATED - UTM integration)
 
+## Referral System Implementation
+
+### Overview
+
+A referral/sharing system where users earn Megyk Credits (MC) when friends sign up AND activate their accounts. Activation is triggered by the user's first chat message or first summary generation.
+
+### Reward Structure
+
+| Recipient | Amount | Trigger |
+|-----------|--------|---------|
+| Referrer (inviter) | 1,500 MC | When invitee activates |
+| Referred (invitee) | 1,000 MC | On activation (+ 500 MC signup bonus = 1,500 MC total) |
+
+### Activation Triggers
+
+- First chat message sent, OR
+- First summary generated (whichever comes first)
+- One-time only: Each user can only be referred once
+
+### Database Schema
+
+**Tables Created** (`supabase/migrations/016_create_referral_system.sql`):
+
+1. **`referral_codes`** - Unique 8-character code per user
+   - Auto-generated on signup via trigger
+   - Uses alphanumeric chars excluding confusing ones (0, O, I, 1, L)
+   - Tracks total_referrals and successful_referrals counts
+
+2. **`referrals`** - Tracks referrer→referred relationships
+   - Status: `pending`, `completed`, `expired`
+   - Activation type: `chat` or `summary`
+   - Unique constraint on referred_id (one referral per user)
+   - Check constraint prevents self-referral
+
+**Database Functions**:
+- `generate_referral_code()` - Creates 8-char alphanumeric codes
+- `create_referral_code_for_user()` - Trigger function for auto-generation
+- `activate_referral()` - Atomically activates referral and awards credits
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `/supabase/migrations/016_create_referral_system.sql` | Database tables, triggers, functions |
+| `/lib/types/referral.ts` | TypeScript types and constants |
+| `/lib/services/referrals.ts` | Service layer for referral operations |
+| `/app/api/v1/referrals/route.ts` | GET - Fetch user's referral code and stats |
+| `/app/api/v1/referrals/validate/route.ts` | GET - Validate a referral code |
+| `/components/referral/ReferralShareSection.tsx` | Profile page UI component |
+| `/components/referral/index.ts` | Component export |
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `/app/auth/signup/page.tsx` | Captures `?ref=CODE`, validates, shows badge, stores in cookie |
+| `/app/auth/confirm/route.ts` | Creates pending referral after email verification |
+| `/app/api/v1/book-chat/route.ts` | Calls `activateReferral()` after successful chat |
+| `/app/api/v1/summary/route.ts` | Calls `activateReferral()` after successful summary |
+| `/app/dashboard/profile/page.tsx` | Added `<ReferralShareSection />` component |
+
+### Referral Flow
+
+1. **User A** visits Profile page → sees referral link with unique code
+2. **User A** shares link: `https://app.megyk.com/auth/signup?ref=ABCD1234`
+3. **User B** clicks link → Signup page shows "Referral Applied" badge
+4. **User B** signs up → Code stored in cookie for email verification
+5. **User B** verifies email → Pending referral record created
+6. **User B** sends first chat OR generates first summary
+7. **Both users** receive bonus credits automatically
+8. Referral status changes from `pending` to `completed`
+
+### API Endpoints
+
+#### GET `/api/v1/referrals`
+Returns user's referral code and stats:
+```json
+{
+  "stats": {
+    "referral_code": "ABCD1234",
+    "referral_link": "https://app.megyk.com/auth/signup?ref=ABCD1234",
+    "pending": 2,
+    "successful": 5,
+    "total_earned": 7500
+  }
+}
+```
+
+#### GET `/api/v1/referrals/validate?code=ABCD1234`
+Validates a referral code (public endpoint for signup page):
+```json
+{
+  "valid": true,
+  "code": "ABCD1234"
+}
+```
+
+### Constants
+
+Defined in `/lib/types/referral.ts`:
+
+```typescript
+REFERRAL_CODE_PARAM = 'ref'          // URL parameter name
+REFERRAL_CODE_COOKIE = 'megyk_ref_code'  // Cookie name
+REFERRAL_COOKIE_MAX_AGE = 2592000    // 30 days in seconds
+
+REFERRAL_REWARDS = {
+  referrer_bonus: 1500,
+  referred_bonus: 1000,
+}
+```
+
+### Profile Page Component
+
+The `<ReferralShareSection />` component displays:
+- Copy-to-clipboard referral link
+- Native share button (on supported devices)
+- Stats grid: Total Invited, Pending, Activated, Credits Earned
+- "How it works" explainer with reward amounts
+
+### Edge Cases Handled
+
+- Invalid referral code → No badge shown, signup proceeds normally
+- Self-referral → Prevented by database constraint
+- Already referred → User can only be referred once
+- Multiple activations → Only first activation triggers rewards
+- Cross-device signup → Referral code passed via URL params survives email verification
+
+### Testing Checklist
+
+- [ ] Run migration on Supabase
+- [ ] Verify tables created with RLS policies
+- [ ] Verify existing users get referral codes backfilled
+- [ ] Verify new users auto-get referral code on signup
+- [ ] User A gets referral link on profile page
+- [ ] User B signs up with `?ref=CODE` - shows badge
+- [ ] After email verification, pending referral created
+- [ ] User B sends first chat message
+- [ ] User B gets 1000 MC bonus (check credit_transactions)
+- [ ] User A gets 1500 MC bonus (check credit_transactions)
+- [ ] Referral status changes to `completed`
+- [ ] Second activation attempt does nothing (already completed)
+
 ## Dev Server
 
 Currently running on: http://localhost:3001

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createCreditService } from '@/lib/services/credits'
 import { getSummaryCreditCost } from '@/lib/types/credits'
 import { SummaryStyle, SummaryLength } from '@/lib/types/preferences'
+import { createReferralService } from '@/lib/services/referrals'
 
 export async function POST(request: NextRequest) {
   try {
@@ -192,6 +193,14 @@ export async function POST(request: NextRequest) {
           // Note: We don't fail the request here since the summary was already generated
           // This should be monitored and resolved manually if it occurs
         }
+
+        // Activate referral if this is the user's first action (chat or summary)
+        // This awards bonus credits to both referrer and referred user
+        const referralService = createReferralService(supabase)
+        referralService.activateReferral(user.id, 'summary').catch((error) => {
+          console.error('Failed to activate referral:', error)
+          // Don't fail the request if referral activation fails
+        })
 
         const filename = await getBookFilename(book_id, preferences.length, preferences.style)
 

@@ -1,8 +1,10 @@
 'use client'
 
-import { Modal, Stack, Text, Button, Group, ThemeIcon, Box } from '@mantine/core'
-import { IconCoins, IconAlertCircle } from '@tabler/icons-react'
+import { useRouter } from 'next/navigation'
+import { Modal, Stack, Text, Button, Group, ThemeIcon, Box, Paper } from '@mantine/core'
+import { IconCoins, IconAlertCircle, IconGift, IconUsers } from '@tabler/icons-react'
 import { formatCredits } from '@/lib/types/credits'
+import { REFERRAL_REWARDS } from '@/lib/types/referral'
 
 interface InsufficientCreditsModalProps {
   opened: boolean
@@ -19,7 +21,13 @@ export function InsufficientCreditsModal({
   currentBalance,
   actionName = 'this action',
 }: InsufficientCreditsModalProps) {
+  const router = useRouter()
   const shortfall = requiredCredits - currentBalance
+
+  const handleInviteFriends = () => {
+    onClose()
+    router.push('/dashboard/profile')
+  }
 
   return (
     <Modal
@@ -74,16 +82,45 @@ export function InsufficientCreditsModal({
           </Stack>
         </Box>
 
-        <Stack gap="xs">
-          <Text size="sm" fw={600}>
-            Get more credits:
-          </Text>
-          <Text size="xs" c="dimmed">
-            Credit packages and subscriptions will be available soon. Stay tuned for updates!
-          </Text>
-        </Stack>
+        {/* Referral CTA */}
+        <Paper
+          p="md"
+          radius="md"
+          style={{
+            background: 'linear-gradient(135deg, var(--mantine-color-violet-0) 0%, var(--mantine-color-indigo-0) 100%)',
+            border: '1px solid var(--mantine-color-violet-2)',
+          }}
+        >
+          <Group gap="md" wrap="nowrap" align="flex-start">
+            <ThemeIcon size="xl" radius="md" variant="light" color="violet">
+              <IconGift size={24} />
+            </ThemeIcon>
+            <Stack gap={4} style={{ flex: 1 }}>
+              <Text size="sm" fw={600}>
+                Earn free credits by inviting friends!
+              </Text>
+              <Text size="xs" c="dimmed">
+                Earn more MC's! Get <Text span fw={700} c="violet">{REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC</Text> per friend who joins and activates their account.
+              </Text>
+            </Stack>
+          </Group>
+          <Button
+            fullWidth
+            mt="md"
+            variant="gradient"
+            gradient={{ from: 'violet', to: 'indigo' }}
+            leftSection={<IconUsers size={18} />}
+            onClick={handleInviteFriends}
+          >
+            Invite Friends
+          </Button>
+        </Paper>
 
-        <Group justify="flex-end" mt="md">
+        <Text size="xs" c="dimmed" ta="center">
+          Subscription plans coming soon!
+        </Text>
+
+        <Group justify="flex-end">
           <Button variant="default" onClick={onClose}>
             Close
           </Button>

@@ -1,14 +1,16 @@
 'use client'
 
-import { useState, Suspense } from 'react'
-import { useRouter } from 'next/navigation'
-import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert, Loader, Center } from '@mantine/core'
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Container, Paper, Title, Text, TextInput, PasswordInput, Button, Stack, Anchor, Alert, Loader, Center, Badge, Group } from '@mantine/core'
+import { IconAlertCircle, IconCheck, IconGift } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
 import { useUTMTracking } from '@/hooks/useUTMTracking'
+import { REFERRAL_CODE_PARAM, REFERRAL_CODE_COOKIE, REFERRAL_COOKIE_MAX_AGE, REFERRAL_REWARDS } from '@/lib/types/referral'
 
 function SignUpForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { utmParams } = useUTMTracking()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -16,6 +18,36 @@ function SignUpForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [referralCode, setReferralCode] = useState<string | null>(null)
+  const [referralValidated, setReferralValidated] = useState(false)
+  const [referralValidating, setReferralValidating] = useState(false)
+
+  // Capture and validate referral code from URL
+  useEffect(() => {
+    const code = searchParams.get(REFERRAL_CODE_PARAM)
+    if (code && !referralCode) {
+      validateReferralCode(code)
+    }
+  }, [searchParams])
+
+  const validateReferralCode = async (code: string) => {
+    setReferralValidating(true)
+    try {
+      const response = await fetch(`/api/v1/referrals/validate?code=${encodeURIComponent(code)}`)
+      const data = await response.json()
+
+      if (data.valid) {
+        setReferralCode(data.code)
+        setReferralValidated(true)
+        // Store in cookie for the email verification flow
+        document.cookie = `${REFERRAL_CODE_COOKIE}=${data.code}; path=/; max-age=${REFERRAL_COOKIE_MAX_AGE}; SameSite=Lax`
+      }
+    } catch (err) {
+      console.error('Failed to validate referral code:', err)
+    } finally {
+      setReferralValidating(false)
+    }
+  }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,6 +79,10 @@ function SignUpForm() {
             emailRedirectUrl.searchParams.set(key, value)
           }
         })
+      }
+      // Include referral code in redirect URL so it survives cross-device verification
+      if (referralCode) {
+        emailRedirectUrl.searchParams.set(REFERRAL_CODE_PARAM, referralCode)
       }
       console.log('[UTM] emailRedirectTo:', emailRedirectUrl.toString())
 
@@ -104,10 +140,30 @@ function SignUpForm() {
       <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: '100%' }}>
         <Stack gap="lg">
           <div>
-            <Title order={2} mb="xs">Create Account</Title>
+            <Group justify="space-between" align="flex-start" mb="xs">
+              <Title order={2}>Create Account</Title>
+              {referralValidating && (
+                <Loader size="xs" />
+              )}
+              {referralValidated && referralCode && (
+                <Badge
+                  color="green"
+                  variant="light"
+                  size="lg"
+                  leftSection={<IconGift size={14} />}
+                >
+                  Referral Applied
+                </Badge>
+              )}
+            </Group>
             <Text c="dimmed" size="sm">
               Sign up to start generating personalized book summaries
             </Text>
+            {referralValidated && referralCode && (
+              <Text size="sm" c="green" mt="xs">
+                You'll receive {REFERRAL_REWARDS.referred_bonus.toLocaleString()} bonus MC when you activate your account!
+              </Text>
+            )}
           </div>
 
           {error && (

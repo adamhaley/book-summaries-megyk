@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getUTMFromCookies } from '@/lib/utils/utm.server'
 import { hasUTMParams, parseUTMFromSearchParams, UTM_COOKIE_EXPIRY, UTM_COOKIE_NAME } from '@/lib/utils/utm'
+import { createReferralService } from '@/lib/services/referrals'
+import { REFERRAL_CODE_PARAM, REFERRAL_CODE_COOKIE } from '@/lib/types/referral'
 
 export async function GET(request: NextRequest) {
   console.log('🔵 [CONFIRM ROUTE] Request received')
@@ -99,8 +101,38 @@ export async function GET(request: NextRequest) {
         // Don't fail the verification if webhook fails
       }
       
+      // Handle referral code if present
+      // Check URL params first (works across devices), then fall back to cookie (same browser)
+      const referralCodeFromUrl = requestUrl.searchParams.get(REFERRAL_CODE_PARAM)
+      const referralCodeFromCookie = request.cookies.get(REFERRAL_CODE_COOKIE)?.value
+      const referralCode = referralCodeFromUrl || referralCodeFromCookie
+
+      if (referralCode && userData.user) {
+        console.log('🎁 [CONFIRM ROUTE] Referral code found:', referralCode)
+        try {
+          const referralService = createReferralService(supabase)
+          const result = await referralService.createPendingReferral(userData.user.id, referralCode)
+          if (result.success) {
+            console.log('✅ [CONFIRM ROUTE] Pending referral created successfully')
+          } else {
+            console.log('⚠️ [CONFIRM ROUTE] Referral not created:', result.error)
+          }
+        } catch (referralError) {
+          console.error('❌ [CONFIRM ROUTE] Error creating referral:', referralError)
+          // Don't fail the verification if referral creation fails
+        }
+      }
+
       // Redirect to the specified URL or dashboard on success
       const redirectResponse = NextResponse.redirect(new URL(next, publicUrl))
+
+      // Clear referral code cookie if it was used
+      if (referralCodeFromCookie) {
+        redirectResponse.cookies.set(REFERRAL_CODE_COOKIE, '', {
+          path: '/',
+          maxAge: 0,
+        })
+      }
 
       // Persist UTM params from the confirmation flow (so they survive the redirect to /dashboard)
       if (utmParams && hasUTMParams(utmParams)) {

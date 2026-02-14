@@ -3,7 +3,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert, Group, Badge } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { IconAlertCircle, IconSparkles, IconCheck, IconCoins } from '@tabler/icons-react'
+import { IconAlertCircle, IconSparkles, IconCheck, IconCoins, IconGift } from '@tabler/icons-react'
+import { useRouter } from 'next/navigation'
+import { REFERRAL_REWARDS } from '@/lib/types/referral'
 import {
   UserPreferences,
   SUMMARY_STYLE_OPTIONS,
@@ -24,6 +26,7 @@ interface GenerateSummaryModalProps {
 }
 
 export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryModalProps) {
+  const router = useRouter()
   const [styleIndex, setStyleIndex] = useState(
     SUMMARY_STYLE_OPTIONS.findIndex(opt => opt.value === DEFAULT_PREFERENCES.style)
   )
@@ -434,9 +437,29 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                 )}
               </Group>
               {!canAfford && creditBalance && (
-                <Text size="xs" c="red" mt="xs">
-                  You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
-                </Text>
+                <Stack gap="xs" mt="xs">
+                  <Text size="xs" c="red">
+                    You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
+                  </Text>
+                  <Group gap="xs" align="center">
+                    <IconGift size={14} style={{ color: 'var(--mantine-color-violet-6)' }} />
+                    <Text size="xs" c="dimmed">
+                      <Text
+                        span
+                        c="violet"
+                        fw={600}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          onClose()
+                          router.push('/dashboard/profile')
+                        }}
+                      >
+                        Invite friends
+                      </Text>
+                      {' '}to earn more MC's! ({REFERRAL_REWARDS.referrer_bonus.toLocaleString()} per friend invited)
+                    </Text>
+                  </Group>
+                </Stack>
               )}
             </Box>
 

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createCreditService } from '@/lib/services/credits';
 import { getChatMessageCreditCost } from '@/lib/types/credits';
+import { createReferralService } from '@/lib/services/referrals';
 
 const getWebhookUrl = () => {
   const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
@@ -91,6 +92,14 @@ export async function POST(request: Request) {
       // Note: We don't fail the request here since the chat has already started
       // This should be monitored and resolved manually if it occurs
     }
+
+    // Activate referral if this is the user's first action (chat or summary)
+    // This awards bonus credits to both referrer and referred user
+    const referralService = createReferralService(supabase);
+    referralService.activateReferral(user.id, 'chat').catch((error) => {
+      console.error('Failed to activate referral:', error);
+      // Don't fail the request if referral activation fails
+    });
 
     // Stream the response from n8n to enable real-time updates
     // n8n sends NDJSON (newline-delimited JSON) for streaming responses

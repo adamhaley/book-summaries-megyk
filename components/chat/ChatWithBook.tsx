@@ -18,7 +18,9 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconSend, IconSparkles, IconX, IconCoins } from '@tabler/icons-react';
+import { IconSend, IconSparkles, IconX, IconCoins, IconGift } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { REFERRAL_REWARDS } from '@/lib/types/referral';
 import { Book } from '@/lib/types/books';
 import { getDisplayTitle } from '@/lib/utils/bookTitle';
 import { GenerateSummaryModal } from '@/components/summary/GenerateSummaryModal';
@@ -76,6 +78,7 @@ const getChatReply = (payload: unknown) => {
 };
 
 export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -542,6 +545,23 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                 {remainingMessages} messages left
               </Badge>
             </Group>
+            {!canAffordChat && (
+              <Group gap={4} mt={4}>
+                <IconGift size={12} style={{ color: 'var(--mantine-color-violet-6)' }} />
+                <Text
+                  size="xs"
+                  c="violet"
+                  fw={500}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    onClose();
+                    router.push('/dashboard/profile');
+                  }}
+                >
+                  Invite friends to earn more MC's! ({REFERRAL_REWARDS.referrer_bonus.toLocaleString()} per friend invited)
+                </Text>
+              </Group>
+            )}
           </Box>
         )}
         <Group px="md" py="sm" gap="xs">

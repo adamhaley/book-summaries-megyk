@@ -5,6 +5,7 @@ import { Container, Title, Text, Stack, Card, TextInput, PasswordInput, Button, 
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react'
 import { createClient } from '@/lib/supabase/client'
 import { InstallAppSection } from '@/components/pwa'
+import { ReferralShareSection } from '@/components/referral'
 
 export default function ProfilePage() {
   const [email, setEmail] = useState('')
@@ -210,6 +211,9 @@ export default function ProfilePage() {
             </form>
           </Stack>
         </Card>
+
+        {/* Referral Section */}
+        <ReferralShareSection />
 
         {/* Install App Section */}
         <InstallAppSection />
