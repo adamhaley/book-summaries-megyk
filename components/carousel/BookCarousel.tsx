@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import { Carousel } from '@mantine/carousel';
 import type { EmblaCarouselType } from 'embla-carousel';
 import {
@@ -49,7 +49,144 @@ const getFallbackPlaceholder = (book: Book) => {
   return `https://placehold.co/300x450/64748B/ffffff?text=${encodeURIComponent('Book Cover')}`;
 };
 
-export function BookCarousel({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
+// Memoized BookCard component - extracted outside to prevent recreation on parent re-renders
+interface BookCardProps {
+  book: Book;
+  isFirstCard?: boolean;
+  onGetSummary: (book: Book) => void;
+  onGenerateSummary: (book: Book) => void;
+  onOpenChat: (book: Book) => void;
+}
+
+const BookCard = memo(function BookCard({
+  book,
+  isFirstCard = false,
+  onGetSummary,
+  onGenerateSummary,
+  onOpenChat,
+}: BookCardProps) {
+  return (
+    <Card
+      className={styles.bookCard}
+      shadow="lg"
+      radius="md"
+      withBorder={false}
+      p="sm"
+      id={isFirstCard ? 'tour-recommended-book' : undefined}
+    >
+      <div className={styles.cardContent}>
+        <div className={styles.imageContainer}>
+          <Image
+            src={getBookCoverPlaceholder(book)}
+            fallbackSrc={getFallbackPlaceholder(book)}
+            alt={`Cover of ${getDisplayTitle(book.title) || book.title}`}
+            className={styles.coverImage}
+            fit="cover"
+            radius="md"
+          />
+          <div className={styles.overlay}>
+            <Stack gap="xs" align="center">
+              {book.genre && (
+                <Badge
+                  variant="filled"
+                  color="dark"
+                  c="#000000"
+                  size="sm"
+                  style={{
+                    backgroundColor: '#f3f4f6',
+                    border: '1px solid #e5e7eb',
+                    color: '#000000'
+                  }}
+                >
+                  {book.genre}
+                </Badge>
+              )}
+              {book.default_summary_pdf_url ? (
+                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
+                  <Button
+                    variant="filled"
+                    leftSection={<IconSparkles size={14} />}
+                    onClick={() => onGetSummary(book)}
+                    size="sm"
+                    className={styles.generateButton}
+                    style={{
+                      backgroundColor: '#2563EB',
+                      color: '#ffffff',
+                    }}
+                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
+                  >
+                    Get Summary
+                  </Button>
+                  <Button
+                    variant="light"
+                    leftSection={<IconSettings size={14} />}
+                    onClick={() => onGenerateSummary(book)}
+                    size="sm"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      color: '#000000',
+                    }}
+                  >
+                    Custom
+                  </Button>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() => onOpenChat(book)}
+                    aria-label="Chat with book"
+                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
+                    id={isFirstCard ? 'tour-book-chat' : undefined}
+                  >
+                    <img
+                      src="/chat-with-book/chat-with-book.png"
+                      alt=""
+                      aria-hidden="true"
+                      style={{ display: 'block', height: 22, width: 'auto' }}
+                    />
+                  </ActionIcon>
+                </Group>
+              ) : (
+                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
+                  <Button
+                    variant="filled"
+                    leftSection={<IconSparkles size={16} />}
+                    onClick={() => onGetSummary(book)}
+                    size="sm"
+                    className={styles.generateButton}
+                    style={{
+                      backgroundColor: 'rgba(0, 210, 255, 0.8)',
+                      color: '#000000',
+                    }}
+                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
+                  >
+                    Get Summary
+                  </Button>
+                  <ActionIcon
+                    variant="light"
+                    size="lg"
+                    onClick={() => onOpenChat(book)}
+                    aria-label="Chat with book"
+                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
+                    id={isFirstCard ? 'tour-book-chat' : undefined}
+                  >
+                    <img
+                      src="/chat-with-book/chat-with-book.png"
+                      alt=""
+                      aria-hidden="true"
+                      style={{ display: 'block', height: 22, width: 'auto' }}
+                    />
+                  </ActionIcon>
+                </Group>
+              )}
+            </Stack>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+});
+
+function BookCarouselInner({ books, title = "Featured Books", showTitle = true }: BookCarouselProps) {
   const [modalOpened, setModalOpened] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [chatOpened, setChatOpened] = useState(false);
@@ -126,161 +263,27 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     };
   }, [embla, onSelect]);
 
-  const handleGenerateSummary = (book: Book) => {
+  // Memoized handlers to prevent unnecessary re-renders of BookCard
+  const handleGenerateSummary = useCallback((book: Book) => {
     setSelectedBook(book);
     setModalOpened(true);
-  };
+  }, []);
 
-  const handleGetSummary = (book: Book) => {
+  const handleGetSummary = useCallback((book: Book) => {
     if (book.default_summary_pdf_url) {
       // Download pre-generated summary
       window.open(book.default_summary_pdf_url, '_blank');
     } else {
       // Fallback to customization modal if no default summary exists
-      handleGenerateSummary(book);
+      setSelectedBook(book);
+      setModalOpened(true);
     }
-  };
+  }, []);
 
-  const handleOpenChat = (book: Book) => {
+  const handleOpenChat = useCallback((book: Book) => {
     setChatBook(book);
     setChatOpened(true);
-  };
-
-  const BookCard = ({ book, isFirstCard = false }: { book: Book; isFirstCard?: boolean }) => (
-    <Card 
-      className={styles.bookCard}
-      shadow="lg" 
-      radius="md" 
-      withBorder={false}
-      p="sm"
-      id={isFirstCard ? 'tour-recommended-book' : undefined}
-    >
-      <div className={styles.cardContent}>
-        <div className={styles.imageContainer}>
-          <Image
-            src={getBookCoverPlaceholder(book)}
-            fallbackSrc={getFallbackPlaceholder(book)}
-            alt={`Cover of ${getDisplayTitle(book.title) || book.title}`}
-            className={styles.coverImage}
-            fit="cover"
-            radius="md"
-          />
-          <div className={styles.overlay}>
-            <Stack gap="xs" align="center">
-              {/* <Text 
-                size="lg" 
-                fw={700} 
-                c="white" 
-                ta="center"
-                className={styles.bookTitle}
-              >
-              sdasd  {book.title}
-              </Text>
-              <Text 
-                size="sm" 
-                c="rgba(255, 255, 255, 0.9)" 
-                ta="center"
-              >
-                by {book.author} TEST
-              </Text> */}
-              {book.genre && (
-                <Badge 
-                  variant="filled" 
-                  color="dark"
-                  c="#000000"
-                  size="sm"
-                  style={{ 
-                    backgroundColor: '#f3f4f6',
-                    border: '1px solid #e5e7eb',
-                    color: '#000000'
-                  }}
-                >
-                  {book.genre}
-                </Badge>
-              )}
-              {book.default_summary_pdf_url ? (
-                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
-                  <Button
-                    variant="filled"
-                    leftSection={<IconSparkles size={14} />}
-                    onClick={() => handleGetSummary(book)}
-                    size="sm"
-                    className={styles.generateButton}
-                    style={{
-                      backgroundColor: '#2563EB',
-                      color: '#ffffff',
-                    }}
-                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
-                  >
-                    Get Summary
-                  </Button>
-                  <Button
-                    variant="light"
-                    leftSection={<IconSettings size={14} />}
-                    onClick={() => handleGenerateSummary(book)}
-                    size="sm"
-                    style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      color: '#000000',
-                    }}
-                  >
-                    Custom
-                  </Button>
-                  <ActionIcon
-                    variant="light"
-                    size="lg"
-                    onClick={() => handleOpenChat(book)}
-                    aria-label="Chat with book"
-                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
-                    id={isFirstCard ? 'tour-book-chat' : undefined}
-                  >
-                    <img
-                      src="/chat-with-book/chat-with-book.png"
-                      alt=""
-                      aria-hidden="true"
-                      style={{ display: 'block', height: 22, width: 'auto' }}
-                    />
-                  </ActionIcon>
-                </Group>
-              ) : (
-                <Group gap={8} wrap="nowrap" className={styles.pwaButtonRow}>
-                  <Button
-                    variant="filled"
-                    leftSection={<IconSparkles size={16} />}
-                    onClick={() => handleGetSummary(book)}
-                    size="sm"
-                    className={styles.generateButton}
-                    style={{
-                      backgroundColor: 'rgba(0, 210, 255, 0.8)',
-                      color: '#000000',
-                    }}
-                    id={isFirstCard ? 'tour-book-get-summary' : undefined}
-                  >
-                    Get Summary
-                  </Button>
-                  <ActionIcon
-                    variant="light"
-                    size="lg"
-                    onClick={() => handleOpenChat(book)}
-                    aria-label="Chat with book"
-                    style={{ backgroundColor: 'rgba(243, 244, 246, 0.92)', color: '#2563EB' }}
-                    id={isFirstCard ? 'tour-book-chat' : undefined}
-                  >
-                    <img
-                      src="/chat-with-book/chat-with-book.png"
-                      alt=""
-                      aria-hidden="true"
-                      style={{ display: 'block', height: 22, width: 'auto' }}
-                    />
-                  </ActionIcon>
-                </Group>
-              )}
-            </Stack>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
+  }, []);
 
   if (!books || books.length === 0) {
     return null;
@@ -336,7 +339,13 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
       >
         {books.map((book, index) => (
           <Carousel.Slide key={book.id}>
-            <BookCard book={book} isFirstCard={index === 1} />
+            <BookCard
+              book={book}
+              isFirstCard={index === 1}
+              onGetSummary={handleGetSummary}
+              onGenerateSummary={handleGenerateSummary}
+              onOpenChat={handleOpenChat}
+            />
           </Carousel.Slide>
         ))}
 
@@ -357,3 +366,6 @@ export function BookCarousel({ books, title = "Featured Books", showTitle = true
     </Container>
   );
 }
+
+// Memoize the entire carousel to prevent re-renders when parent state changes
+export const BookCarousel = memo(BookCarouselInner);
