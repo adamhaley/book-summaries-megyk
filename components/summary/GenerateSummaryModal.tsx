@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert, Group, Badge } from '@mantine/core'
+import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert, Group, Badge, Paper, TextInput, ThemeIcon, Tooltip } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
-import { IconAlertCircle, IconSparkles, IconCheck, IconCoins, IconGift } from '@tabler/icons-react'
+import { IconAlertCircle, IconSparkles, IconCheck, IconCoins, IconGift, IconSend, IconCopy, IconLoader2 } from '@tabler/icons-react'
 import { REFERRAL_REWARDS } from '@/lib/types/referral'
 import {
   UserPreferences,
@@ -41,6 +41,15 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
     current: number
   } | null>(null)
 
+  // Inline invite form state
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteName, setInviteName] = useState('')
+  const [inviteSending, setInviteSending] = useState(false)
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null)
+  const [inviteError, setInviteError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [referralLink, setReferralLink] = useState<string | null>(null)
+
   const style = SUMMARY_STYLE_OPTIONS[styleIndex].value as SummaryStyle
   const length = SUMMARY_LENGTH_OPTIONS[lengthIndex].value as SummaryLength
 
@@ -67,8 +76,79 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
     if (opened) {
       fetchPreferences()
       fetchCreditBalance()
+      // Reset invite form state
+      setInviteEmail('')
+      setInviteName('')
+      setInviteSuccess(null)
+      setInviteError(null)
     }
   }, [opened, fetchCreditBalance])
+
+  const fetchReferralLink = async () => {
+    if (referralLink) return referralLink
+    try {
+      const response = await fetch('/api/v1/referrals')
+      if (response.ok) {
+        const data = await response.json()
+        setReferralLink(data.stats?.referral_link || null)
+        return data.stats?.referral_link
+      }
+    } catch (err) {
+      console.error('Failed to fetch referral link:', err)
+    }
+    return null
+  }
+
+  const handleSendInvite = async () => {
+    if (!inviteEmail.trim()) {
+      setInviteError('Please enter an email address')
+      return
+    }
+
+    setInviteSending(true)
+    setInviteError(null)
+    setInviteSuccess(null)
+
+    try {
+      const response = await fetch('/api/v1/referrals/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: inviteEmail.trim(), name: inviteName.trim() || undefined }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setInviteError(data.error || 'Failed to send invite')
+        return
+      }
+
+      setInviteSuccess(`Invite sent to ${inviteEmail}!`)
+      setInviteEmail('')
+      setInviteName('')
+
+      setTimeout(() => setInviteSuccess(null), 3000)
+    } catch (err) {
+      setInviteError('Failed to send invite. Please try again.')
+    } finally {
+      setInviteSending(false)
+    }
+  }
+
+  const handleCopyLink = async () => {
+    const link = await fetchReferralLink()
+    if (link) {
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const handleInviteKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !inviteSending && inviteEmail.trim()) {
+      handleSendInvite()
+    }
+  }
 
   const fetchPreferences = async () => {
     setLoading(true)
@@ -435,32 +515,9 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                 )}
               </Group>
               {!canAfford && creditBalance && (
-                <Stack gap="xs" mt="xs">
-                  <Text size="xs" c="red">
-                    You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
-                  </Text>
-                  <Group gap="xs" align="center">
-                    <IconGift size={14} style={{ color: 'var(--mantine-color-violet-6)' }} />
-                    <Text size="xs" c="dimmed">
-                      <Text
-                        span
-                        c="violet"
-                        fw={600}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => {
-                          setInsufficientCreditsData({
-                            required: creditCost,
-                            current: creditBalance.current_balance,
-                          })
-                          setShowInsufficientModal(true)
-                        }}
-                      >
-                        Invite friends
-                      </Text>
-                      {' '}to earn more MC's! ({REFERRAL_REWARDS.referrer_bonus.toLocaleString()} per friend invited)
-                    </Text>
-                  </Group>
-                </Stack>
+                <Text size="xs" c="red" mt="xs">
+                  You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
+                </Text>
               )}
             </Box>
 
@@ -478,6 +535,104 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
             >
               {canAfford ? 'Generate Summary' : 'Insufficient Credits'}
             </Button>
+
+            {/* Inline Invite Form - shown when insufficient credits */}
+            {!canAfford && creditBalance && (
+              <Paper
+                p="md"
+                radius="md"
+                style={{
+                  background: 'linear-gradient(135deg, var(--mantine-color-violet-0) 0%, var(--mantine-color-indigo-0) 100%)',
+                  border: '1px solid var(--mantine-color-violet-2)',
+                }}
+              >
+                <Group gap="sm" mb="md" wrap="nowrap">
+                  <ThemeIcon size="lg" radius="md" variant="light" color="violet">
+                    <IconGift size={20} />
+                  </ThemeIcon>
+                  <div>
+                    <Text size="sm" fw={600}>
+                      Invite a friend, get {REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC!
+                    </Text>
+                    <Text size="xs" c="dimmed">
+                      They get {REFERRAL_REWARDS.referred_bonus.toLocaleString()} MC too
+                    </Text>
+                  </div>
+                </Group>
+
+                {inviteSuccess ? (
+                  <Box
+                    p="md"
+                    style={{
+                      backgroundColor: 'var(--mantine-color-green-0)',
+                      borderRadius: 'var(--mantine-radius-md)',
+                      border: '1px solid var(--mantine-color-green-3)',
+                    }}
+                  >
+                    <Group gap="xs">
+                      <IconCheck size={18} color="var(--mantine-color-green-6)" />
+                      <Text size="sm" fw={500} c="green">
+                        {inviteSuccess}
+                      </Text>
+                    </Group>
+                    <Text size="xs" c="dimmed" mt="xs">
+                      Want to invite another friend?
+                    </Text>
+                  </Box>
+                ) : (
+                  <Stack gap="sm">
+                    <Group gap="sm" grow>
+                      <TextInput
+                        placeholder="Friend's email"
+                        value={inviteEmail}
+                        onChange={(e) => setInviteEmail(e.currentTarget.value)}
+                        onKeyDown={handleInviteKeyDown}
+                        disabled={inviteSending}
+                        error={inviteError}
+                        size="sm"
+                        style={{ flex: 2 }}
+                      />
+                      <TextInput
+                        placeholder="Name (optional)"
+                        value={inviteName}
+                        onChange={(e) => setInviteName(e.currentTarget.value)}
+                        onKeyDown={handleInviteKeyDown}
+                        disabled={inviteSending}
+                        size="sm"
+                        style={{ flex: 1 }}
+                      />
+                    </Group>
+
+                    <Button
+                      variant="gradient"
+                      gradient={{ from: 'violet', to: 'indigo' }}
+                      leftSection={inviteSending ? <IconLoader2 size={18} className="animate-spin" /> : <IconSend size={18} />}
+                      onClick={handleSendInvite}
+                      disabled={inviteSending || !inviteEmail.trim()}
+                      fullWidth
+                    >
+                      {inviteSending ? 'Sending...' : 'Send Invite'}
+                    </Button>
+                  </Stack>
+                )}
+
+                {/* Copy link fallback */}
+                <Group justify="center" mt="md" gap="xs">
+                  <Text size="xs" c="dimmed">or</Text>
+                  <Tooltip label={copied ? 'Copied!' : 'Copy your referral link'}>
+                    <Button
+                      variant="subtle"
+                      size="xs"
+                      color={copied ? 'green' : 'gray'}
+                      leftSection={copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+                      onClick={handleCopyLink}
+                    >
+                      {copied ? 'Copied!' : 'Copy Link'}
+                    </Button>
+                  </Tooltip>
+                </Group>
+              </Paper>
+            )}
           </>
         )}
       </Stack>
