@@ -1,8 +1,8 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { Modal, Stack, Text, Button, Group, ThemeIcon, Box, Paper } from '@mantine/core'
-import { IconCoins, IconAlertCircle, IconGift, IconUsers } from '@tabler/icons-react'
+import { useState } from 'react'
+import { Modal, Stack, Text, Button, Group, ThemeIcon, Box, Paper, TextInput, Tooltip } from '@mantine/core'
+import { IconCoins, IconAlertCircle, IconGift, IconSend, IconCheck, IconCopy, IconLoader2 } from '@tabler/icons-react'
 import { formatCredits } from '@/lib/types/credits'
 import { REFERRAL_REWARDS } from '@/lib/types/referral'
 
@@ -21,18 +21,97 @@ export function InsufficientCreditsModal({
   currentBalance,
   actionName = 'this action',
 }: InsufficientCreditsModalProps) {
-  const router = useRouter()
   const shortfall = requiredCredits - currentBalance
 
-  const handleInviteFriends = () => {
+  const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
+  const [sending, setSending] = useState(false)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [referralLink, setReferralLink] = useState<string | null>(null)
+
+  // Fetch referral link on first render if not already fetched
+  const fetchReferralLink = async () => {
+    if (referralLink) return referralLink
+    try {
+      const response = await fetch('/api/v1/referrals')
+      if (response.ok) {
+        const data = await response.json()
+        setReferralLink(data.stats?.referral_link || null)
+        return data.stats?.referral_link
+      }
+    } catch (err) {
+      console.error('Failed to fetch referral link:', err)
+    }
+    return null
+  }
+
+  const handleSendInvite = async () => {
+    if (!email.trim()) {
+      setError('Please enter an email address')
+      return
+    }
+
+    setSending(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const response = await fetch('/api/v1/referrals/invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), name: name.trim() || undefined }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to send invite')
+        return
+      }
+
+      setSuccess(`Invite sent to ${email}!`)
+      setEmail('')
+      setName('')
+
+      // Clear success after 3 seconds to allow another invite
+      setTimeout(() => setSuccess(null), 3000)
+    } catch (err) {
+      setError('Failed to send invite. Please try again.')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const handleCopyLink = async () => {
+    const link = await fetchReferralLink()
+    if (link) {
+      await navigator.clipboard.writeText(link)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !sending && email.trim()) {
+      handleSendInvite()
+    }
+  }
+
+  // Reset state when modal closes
+  const handleClose = () => {
+    setEmail('')
+    setName('')
+    setError(null)
+    setSuccess(null)
     onClose()
-    router.push('/dashboard/profile')
   }
 
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={handleClose}
       title={
         <Group gap="xs">
           <ThemeIcon color="red" variant="light" size="lg">
@@ -82,7 +161,7 @@ export function InsufficientCreditsModal({
           </Stack>
         </Box>
 
-        {/* Referral CTA */}
+        {/* Inline Invite Form */}
         <Paper
           p="md"
           radius="md"
@@ -91,29 +170,91 @@ export function InsufficientCreditsModal({
             border: '1px solid var(--mantine-color-violet-2)',
           }}
         >
-          <Group gap="md" wrap="nowrap" align="flex-start">
-            <ThemeIcon size="xl" radius="md" variant="light" color="violet">
-              <IconGift size={24} />
+          <Group gap="sm" mb="md" wrap="nowrap">
+            <ThemeIcon size="lg" radius="md" variant="light" color="violet">
+              <IconGift size={20} />
             </ThemeIcon>
-            <Stack gap={4} style={{ flex: 1 }}>
+            <div>
               <Text size="sm" fw={600}>
-                Earn free credits by inviting friends!
+                Invite a friend, get {REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC!
               </Text>
               <Text size="xs" c="dimmed">
-                Earn more MC's! Get <Text span fw={700} c="violet">{REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC</Text> per friend who joins and activates their account.
+                They get {REFERRAL_REWARDS.referred_bonus.toLocaleString()} MC too
               </Text>
-            </Stack>
+            </div>
           </Group>
-          <Button
-            fullWidth
-            mt="md"
-            variant="gradient"
-            gradient={{ from: 'violet', to: 'indigo' }}
-            leftSection={<IconUsers size={18} />}
-            onClick={handleInviteFriends}
-          >
-            Invite Friends
-          </Button>
+
+          {success ? (
+            <Box
+              p="md"
+              style={{
+                backgroundColor: 'var(--mantine-color-green-0)',
+                borderRadius: 'var(--mantine-radius-md)',
+                border: '1px solid var(--mantine-color-green-3)',
+              }}
+            >
+              <Group gap="xs">
+                <IconCheck size={18} color="var(--mantine-color-green-6)" />
+                <Text size="sm" fw={500} c="green">
+                  {success}
+                </Text>
+              </Group>
+              <Text size="xs" c="dimmed" mt="xs">
+                Want to invite another friend?
+              </Text>
+            </Box>
+          ) : (
+            <Stack gap="sm">
+              <Group gap="sm" grow>
+                <TextInput
+                  placeholder="Friend's email"
+                  value={email}
+                  onChange={(e) => setEmail(e.currentTarget.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={sending}
+                  error={error}
+                  size="sm"
+                  style={{ flex: 2 }}
+                />
+                <TextInput
+                  placeholder="Name (optional)"
+                  value={name}
+                  onChange={(e) => setName(e.currentTarget.value)}
+                  onKeyDown={handleKeyDown}
+                  disabled={sending}
+                  size="sm"
+                  style={{ flex: 1 }}
+                />
+              </Group>
+
+              <Button
+                variant="gradient"
+                gradient={{ from: 'violet', to: 'indigo' }}
+                leftSection={sending ? <IconLoader2 size={18} className="animate-spin" /> : <IconSend size={18} />}
+                onClick={handleSendInvite}
+                disabled={sending || !email.trim()}
+                fullWidth
+              >
+                {sending ? 'Sending...' : 'Send Invite'}
+              </Button>
+            </Stack>
+          )}
+
+          {/* Copy link fallback */}
+          <Group justify="center" mt="md" gap="xs">
+            <Text size="xs" c="dimmed">or</Text>
+            <Tooltip label={copied ? 'Copied!' : 'Copy your referral link'}>
+              <Button
+                variant="subtle"
+                size="xs"
+                color={copied ? 'green' : 'gray'}
+                leftSection={copied ? <IconCheck size={14} /> : <IconCopy size={14} />}
+                onClick={handleCopyLink}
+              >
+                {copied ? 'Copied!' : 'Copy Link'}
+              </Button>
+            </Tooltip>
+          </Group>
         </Paper>
 
         <Text size="xs" c="dimmed" ta="center">
@@ -121,7 +262,7 @@ export function InsufficientCreditsModal({
         </Text>
 
         <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>
+          <Button variant="default" onClick={handleClose}>
             Close
           </Button>
         </Group>
