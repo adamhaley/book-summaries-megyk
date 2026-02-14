@@ -83,6 +83,13 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
     }
   }, [opened, fetchCreditBalance])
 
+  // Pre-fetch referral link when entering invite screen
+  useEffect(() => {
+    if (screen === 'invite' && !referralLink) {
+      fetchReferralLink()
+    }
+  }, [screen, referralLink])
+
   const fetchPreferences = async () => {
     setLoading(true)
     setErrorMessage(null)
@@ -186,11 +193,29 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
   }
 
   const handleCopyLink = async () => {
-    const link = await fetchReferralLink()
-    if (link) {
-      await navigator.clipboard.writeText(link)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+    try {
+      // Use cached link if available, otherwise fetch
+      const link = referralLink || await fetchReferralLink()
+      if (link) {
+        await navigator.clipboard.writeText(link)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }
+    } catch (err) {
+      // Fallback: create a temporary input element
+      const link = referralLink
+      if (link) {
+        const textArea = document.createElement('textarea')
+        textArea.value = link
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-9999px'
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }
     }
   }
 
