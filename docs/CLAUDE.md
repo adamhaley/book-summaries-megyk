@@ -583,13 +583,26 @@ sudo systemctl restart megyk-books.service
 
 Unlike Laravel's `php artisan migrate`, Next.js doesn't have built-in migration tools. Use one of these methods:
 
-### Option 1: Supabase Dashboard (Easiest for MVP)
-1. Go to https://app.supabase.com
+### Option 1: Ninja Mode (Direct psql - Recommended for Self-Hosted)
+Uses the `DATABASE_URL` from `.env.local` to run migrations directly:
+
+```bash
+# Run a specific migration
+source .env.local && psql "$DATABASE_URL" -f supabase/migrations/016_create_referral_system.sql
+
+# Or run all migrations in order
+source .env.local && for f in supabase/migrations/*.sql; do psql "$DATABASE_URL" -f "$f"; done
+```
+
+This works with self-hosted Supabase where the CLI may not be configured.
+
+### Option 2: Supabase Dashboard (SQL Editor)
+1. Go to your Supabase dashboard
 2. Navigate to **SQL Editor**
 3. Copy/paste migration file contents from `supabase/migrations/`
 4. Click **Run**
 
-### Option 2: Supabase CLI (Recommended for Production)
+### Option 3: Supabase CLI (Cloud Supabase only)
 ```bash
 # Install Supabase CLI
 npm install -g supabase

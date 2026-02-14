@@ -108,9 +108,12 @@ export default function ProfilePage() {
             Profile Settings
           </Title>
           <Text size="lg" c="dimmed">
-            Manage your account email and password
+            Manage your account and earn rewards
           </Text>
         </div>
+
+        {/* Referral Section */}
+        <ReferralShareSection />
 
         {/* Email Update Section */}
         <Card shadow="sm" padding="lg" radius="md" withBorder>
@@ -211,9 +214,6 @@ export default function ProfilePage() {
             </form>
           </Stack>
         </Card>
-
-        {/* Referral Section */}
-        <ReferralShareSection />
 
         {/* Install App Section */}
         <InstallAppSection />
