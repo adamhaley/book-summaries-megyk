@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Modal, Stack, Text, Button, Slider, Box, Loader, Center, Alert, Group, Badge } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { IconAlertCircle, IconSparkles, IconCheck, IconCoins, IconGift } from '@tabler/icons-react'
-import { useRouter } from 'next/navigation'
 import { REFERRAL_REWARDS } from '@/lib/types/referral'
 import {
   UserPreferences,
@@ -26,7 +25,6 @@ interface GenerateSummaryModalProps {
 }
 
 export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryModalProps) {
-  const router = useRouter()
   const [styleIndex, setStyleIndex] = useState(
     SUMMARY_STYLE_OPTIONS.findIndex(opt => opt.value === DEFAULT_PREFERENCES.style)
   )
@@ -450,8 +448,11 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                         fw={600}
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
-                          onClose()
-                          router.push('/dashboard/profile')
+                          setInsufficientCreditsData({
+                            required: creditCost,
+                            current: creditBalance.current_balance,
+                          })
+                          setShowInsufficientModal(true)
                         }}
                       >
                         Invite friends

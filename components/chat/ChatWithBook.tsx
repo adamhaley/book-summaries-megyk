@@ -19,7 +19,6 @@ import {
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSend, IconSparkles, IconX, IconCoins, IconGift } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { REFERRAL_REWARDS } from '@/lib/types/referral';
 import { Book } from '@/lib/types/books';
 import { getDisplayTitle } from '@/lib/utils/bookTitle';
@@ -78,7 +77,6 @@ const getChatReply = (payload: unknown) => {
 };
 
 export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
-  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -553,10 +551,7 @@ export function ChatWithBook({ opened, onClose, book }: ChatWithBookProps) {
                   c="violet"
                   fw={500}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    onClose();
-                    router.push('/dashboard/profile');
-                  }}
+                  onClick={() => setShowInsufficientModal(true)}
                 >
                   Invite friends to earn more MC's! ({REFERRAL_REWARDS.referrer_bonus.toLocaleString()} per friend invited)
                 </Text>
