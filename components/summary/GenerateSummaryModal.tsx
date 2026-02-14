@@ -522,25 +522,28 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                   )}
                 </Group>
                 {!canAfford && creditBalance && (
-                  <Text size="xs" c="red" mt="xs">
-                    You need {formatCredits(shortfall)} more credits
-                  </Text>
+                  <Stack gap="xs" mt="xs">
+                    <Text size="xs" c="red">
+                      You need {formatCredits(shortfall)} more credits
+                    </Text>
+                    <Group gap="xs" align="center">
+                      <IconGift size={14} style={{ color: 'var(--mantine-color-violet-6)' }} />
+                      <Text size="xs" c="dimmed">
+                        <Text
+                          span
+                          c="violet"
+                          fw={600}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setScreen('invite')}
+                        >
+                          Invite friends
+                        </Text>
+                        {' '}to earn more MC's! ({REFERRAL_REWARDS.referrer_bonus.toLocaleString()} per friend)
+                      </Text>
+                    </Group>
+                  </Stack>
                 )}
               </Box>
-
-              {/* Invite button - shown when insufficient credits */}
-              {!canAfford && creditBalance && (
-                <Button
-                  fullWidth
-                  variant="light"
-                  color="violet"
-                  size="md"
-                  leftSection={<IconGift size={18} />}
-                  onClick={() => setScreen('invite')}
-                >
-                  Invite friends to earn {REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC
-                </Button>
-              )}
 
               <Button
                 fullWidth
