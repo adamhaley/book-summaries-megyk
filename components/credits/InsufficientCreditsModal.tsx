@@ -124,6 +124,7 @@ export function InsufficientCreditsModal({
       }
       centered
       size="md"
+      zIndex={1500}
     >
       <Stack gap="lg">
         <Text size="sm" c="dimmed">

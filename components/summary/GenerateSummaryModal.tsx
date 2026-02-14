@@ -435,28 +435,31 @@ export function GenerateSummaryModal({ opened, onClose, book }: GenerateSummaryM
                 )}
               </Group>
               {!canAfford && creditBalance && (
-                <Stack gap="xs" mt="xs">
-                  <Text size="xs" c="red">
-                    You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
-                  </Text>
-                  <Button
-                    variant="light"
-                    color="violet"
-                    size="xs"
-                    leftSection={<IconGift size={14} />}
-                    onClick={() => {
-                      setInsufficientCreditsData({
-                        required: creditCost,
-                        current: creditBalance.current_balance,
-                      })
-                      setShowInsufficientModal(true)
-                    }}
-                  >
-                    Invite friends to earn {REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC
-                  </Button>
-                </Stack>
+                <Text size="xs" c="red" mt="xs">
+                  You need {formatCredits(creditCost - creditBalance.current_balance)} more credits
+                </Text>
               )}
             </Box>
+
+            {/* Invite button - separate from cost box for visibility */}
+            {!canAfford && creditBalance && (
+              <Button
+                fullWidth
+                variant="light"
+                color="violet"
+                size="md"
+                leftSection={<IconGift size={18} />}
+                onClick={() => {
+                  setInsufficientCreditsData({
+                    required: creditCost,
+                    current: creditBalance.current_balance,
+                  })
+                  setShowInsufficientModal(true)
+                }}
+              >
+                Invite friends to earn {REFERRAL_REWARDS.referrer_bonus.toLocaleString()} MC
+              </Button>
+            )}
 
             <Button
               fullWidth
